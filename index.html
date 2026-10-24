@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sag's auf Deutsch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@500;700;800&display=swap">
+<style>
+/* Layout: one play table. A setup sheet, then a single big card on the table, then a result sheet. Title plate borrows the yellow German town sign. */
+:root {
+  --table: #e6eaef;
+  --surface: #ffffff;
+  --ink: #15181d;
+  --muted: #586270;
+  --line: #ccd3dc;
+  --sign: #f5c400;
+  --sign-ink: #111111;
+  --der: #1f56c9;
+  --die: #c62f38;
+  --das: #1b8548;
+  --pl: #95580a;
+  --p1: #1f56c9;
+  --p2: #b03a78;
+  --good: #1b8548;
+  --shadow: 0 1px 0 rgba(20, 30, 45, .06), 0 10px 30px rgba(20, 30, 45, .12);
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --table: #0f141b; --surface: #1a212b; --ink: #edf0f4; --muted: #9ba6b4; --line: #2c3642;
+    --sign: #f2c200; --sign-ink: #111111;
+    --der: #7ea4ff; --die: #ff7d84; --das: #5ccf8b; --pl: #e3a650;
+    --p1: #7ea4ff; --p2: #f08cc4; --good: #5ccf8b;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --table: #0f141b; --surface: #1a212b; --ink: #edf0f4; --muted: #9ba6b4; --line: #2c3642;
+  --sign: #f2c200; --sign-ink: #111111;
+  --der: #7ea4ff; --die: #ff7d84; --das: #5ccf8b; --pl: #e3a650;
+  --p1: #7ea4ff; --p2: #f08cc4; --good: #5ccf8b;
+  --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--table);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1rem;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+main { max-width: 760px; margin: 0 auto; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, .card:focus-visible { outline: 3px solid var(--sign); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.05; }
+
+/* Title plate (Ortsschild) */
+.plate {
+  display: inline-flex; flex-direction: column; align-items: center;
+  background: var(--sign); color: var(--sign-ink);
+  border: 3px solid var(--sign-ink); outline: 4px solid var(--sign); border-radius: 6px;
+  padding: 10px 22px 8px; margin: 6px 4px 0;
+}
+.plate h1 { font-size: clamp(2.2rem, 7vw, 3.2rem); font-weight: 800; letter-spacing: .01em; }
+.plate small { font-family: var(--display); font-weight: 500; font-size: 1rem; letter-spacing: .08em; text-transform: uppercase; }
+.intro { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; margin-bottom: 24px; }
+.intro p { margin: 0; max-width: 40ch; color: var(--muted); flex: 1 1 260px; }
+
+/* Setup sheet */
+.sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 22px; display: grid; gap: 26px; }
+.field { display: grid; gap: 10px; }
+.field-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.label { font-family: var(--display); font-weight: 700; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; }
+.linkish { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; font-size: .9rem; }
+.topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.topic-chip {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; text-align: left;
+  background: var(--table); border: 2px solid transparent; border-radius: 10px; padding: 8px 10px; min-width: 0;
+}
+.topic-chip .ico { grid-row: 1 / 3; font-family: var(--emoji); font-size: 1.6rem; line-height: 1; }
+.topic-chip b { font-weight: 700; font-size: .98rem; }
+.topic-chip span.sub { font-size: .8rem; color: var(--muted); }
+.topic-chip[aria-pressed="true"] { border-color: var(--ink); background: var(--surface); }
+.topic-chip[aria-pressed="false"] { opacity: .62; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.seg button { background: var(--table); border: 2px solid transparent; border-radius: 999px; padding: 7px 16px; font-weight: 700; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.players { display: flex; flex-wrap: wrap; gap: 12px; }
+.players label { display: grid; gap: 4px; flex: 1 1 180px; font-size: .85rem; color: var(--muted); }
+.players input { font: inherit; color: var(--ink); background: var(--table); border: 2px solid var(--line); border-radius: 10px; padding: 9px 12px; width: 100%; }
+.players .k { font-family: var(--display); font-weight: 700; border: 1.5px solid currentColor; border-radius: 5px; padding: 0 6px; margin-left: 4px; }
+.help { margin: 0; color: var(--muted); font-size: .9rem; max-width: 62ch; }
+.check { display: flex; gap: 10px; align-items: center; font-weight: 700; }
+.check input { width: 20px; height: 20px; accent-color: var(--ink); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .9rem; color: var(--muted); }
+.art { font-weight: 700; }
+.a-der { color: var(--der); } .a-die { color: var(--die); } .a-das { color: var(--das); } .a-pl { color: var(--pl); }
+.start-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.btn-main {
+  background: var(--sign); color: var(--sign-ink); border: 3px solid var(--sign-ink); border-radius: 10px;
+  font-family: var(--display); font-weight: 800; font-size: 1.4rem; letter-spacing: .03em; padding: 8px 26px;
+}
+.btn-main:disabled { opacity: .45; cursor: not-allowed; }
+.avail { color: var(--muted); font-size: .92rem; }
+
+/* Play */
+.bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.ghost { background: transparent; border: 2px solid var(--line); border-radius: 999px; padding: 5px 14px; font-weight: 700; color: var(--muted); }
+.progress { flex: 1 1 140px; display: grid; gap: 4px; font-family: var(--display); font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; min-width: 0; }
+.track { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.track i { display: block; height: 100%; width: 0; background: var(--ink); transition: width .3s; }
+.scores { display: flex; gap: 8px; }
+.score { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 2px solid var(--line); border-radius: 999px; padding: 3px 6px 3px 14px; font-weight: 700; }
+.score b { font-family: var(--display); font-size: 1.3rem; min-width: 1.8em; text-align: center; background: var(--table); border-radius: 999px; font-variant-numeric: tabular-nums; }
+.score.p1 { color: var(--p1); } .score.p2 { color: var(--p2); }
+.score.buzzed { border-color: currentColor; box-shadow: 0 0 0 3px currentColor; }
+.score span { color: var(--ink); }
+
+.stage { display: flex; justify-content: center; perspective: 1400px; }
+.card { width: min(360px, 100%); aspect-ratio: 4 / 5; position: relative; cursor: pointer; border-radius: 18px; }
+.inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.3,.7,.2,1); }
+.card.flipped .inner { transform: rotateY(180deg); }
+.card.noanim .inner { transition: none; }
+.face {
+  position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  background: var(--surface); border: 2px solid var(--line); border-radius: 18px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 46px 22px 26px; text-align: center;
+}
+.back { transform: rotateY(180deg); }
+.ctopic { position: absolute; top: 14px; left: 16px; right: 16px; display: flex; justify-content: space-between; font-family: var(--display); font-weight: 700; font-size: .9rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.pic { font-family: var(--emoji); font-size: clamp(6rem, 30vw, 9.5rem); line-height: 1; }
+.pic.num { font-family: var(--display); font-weight: 800; font-size: clamp(6rem, 32vw, 10rem); font-variant-numeric: tabular-nums; }
+.swatch { width: 62%; aspect-ratio: 1; border-radius: 50%; border: 2px solid var(--line); }
+.cue { margin: 0; font-size: 1.15rem; font-weight: 700; max-width: 26ch; }
+.tap { position: absolute; bottom: 14px; font-size: .8rem; color: var(--muted); }
+.de { font-family: var(--display); font-weight: 800; font-size: 3rem; line-height: 1.05; overflow-wrap: anywhere; }
+.de.mid { font-size: 2.3rem; } .de.long { font-size: 1.8rem; }
+.de .art { font-weight: 700; }
+.fem { margin: -6px 0 0; color: var(--muted); font-weight: 700; }
+.tr { margin: 0; display: grid; gap: 6px; width: 100%; max-width: 280px; border-top: 1px solid var(--line); padding-top: 12px; }
+.tr div { display: grid; grid-template-columns: 2.6em 1fr; text-align: left; gap: 8px; }
+.tr dt { font-family: var(--display); font-weight: 700; letter-spacing: .08em; color: var(--muted); }
+.tr dd { margin: 0; }
+.say { background: var(--table); border: 2px solid var(--line); border-radius: 999px; padding: 6px 16px; font-weight: 700; }
+.plnote { font-size: .8rem; color: var(--pl); font-weight: 700; vertical-align: super; margin-left: 2px; }
+
+.controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.ctl { border: 2px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 18px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; flex: 0 1 auto; }
+.ctl .k { font-family: var(--display); font-size: .85rem; border: 1.5px solid currentColor; border-radius: 5px; padding: 0 6px; opacity: .7; }
+.ctl.p1 { color: var(--p1); border-color: var(--p1); }
+.ctl.p2 { color: var(--p2); border-color: var(--p2); }
+.ctl.good { color: var(--good); border-color: var(--good); }
+.ctl.big { background: var(--ink); color: var(--surface); border-color: var(--ink); font-size: 1.1rem; padding: 12px 26px; }
+.ctl.hl { box-shadow: 0 0 0 3px currentColor; }
+.status { text-align: center; min-height: 1.5em; margin: 12px 0 0; font-weight: 700; }
+.status .p1 { color: var(--p1); } .status .p2 { color: var(--p2); }
+
+/* Done */
+.result h2 { font-size: clamp(2.2rem, 8vw, 3.4rem); }
+.final { display: flex; gap: 12px; flex-wrap: wrap; }
+.final .score { font-size: 1.1rem; }
+.missed { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.missed li { background: var(--table); border-radius: 10px; padding: 8px 12px; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; min-width: 0; }
+.missed .mi { font-family: var(--emoji); font-size: 1.6rem; }
+.missed .mi.num { font-family: var(--display); font-weight: 800; }
+.missed .mi .dot { display: inline-block; width: 1.3rem; height: 1.3rem; border-radius: 50%; border: 1.5px solid var(--line); vertical-align: middle; }
+.missed small { color: var(--muted); display: block; }
+
+@media (max-width: 480px) {
+  .sheet { padding: 16px; }
+  .scores { width: 100%; }
+  .score { flex: 1; justify-content: space-between; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .inner { transition: none; }
+  .track i { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<main>
+  <section id="setup">
+    <div class="intro">
+      <div class="plate"><h1>Sag's auf Deutsch</h1><small>Bildkarten · Wortspiel</small></div>
+      <p>Look at the picture and say it in German before the other one does. Flip the card to check, and hear how it sounds.</p>
+    </div>
+
+    <div class="sheet">
+      <div class="field">
+        <div class="field-head">
+          <span class="label">Themen</span>
+          <span><button class="linkish" id="allTopics" type="button">Select all</button> · <button class="linkish" id="noTopics" type="button">Clear</button></span>
+        </div>
+        <div class="topics" id="topics"></div>
+      </div>
+
+      <div class="field">
+        <span class="label">Spielart</span>
+        <div class="seg" id="modeSeg">
+          <button type="button" data-v="race">Race: who says it first</button>
+          <button type="button" data-v="practice">Practice, no score</button>
+        </div>
+        <div class="players" id="players">
+          <label for="p1"><span>Player 1, buzzer key <span class="k">A</span></span><input id="p1" maxlength="16" autocomplete="off"></label>
+          <label for="p2"><span>Player 2, buzzer key <span class="k">L</span></span><input id="p2" maxlength="16" autocomplete="off"></label>
+        </div>
+        <p class="help" id="modeHelp"></p>
+      </div>
+
+      <div class="field">
+        <span class="label">Karten pro Runde</span>
+        <div class="seg" id="countSeg">
+          <button type="button" data-v="10">10</button>
+          <button type="button" data-v="20">20</button>
+          <button type="button" data-v="40">40</button>
+          <button type="button" data-v="0">All</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label">Hint on the front</span>
+        <div class="seg" id="hintSeg">
+          <button type="button" data-v="none">Picture only</button>
+          <button type="button" data-v="en">English</button>
+          <button type="button" data-v="es">Español</button>
+        </div>
+        <p class="help">Phrase cards always show a short cue, since a picture alone can't say "the bill, please".</p>
+      </div>
+
+      <div class="field">
+        <label class="check" for="speak"><input type="checkbox" id="speak"> Read the German aloud when a card flips</label>
+        <div class="legend"><span>Articles are colour-coded:</span><span class="art a-der">der</span><span class="art a-die">die</span><span class="art a-das">das</span><span class="art a-pl">die (plural)</span></div>
+      </div>
+
+      <div class="start-row">
+        <button class="btn-main" id="start" type="button">Los geht's</button>
+        <span class="avail" id="avail"></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="play" hidden>
+    <div class="bar">
+      <button class="ghost" id="quit" type="button">← Menu</button>
+      <div class="progress"><span id="prog">1 / 20</span><div class="track"><i id="progbar"></i></div></div>
+      <div class="scores" id="scores"></div>
+    </div>
+    <div class="stage">
+      <div class="card" id="card" tabindex="0" role="button" aria-label="Flip card">
+        <div class="inner">
+          <div class="face front">
+            <div class="ctopic"><span id="fTopic"></span></div>
+            <div id="fPic"></div>
+            <p class="cue" id="fCue" hidden></p>
+            <span class="tap">Tap or press Space to flip</span>
+          </div>
+          <div class="face back">
+            <div class="ctopic"><span id="bTopic"></span></div>
+            <div class="de" id="bDe"></div>
+            <p class="fem" id="bFem" hidden></p>
+            <dl class="tr">
+              <div><dt>EN</dt><dd id="bEn"></dd></div>
+              <div><dt>ES</dt><dd id="bEs"></dd></div>
+            </dl>
+            <button class="say" id="say" type="button">🔊 Anhören</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="status" id="status"></p>
+    <div class="controls" id="controls"></div>
+  </section>
+
+  <section id="done" hidden>
+    <div class="sheet result">
+      <h2 id="doneTitle"></h2>
+      <div class="final" id="final"></div>
+      <div class="field" id="missedWrap">
+        <span class="label" id="missedLabel">Cards to practise again</span>
+        <ul class="missed" id="missed"></ul>
+      </div>
+      <div class="start-row">
+        <button class="btn-main" id="again" type="button">Noch mal</button>
+        <button class="ctl" id="replayMissed" type="button">Replay the missed cards</button>
+        <button class="ctl" id="toSetup" type="button">Change topics</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+// Card: [front, german, article, english, spanish, feminine form]
+// front: emoji, "#hex" colour swatch, or "n:12" numeral. article: der | die | das | pl | "" (none)
+const TOPICS = [
+  { id: "colors", name: "Farben", en: "Colours", icon: "🎨", items: [
+    ["#d62828","rot","","red","rojo"],["#1d4ed8","blau","","blue","azul"],["#16a34a","grün","","green","verde"],
+    ["#facc15","gelb","","yellow","amarillo"],["#f97316","orange","","orange","naranja"],["#7c3aed","lila","","purple","morado"],
+    ["#f472b6","rosa","","pink","rosa"],["#111111","schwarz","","black","negro"],["#ffffff","weiß","","white","blanco"],
+    ["#8b8f96","grau","","grey","gris"],["#7c4a1e","braun","","brown","marrón"],["#14b8a6","türkis","","turquoise","turquesa"]
+  ]},
+  { id: "numbers", name: "Zahlen", en: "Numbers", icon: "🔢", items: [
+    ["n:0","null","","zero","cero"],["n:1","eins","","one","uno"],["n:2","zwei","","two","dos"],["n:3","drei","","three","tres"],
+    ["n:4","vier","","four","cuatro"],["n:5","fünf","","five","cinco"],["n:6","sechs","","six","seis"],["n:7","sieben","","seven","siete"],
+    ["n:8","acht","","eight","ocho"],["n:9","neun","","nine","nueve"],["n:10","zehn","","ten","diez"],["n:11","elf","","eleven","once"],
+    ["n:12","zwölf","","twelve","doce"],["n:13","dreizehn","","thirteen","trece"],["n:16","sechzehn","","sixteen","dieciséis"],
+    ["n:17","siebzehn","","seventeen","diecisiete"],["n:20","zwanzig","","twenty","veinte"],["n:21","einundzwanzig","","twenty-one","veintiuno"],
+    ["n:30","dreißig","","thirty","treinta"],["n:47","siebenundvierzig","","forty-seven","cuarenta y siete"],["n:50","fünfzig","","fifty","cincuenta"],
+    ["n:99","neunundneunzig","","ninety-nine","noventa y nueve"],["n:100","hundert","","one hundred","cien"],["n:1000","tausend","","one thousand","mil"]
+  ]},
+  { id: "food", name: "Essen & Trinken", en: "Food & drink", icon: "🥨", items: [
+    ["🍎","Apfel","der","apple","manzana"],["🍌","Banane","die","banana","plátano"],["🍞","Brot","das","bread","pan"],
+    ["🧀","Käse","der","cheese","queso"],["🥚","Ei","das","egg","huevo"],["🥛","Milch","die","milk","leche"],
+    ["☕","Kaffee","der","coffee","café"],["🍵","Tee","der","tea","té"],["💧","Wasser","das","water","agua"],
+    ["🍺","Bier","das","beer","cerveza"],["🍷","Wein","der","wine","vino"],["🥔","Kartoffel","die","potato","patata"],
+    ["🥕","Karotte","die","carrot","zanahoria"],["🍅","Tomate","die","tomato","tomate"],["🐟","Fisch","der","fish","pescado"],
+    ["🥩","Fleisch","das","meat","carne"],["🍗","Hähnchen","das","chicken","pollo"],["🍚","Reis","der","rice","arroz"],
+    ["🍝","Nudeln","pl","pasta, noodles","pasta"],["🍲","Suppe","die","soup","sopa"],["🍰","Kuchen","der","cake","pastel"],
+    ["🍦","Eis","das","ice cream","helado"],["🍓","Erdbeere","die","strawberry","fresa"],["🧅","Zwiebel","die","onion","cebolla"],
+    ["🧄","Knoblauch","der","garlic","ajo"],["🧈","Butter","die","butter","mantequilla"],["🥗","Salat","der","salad","ensalada"],
+    ["🥨","Brezel","die","pretzel","pretzel"],["🌭","Wurst","die","sausage","salchicha"]
+  ]},
+  { id: "verbs", name: "Verben", en: "Verbs", icon: "🏃", items: [
+    ["🏃","rennen","","to run","correr"],["🚶","gehen","","to walk, to go","caminar, ir"],["😴","schlafen","","to sleep","dormir"],
+    ["🍽️","essen","","to eat","comer"],["🥤","trinken","","to drink","beber"],["🏊","schwimmen","","to swim","nadar"],
+    ["📖","lesen","","to read","leer"],["✍️","schreiben","","to write","escribir"],["🎤","singen","","to sing","cantar"],
+    ["💃","tanzen","","to dance","bailar"],["🧑‍🍳","kochen","","to cook","cocinar"],["🚗","fahren","","to drive","conducir"],
+    ["😂","lachen","","to laugh","reír"],["😢","weinen","","to cry","llorar"],["🧍","aufstehen","","to stand up","levantarse"],
+    ["🪑","sich setzen","","to sit down","sentarse"],["🤔","denken","","to think","pensar"],["📞","telefonieren","","to phone","llamar por teléfono"],
+    ["💳","bezahlen","","to pay","pagar"],["🎮","spielen","","to play","jugar"],["🧼","waschen","","to wash","lavar"],
+    ["🎧","hören","","to listen, to hear","escuchar, oír"],["👀","sehen","","to see","ver"],["🧗","klettern","","to climb","escalar"],
+    ["🗣️","sprechen","","to speak","hablar"],["🛌","sich ausruhen","","to rest","descansar"]
+  ]},
+  { id: "home", name: "Wohnung & Möbel", en: "Home & furniture", icon: "🛋️", items: [
+    ["🪑","Stuhl","der","chair","silla"],["🛏️","Bett","das","bed","cama"],["🛋️","Sofa","das","sofa","sofá"],
+    ["🚪","Tür","die","door","puerta"],["🪟","Fenster","das","window","ventana"],["🪞","Spiegel","der","mirror","espejo"],
+    ["🚿","Dusche","die","shower","ducha"],["🛁","Badewanne","die","bathtub","bañera"],["🚽","Toilette","die","toilet","váter"],
+    ["📺","Fernseher","der","TV","televisión"],["🖼️","Bild","das","picture","cuadro"],["🕰️","Uhr","die","clock","reloj"],
+    ["🗄️","Schrank","der","cupboard","armario"],["🪴","Pflanze","die","plant","planta"],["🔑","Schlüssel","der","key","llave"],
+    ["🕯️","Kerze","die","candle","vela"],["💡","Glühbirne","die","light bulb","bombilla"],["🪜","Leiter","die","ladder","escalera de mano"],
+    ["🧹","Besen","der","broom","escoba"],["🏠","Haus","das","house","casa"]
+  ]},
+  { id: "work", name: "Arbeit & Berufe", en: "Work & jobs", icon: "💼", items: [
+    ["🏢","Büro","das","office","oficina"],["💻","Computer","der","computer","ordenador"],["📧","E-Mail","die","email","correo electrónico"],
+    ["📅","Termin","der","appointment","cita"],["💶","Geld","das","money","dinero"],["🖊️","Kugelschreiber","der","pen","bolígrafo"],
+    ["📄","Papier","das","paper","papel"],["🧑‍💼","Chef","der","boss","jefe","die Chefin"],["🧑‍🏫","Lehrer","der","teacher","profesor","die Lehrerin"],
+    ["🧑‍⚕️","Arzt","der","doctor","médico","die Ärztin"],["👨‍🍳","Koch","der","cook, chef","cocinero","die Köchin"],
+    ["👮","Polizist","der","police officer","policía","die Polizistin"],["🧑‍🚒","Feuerwehrmann","der","firefighter","bombero","die Feuerwehrfrau"],
+    ["🧑‍🌾","Bauer","der","farmer","agricultor","die Bäuerin"],["🧑‍🔧","Mechaniker","der","mechanic","mecánico","die Mechanikerin"],
+    ["🧑‍💻","Programmierer","der","programmer","programador","die Programmiererin"],["🧑‍✈️","Pilot","der","pilot","piloto","die Pilotin"],
+    ["☎️","Telefon","das","telephone","teléfono"],["⏰","Wecker","der","alarm clock","despertador"]
+  ]},
+  { id: "animals", name: "Tiere", en: "Animals", icon: "🐕", items: [
+    ["🐕","Hund","der","dog","perro"],["🐈","Katze","die","cat","gato"],["🐎","Pferd","das","horse","caballo"],
+    ["🐄","Kuh","die","cow","vaca"],["🐖","Schwein","das","pig","cerdo"],["🐦","Vogel","der","bird","pájaro"],
+    ["🐁","Maus","die","mouse","ratón"],["🐻","Bär","der","bear","oso"],["🦊","Fuchs","der","fox","zorro"],
+    ["🐔","Huhn","das","hen","gallina"],["🐝","Biene","die","bee","abeja"],["🦋","Schmetterling","der","butterfly","mariposa"],
+    ["🐍","Schlange","die","snake","serpiente"],["🐘","Elefant","der","elephant","elefante"],["🦁","Löwe","der","lion","león"],
+    ["🐇","Kaninchen","das","rabbit","conejo"],["🐸","Frosch","der","frog","rana"],["🦆","Ente","die","duck","pato"],
+    ["🐑","Schaf","das","sheep","oveja"],["🐒","Affe","der","monkey","mono"]
+  ]},
+  { id: "body", name: "Körper", en: "Body", icon: "✋", items: [
+    ["💪","Arm","der","arm","brazo"],["🦵","Bein","das","leg","pierna"],["🦶","Fuß","der","foot","pie"],
+    ["✋","Hand","die","hand","mano"],["👁️","Auge","das","eye","ojo"],["👂","Ohr","das","ear","oreja"],
+    ["👃","Nase","die","nose","nariz"],["👄","Mund","der","mouth","boca"],["🦷","Zahn","der","tooth","diente"],
+    ["❤️","Herz","das","heart","corazón"],["👅","Zunge","die","tongue","lengua"],["💇","Haare","pl","hair","pelo"],
+    ["☝️","Finger","der","finger","dedo"],["🧠","Gehirn","das","brain","cerebro"]
+  ]},
+  { id: "clothes", name: "Kleidung", en: "Clothes", icon: "👕", items: [
+    ["👕","T-Shirt","das","T-shirt","camiseta"],["👖","Hose","die","trousers","pantalones"],["👗","Kleid","das","dress","vestido"],
+    ["👟","Schuh","der","shoe","zapato"],["🧦","Socken","pl","socks","calcetines"],["🎩","Hut","der","hat","sombrero"],
+    ["🧢","Mütze","die","cap","gorra"],["🧥","Jacke","die","jacket","chaqueta"],["🧣","Schal","der","scarf","bufanda"],
+    ["🧤","Handschuhe","pl","gloves","guantes"],["👓","Brille","die","glasses","gafas"],["👜","Tasche","die","bag","bolso"],
+    ["👔","Krawatte","die","tie","corbata"],["🩱","Badeanzug","der","swimsuit","bañador"]
+  ]},
+  { id: "nature", name: "Wetter & Natur", en: "Weather & nature", icon: "🌦️", items: [
+    ["🌧️","Regen","der","rain","lluvia"],["❄️","Schnee","der","snow","nieve"],["🌬️","Wind","der","wind","viento"],
+    ["☁️","Wolke","die","cloud","nube"],["⛈️","Gewitter","das","thunderstorm","tormenta"],["🌈","Regenbogen","der","rainbow","arcoíris"],
+    ["🌫️","Nebel","der","fog","niebla"],["🌳","Baum","der","tree","árbol"],["🌸","Blume","die","flower","flor"],
+    ["⛰️","Berg","der","mountain","montaña"],["🌊","Meer","das","sea","mar"],["🏖️","Strand","der","beach","playa"],
+    ["🏝️","Insel","die","island","isla"],["🏜️","Wüste","die","desert","desierto"]
+  ]},
+  { id: "science", name: "Wissenschaft", en: "Science", icon: "🔬", items: [
+    ["⚛️","Atom","das","atom","átomo"],["🧲","Magnet","der","magnet","imán"],["🔬","Mikroskop","das","microscope","microscopio"],
+    ["🔭","Teleskop","das","telescope","telescopio"],["🧬","DNA","die","DNA","ADN"],["🪐","Planet","der","planet","planeta"],
+    ["⭐","Stern","der","star","estrella"],["🌙","Mond","der","moon","luna"],["☀️","Sonne","die","sun","sol"],
+    ["🌍","Erde","die","Earth","Tierra"],["🚀","Rakete","die","rocket","cohete"],["🧪","Reagenzglas","das","test tube","tubo de ensayo"],
+    ["🔋","Batterie","die","battery","pila, batería"],["⚡","Blitz","der","lightning","rayo"],["🌋","Vulkan","der","volcano","volcán"],
+    ["☄️","Komet","der","comet","cometa"],["🦠","Bakterium","das","bacterium","bacteria"],["🌡️","Thermometer","das","thermometer","termómetro"],
+    ["⚖️","Waage","die","scales","balanza"]
+  ]},
+  { id: "travel", name: "Stadt & Verkehr", en: "Town & transport", icon: "🚆", items: [
+    ["🚌","Bus","der","bus","autobús"],["🚆","Zug","der","train","tren"],["🚲","Fahrrad","das","bicycle","bicicleta"],
+    ["✈️","Flugzeug","das","plane","avión"],["🚢","Schiff","das","ship","barco"],["🚕","Taxi","das","taxi","taxi"],
+    ["🚇","U-Bahn","die","underground, metro","metro"],["🚉","Bahnhof","der","station","estación"],["🚦","Ampel","die","traffic light","semáforo"],
+    ["🏥","Krankenhaus","das","hospital","hospital"],["💊","Tablette","die","pill","pastilla"],["🏦","Bank","die","bank","banco"],
+    ["🏫","Schule","die","school","escuela"],["⛪","Kirche","die","church","iglesia"],["🏨","Hotel","das","hotel","hotel"],
+    ["🗺️","Stadtplan","der","city map","plano de la ciudad"],["🎫","Fahrkarte","die","ticket","billete"]
+  ]},
+  { id: "phrases", name: "Alltagssätze", en: "Everyday phrases", icon: "💬", cue: true, items: [
+    ["😊","Hallo! Wie geht's?","","Hi! How are you?","¡Hola! ¿Qué tal?"],["🙏","Danke schön!","","Thank you very much!","¡Muchas gracias!"],
+    ["🧾","Die Rechnung, bitte.","","The bill, please.","La cuenta, por favor."],["🏷️","Wie viel kostet das?","","How much is it?","¿Cuánto cuesta?"],
+    ["🚻","Wo ist die Toilette?","","Where is the toilet?","¿Dónde está el baño?"],["🤷","Ich verstehe nicht.","","I don't understand.","No entiendo."],
+    ["🐢","Können Sie bitte langsamer sprechen?","","Could you speak more slowly, please?","¿Puede hablar más despacio, por favor?"],
+    ["🍺","Ein Bier, bitte.","","A beer, please.","Una cerveza, por favor."],["🕐","Wie spät ist es?","","What time is it?","¿Qué hora es?"],
+    ["🙋","Ich heiße …","","My name is …","Me llamo …"],["🌍","Woher kommst du?","","Where are you from?","¿De dónde eres?"],
+    ["😋","Guten Appetit!","","Enjoy your meal!","¡Buen provecho!"],["🍻","Prost!","","Cheers!","¡Salud!"],
+    ["🚆","Wann fährt der nächste Zug?","","When does the next train leave?","¿Cuándo sale el próximo tren?"],
+    ["😬","Entschuldigung!","","Sorry! Excuse me!","¡Perdón!"],["👋","Tschüss, bis morgen!","","Bye, see you tomorrow!","¡Adiós, hasta mañana!"],
+    ["🥶","Mir ist kalt.","","I'm cold.","Tengo frío."],["🤒","Ich fühle mich nicht gut.","","I don't feel well.","No me encuentro bien."],
+    ["🧭","Wie komme ich zum Bahnhof?","","How do I get to the station?","¿Cómo llego a la estación?"],
+    ["☕","Einen Kaffee mit Milch, bitte.","","A coffee with milk, please.","Un café con leche, por favor."]
+  ]}
+];
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "race", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true };
+let settings = { ...DEFAULTS };
+try {
+  const saved = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null");
+  if (saved) settings = { ...DEFAULTS, ...saved };
+} catch (e) {}
+function save() { try { localStorage.setItem("sagsDeutsch.settings", JSON.stringify(settings)); } catch (e) {} }
+
+/* ---------- Setup screen ---------- */
+function renderTopics() {
+  $("topics").innerHTML = TOPICS.map((t) => `
+    <button type="button" class="topic-chip" data-id="${t.id}" aria-pressed="${settings.topics.includes(t.id)}">
+      <span class="ico">${t.icon}</span><b>${esc(t.name)}</b><span class="sub">${esc(t.en)} · ${t.items.length}</span>
+    </button>`).join("");
+  updateAvail();
+}
+function setSeg(segId, value) {
+  for (const b of $(segId).querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.v === String(value)));
+}
+function updateAvail() {
+  const n = TOPICS.filter((t) => settings.topics.includes(t.id)).reduce((a, t) => a + t.items.length, 0);
+  $("avail").textContent = n ? `${n} cards in the chosen topics` : "Pick at least one topic to start";
+  $("start").disabled = n === 0;
+}
+function updateMode() {
+  setSeg("modeSeg", settings.mode);
+  $("players").hidden = settings.mode !== "race";
+  $("modeHelp").textContent = settings.mode === "race"
+    ? "Whoever knows it first hits their key (A or L) or taps their name, says the word, and flips. Then award the point to whoever got it right."
+    : "Say it out loud, flip, and be honest: cards you mark as \"again\" come back a few cards later.";
+}
+
+$("topics").addEventListener("click", (e) => {
+  const b = e.target.closest(".topic-chip"); if (!b) return;
+  const id = b.dataset.id;
+  settings.topics = settings.topics.includes(id) ? settings.topics.filter((x) => x !== id) : [...settings.topics, id];
+  b.setAttribute("aria-pressed", String(settings.topics.includes(id)));
+  updateAvail(); save();
+});
+$("allTopics").onclick = () => { settings.topics = TOPICS.map((t) => t.id); renderTopics(); save(); };
+$("noTopics").onclick = () => { settings.topics = []; renderTopics(); save(); };
+$("modeSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.mode = b.dataset.v; updateMode(); save(); };
+$("countSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.count = Number(b.dataset.v); setSeg("countSeg", settings.count); save(); };
+$("hintSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.hint = b.dataset.v; setSeg("hintSeg", settings.hint); save(); };
+$("p1").oninput = (e) => { settings.p1 = e.target.value; save(); };
+$("p2").oninput = (e) => { settings.p2 = e.target.value; save(); };
+$("speak").onchange = (e) => { settings.speak = e.target.checked; save(); };
+
+/* ---------- Speech ---------- */
+let deVoice = null;
+function pickVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const vs = speechSynthesis.getVoices().filter((v) => v.lang && v.lang.toLowerCase().startsWith("de"));
+  deVoice = vs.find((v) => v.lang === "de-DE" && /anna|helena|google|katja|petra/i.test(v.name)) || vs.find((v) => v.lang === "de-DE") || vs[0] || null;
+}
+if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(text) {
+  if (!("speechSynthesis" in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "de-DE"; if (deVoice) u.voice = deVoice; u.rate = 0.9;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+let actx = null;
+function beep(freq) {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.frequency.value = freq; o.type = "triangle";
+    g.gain.setValueAtTime(0.18, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.25);
+    o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + 0.26);
+  } catch (e) {}
+}
+
+/* ---------- Game ---------- */
+const artWord = (a) => (a === "pl" ? "die" : a);
+function deHTML(c) {
+  if (!c.art) return esc(c.de);
+  return `<span class="art a-${c.art}">${artWord(c.art)}</span> ${esc(c.de)}${c.art === "pl" ? '<span class="plnote">Pl.</span>' : ""}`;
+}
+const deSpeech = (c) => ((c.art ? artWord(c.art) + " " : "") + c.de).replace("…", "");
+function frontHTML(front, cls) {
+  if (front.startsWith("#")) return `<div class="swatch" style="background:${front}"></div>`;
+  if (front.startsWith("n:")) return `<div class="${cls} num">${front.slice(2)}</div>`;
+  return `<div class="${cls}">${front}</div>`;
+}
+
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+let game = null;
+function buildDeck() {
+  const cards = [];
+  for (const t of TOPICS) {
+    if (!settings.topics.includes(t.id)) continue;
+    for (const [front, de, art, en, es, fem] of t.items) cards.push({ front, de, art, en, es, fem, topic: t.name, cue: !!t.cue });
+  }
+  shuffle(cards);
+  return settings.count ? cards.slice(0, settings.count) : cards;
+}
+function names() { return [settings.p1.trim() || "Player 1", settings.p2.trim() || "Player 2"]; }
+
+function startGame(deck) {
+  game = { deck, i: 0, flipped: false, buzzed: null, scores: [0, 0], missed: [], known: 0, againCount: 0 };
+  show("play");
+  dealCard();
+}
+
+function show(screen) {
+  for (const s of ["setup", "play", "done"]) $(s).hidden = s !== screen;
+  window.scrollTo(0, 0);
+}
+
+function dealCard() {
+  const c = game.deck[game.i];
+  const card = $("card");
+  card.classList.add("noanim");
+  card.classList.remove("flipped");
+  void card.offsetWidth;
+  card.classList.remove("noanim");
+  game.flipped = false; game.buzzed = null;
+
+  $("fTopic").textContent = c.topic; $("bTopic").textContent = c.topic;
+  $("fPic").outerHTML = `<div id="fPic">${frontHTML(c.front, "pic")}</div>`;
+  const cueLang = settings.hint !== "none" ? settings.hint : (c.cue ? "es" : null);
+  const cue = $("fCue");
+  cue.hidden = !cueLang; cue.textContent = cueLang ? c[cueLang] : "";
+  const de = $("bDe");
+  de.innerHTML = deHTML(c);
+  const len = c.de.length + (c.art ? 4 : 0);
+  de.className = "de" + (len > 20 ? " long" : len > 11 ? " mid" : "");
+  $("bFem").hidden = !c.fem;
+  $("bFem").innerHTML = c.fem ? `<span class="art a-die">die</span> ${esc(c.fem.replace(/^die /, ""))}` : "";
+  $("bEn").textContent = c.en; $("bEs").textContent = c.es;
+
+  $("prog").textContent = `Karte ${game.i + 1} / ${game.deck.length}`;
+  $("progbar").style.width = `${(game.i / game.deck.length) * 100}%`;
+  renderScores(); renderControls();
+  $("status").textContent = "";
+}
+
+function renderScores() {
+  const el = $("scores");
+  if (settings.mode === "race") {
+    const [a, b] = names();
+    el.innerHTML = [a, b].map((n, p) => `<div class="score p${p + 1}${game.buzzed === p ? " buzzed" : ""}"><span>${esc(n)}</span><b>${game.scores[p]}</b></div>`).join("");
+  } else {
+    el.innerHTML = `<div class="score" style="color:var(--good)"><span>Gewusst</span><b>${game.known}</b></div><div class="score"><span>Noch mal</span><b>${game.againCount}</b></div>`;
+  }
+}
+
+function renderControls() {
+  const el = $("controls");
+  const [a, b] = names();
+  if (!game.flipped) {
+    if (settings.mode === "race") {
+      el.innerHTML = `
+        <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="buzz0" type="button">${esc(a)} knows it <span class="k">A</span></button>
+        <button class="ctl big" data-act="flip" type="button">Flip <span class="k">Space</span></button>
+        <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="buzz1" type="button">${esc(b)} knows it <span class="k">L</span></button>`;
+    } else {
+      el.innerHTML = `<button class="ctl big" data-act="flip" type="button">Flip <span class="k">Space</span></button>`;
+    }
+  } else if (settings.mode === "race") {
+    el.innerHTML = `
+      <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="win0" type="button">Point for ${esc(a)} <span class="k">A</span></button>
+      <button class="ctl" data-act="nobody" type="button">Nobody got it <span class="k">N</span></button>
+      <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="win1" type="button">Point for ${esc(b)} <span class="k">L</span></button>`;
+  } else {
+    el.innerHTML = `
+      <button class="ctl" data-act="again" type="button">↺ Again <span class="k">1</span></button>
+      <button class="ctl good" data-act="known" type="button">✓ Got it <span class="k">2</span></button>`;
+  }
+}
+
+function flip() {
+  if (!game || game.flipped) return;
+  game.flipped = true;
+  $("card").classList.add("flipped");
+  renderControls();
+  if (settings.mode === "race" && game.buzzed !== null) {
+    $("status").innerHTML = `Did <span class="p${game.buzzed + 1}">${esc(names()[game.buzzed])}</span> get it right?`;
+  }
+  if (settings.speak) say(deSpeech(game.deck[game.i]));
+}
+
+function buzz(p) {
+  if (!game || game.flipped || game.buzzed !== null) return;
+  game.buzzed = p;
+  beep(p === 0 ? 523 : 659);
+  renderScores(); renderControls();
+  $("status").innerHTML = `<span class="p${p + 1}">${esc(names()[p])}</span> was first. Say it, then flip.`;
+}
+
+function next() {
+  game.i++;
+  if (game.i >= game.deck.length) return finish();
+  dealCard();
+}
+function award(p) { game.scores[p]++; next(); }
+function nobody() { addMissed(game.deck[game.i]); next(); }
+function known() { game.known++; next(); }
+function again() {
+  const c = game.deck[game.i];
+  game.againCount++; addMissed(c);
+  game.deck.splice(Math.min(game.i + 4, game.deck.length), 0, c);
+  next();
+}
+function addMissed(c) { if (!game.missed.includes(c)) game.missed.push(c); }
+
+function finish() {
+  $("progbar").style.width = "100%";
+  show("done");
+  const [a, b] = names();
+  if (settings.mode === "race") {
+    const [sa, sb] = game.scores;
+    $("doneTitle").textContent = sa === sb ? "Unentschieden!" : `${sa > sb ? a : b} gewinnt!`;
+    $("final").innerHTML = [a, b].map((n, p) => `<div class="score p${p + 1}"><span>${esc(n)}</span><b>${game.scores[p]}</b></div>`).join("");
+    $("missedLabel").textContent = "Nobody knew these";
+  } else {
+    $("doneTitle").textContent = "Gut gemacht!";
+    $("final").innerHTML = `<div class="score" style="color:var(--good)"><span>Cards done</span><b>${game.known}</b></div><div class="score"><span>Needed another go</span><b>${game.missed.length}</b></div>`;
+    $("missedLabel").textContent = "Worth another look";
+  }
+  $("missedWrap").hidden = game.missed.length === 0;
+  $("replayMissed").hidden = game.missed.length === 0;
+  $("missed").innerHTML = game.missed.map((c) => {
+    const ic = c.front.startsWith("#") ? `<span class="mi"><span class="dot" style="background:${c.front}"></span></span>`
+      : c.front.startsWith("n:") ? `<span class="mi num">${c.front.slice(2)}</span>` : `<span class="mi">${c.front}</span>`;
+    return `<li>${ic}<span><b>${deHTML(c)}</b><small>${esc(c.en)} · ${esc(c.es)}</small></span></li>`;
+  }).join("");
+}
+
+$("controls").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  const act = b.dataset.act;
+  if (act === "flip") flip();
+  else if (act === "buzz0") buzz(0);
+  else if (act === "buzz1") buzz(1);
+  else if (act === "win0") award(0);
+  else if (act === "win1") award(1);
+  else if (act === "nobody") nobody();
+  else if (act === "again") again();
+  else if (act === "known") known();
+});
+$("card").addEventListener("click", (e) => { if (!e.target.closest("#say")) flip(); });
+$("say").addEventListener("click", (e) => { e.stopPropagation(); say(deSpeech(game.deck[game.i])); });
+
+document.addEventListener("keydown", (e) => {
+  if ($("play").hidden || !game) return;
+  if (e.target.matches("input") || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (!game.flipped) {
+    if (k === " " || k === "enter") { e.preventDefault(); flip(); }
+    else if (settings.mode === "race" && k === "a") buzz(0);
+    else if (settings.mode === "race" && k === "l") buzz(1);
+  } else if (settings.mode === "race") {
+    if (k === "a") award(0);
+    else if (k === "l") award(1);
+    else if (k === "n") nobody();
+    else if (k === "enter" && game.buzzed !== null) { e.preventDefault(); award(game.buzzed); }
+  } else {
+    if (k === "1" || k === "arrowleft") again();
+    else if (k === "2" || k === "arrowright" || k === " " || k === "enter") { e.preventDefault(); known(); }
+  }
+});
+
+$("start").onclick = () => startGame(buildDeck());
+$("quit").onclick = () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); show("setup"); };
+$("again").onclick = () => startGame(buildDeck());
+$("replayMissed").onclick = () => startGame(shuffle([...game.missed]));
+$("toSetup").onclick = () => show("setup");
+
+/* ---------- Init ---------- */
+$("p1").value = settings.p1; $("p2").value = settings.p2; $("speak").checked = settings.speak;
+setSeg("countSeg", settings.count); setSeg("hintSeg", settings.hint);
+renderTopics(); updateMode();
+</script>
+</body>
+</html>
