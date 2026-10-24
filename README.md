@@ -2,6 +2,8 @@
 
 Small web games for practising everyday German together.
 
+AI agents and reviewers: start with [AGENTS.md](AGENTS.md).
+
 ## Sag's auf Deutsch (picture cards)
 
 `index.html` plus `pictures.js` (the card pictures) make up the game: open `index.html` in any browser, no build step.
@@ -15,7 +17,28 @@ The word bank is the `TOPICS` array near the top of the script. Each card is `[f
 
 ## Pictures
 
-Card pictures are [Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji) 3D images (MIT licence), embedded in `pictures.js` and keyed by emoji. When you add a card with a new emoji, regenerate `pictures.js` so it has a picture; otherwise the card falls back to the plain emoji.
+Card pictures are [Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji) 3D images (MIT licence), embedded in `pictures.js` and keyed by emoji. When you add a card with a new emoji, run `node scripts/build-pictures.js` to regenerate `pictures.js`; otherwise the card falls back to the plain emoji.
+
+## Development
+
+```sh
+npm ci
+npx playwright install chromium   # first time only
+npm test                           # Playwright tests, desktop and phone sizes
+npx eslint .                       # lint, including unsafe-HTML checks
+npm run serve                      # play locally at http://localhost:4173
+```
+
+To play from a phone on the same Wi-Fi, serve the folder on all interfaces (`python3 -m http.server 8081 --bind 0.0.0.0`) and open `http://<computer's IP>:8081/` on the phone.
+
+Every pull request runs:
+
+- **Tests:** ESLint and the Playwright suite. The game's script in `index.html` is checked by `no-unsanitized` (unsafe HTML writes); the `.js` files are also checked by `eslint-plugin-security`.
+- **Security:** `npm audit` for known vulnerabilities, `npm audit signatures`, and gitleaks secret detection over the full history. It also runs weekly on `main`.
+- **Dependabot** opens weekly update PRs for npm packages and GitHub Actions.
+- **CodeQL** code scanning and **dependency review** of new packages. Both run only when the repo is public, since GitHub charges for them on private repos.
+
+The game writes markup only through the `html` tagged template, which escapes every value. The linter enforces this.
 
 ## Roadmap
 
