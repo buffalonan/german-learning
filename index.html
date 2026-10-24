@@ -50,6 +50,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   background: var(--table);
   color: var(--ink);
@@ -438,6 +439,10 @@ const TOPICS = [
 ];
 
 const $ = (id) => document.getElementById(id);
+// html`...` builds markup and escapes every value in it, unless the value was itself built with html`...`.
+class SafeHTML { constructor(s) { this.s = s; } toString() { return this.s; } }
+const asHTML = (v) => (v instanceof SafeHTML ? v.s : Array.isArray(v) ? v.map(asHTML).join("") : v == null ? "" : esc(v));
+const html = (strings, ...vals) => new SafeHTML(strings.reduce((out, str, i) => out + str + (i < vals.length ? asHTML(vals[i]) : ""), ""));
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "race", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "" };
@@ -445,15 +450,15 @@ let settings = { ...DEFAULTS };
 try {
   const saved = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null");
   if (saved) settings = { ...DEFAULTS, ...saved };
-} catch (e) {}
-function save() { try { localStorage.setItem("sagsDeutsch.settings", JSON.stringify(settings)); } catch (e) {} }
+} catch (e) { /* storage or audio unavailable: carry on without it */ }
+function save() { try { localStorage.setItem("sagsDeutsch.settings", JSON.stringify(settings)); } catch (e) { /* storage or audio unavailable: carry on without it */ } }
 
 /* ---------- Setup screen ---------- */
 function renderTopics() {
-  $("topics").innerHTML = TOPICS.map((t) => `
+  $("topics").innerHTML = html`${TOPICS.map((t) => html`
     <button type="button" class="topic-chip" data-id="${t.id}" aria-pressed="${settings.topics.includes(t.id)}">
-      <span class="ico">${picImg(t.icon, "") || t.icon}</span><b>${esc(t.name)}</b><span class="sub">${esc(t.en)} · ${t.items.length}</span>
-    </button>`).join("");
+      <span class="ico">${picImg(t.icon, "") || t.icon}</span><b>${(t.name)}</b><span class="sub">${(t.en)} · ${t.items.length}</span>
+    </button>`)}`;
   updateAvail();
 }
 function setSeg(segId, value) {
@@ -500,9 +505,9 @@ function pickVoice() {
     || local.find((v) => /anna|helena|katja|petra|markus|yannick/i.test(v.name))
     || local[0] || deVoices[0] || null;
   const sel = $("voice");
-  sel.innerHTML = deVoices.length
-    ? deVoices.map((v) => `<option value="${esc(v.name)}"${v === deVoice ? " selected" : ""}>${esc(v.name)}${v.localService ? "" : " (online)"}</option>`).join("")
-    : `<option value="">Browser default</option>`;
+  sel.innerHTML = html`${deVoices.length
+    ? deVoices.map((v) => html`<option value="${v.name}"${v === deVoice ? " selected" : ""}>${v.name}${v.localService ? "" : " (online)"}</option>`)
+    : html`<option value="">Browser default</option>`}`;
 }
 if (ss) { pickVoice(); ss.addEventListener?.("voiceschanged", pickVoice); }
 function soundProblem(msg) {
@@ -535,22 +540,22 @@ function beep(freq) {
     o.frequency.value = freq; o.type = "triangle";
     g.gain.setValueAtTime(0.18, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.25);
     o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + 0.26);
-  } catch (e) {}
+  } catch (e) { /* storage or audio unavailable: carry on without it */ }
 }
 
 /* ---------- Game ---------- */
 const artWord = (a) => (a === "pl" ? "die" : a);
 function deHTML(c) {
-  if (!c.art) return esc(c.de);
-  return `<span class="art a-${c.art}">${artWord(c.art)}</span> ${esc(c.de)}${c.art === "pl" ? '<span class="plnote">Pl.</span>' : ""}`;
+  if (!c.art) return (c.de);
+  return html`<span class="art a-${c.art}">${artWord(c.art)}</span> ${(c.de)}${c.art === "pl" ? html`<span class="plnote">Pl.</span>` : ""}`;
 }
 const deSpeech = (c) => ((c.art ? artWord(c.art) + " " : "") + c.de).replace("…", "");
-const PICS = window.PICS || {};
-const picImg = (e, cls) => (PICS[e] ? `<img class="${cls}" src="${PICS[e]}" alt="">` : "");
+const PICTURES = window.PICS || {};
+const picImg = (e, cls) => (PICTURES[e] ? html`<img class="${cls}" src="${PICTURES[e]}" alt="">` : "");
 function frontHTML(front, cls) {
-  if (front.startsWith("#")) return `<div class="swatch" style="background:${front}"></div>`;
-  if (front.startsWith("n:")) return `<div class="${cls} num">${front.slice(2)}</div>`;
-  return picImg(front, "pic3d") || `<div class="${cls}">${front}</div>`;
+  if (front.startsWith("#")) return html`<div class="swatch" style="background:${front}"></div>`;
+  if (front.startsWith("n:")) return html`<div class="${cls} num">${front.slice(2)}</div>`;
+  return picImg(front, "pic3d") || html`<div class="${cls}">${front}</div>`;
 }
 
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -588,16 +593,16 @@ function dealCard() {
   game.flipped = false; game.buzzed = null;
 
   $("fTopic").textContent = c.topic; $("bTopic").textContent = c.topic;
-  $("fPic").outerHTML = `<div id="fPic">${frontHTML(c.front, "pic")}</div>`;
+  $("fPic").outerHTML = html`<div id="fPic">${frontHTML(c.front, "pic")}</div>`;
   const cueLang = settings.hint !== "none" ? settings.hint : (c.cue ? "es" : null);
   const cue = $("fCue");
   cue.hidden = !cueLang; cue.textContent = cueLang ? c[cueLang] : "";
   const de = $("bDe");
-  de.innerHTML = deHTML(c);
+  de.innerHTML = html`${deHTML(c)}`;
   const len = c.de.length + (c.art ? 4 : 0);
   de.className = "de" + (len > 20 ? " long" : len > 11 ? " mid" : "");
   $("bFem").hidden = !c.fem;
-  $("bFem").innerHTML = c.fem ? `<span class="art a-die">die</span> ${esc(c.fem.replace(/^die /, ""))}` : "";
+  $("bFem").innerHTML = html`${c.fem ? html`<span class="art a-die">die</span> ${c.fem.replace(/^die /, "")}` : ""}`;
   $("bEn").textContent = c.en; $("bEs").textContent = c.es;
 
   $("prog").textContent = `Karte ${game.i + 1} / ${game.deck.length}`;
@@ -610,9 +615,9 @@ function renderScores() {
   const el = $("scores");
   if (settings.mode === "race") {
     const [a, b] = names();
-    el.innerHTML = [a, b].map((n, p) => `<div class="score p${p + 1}${game.buzzed === p ? " buzzed" : ""}"><span>${esc(n)}</span><b>${game.scores[p]}</b></div>`).join("");
+    el.innerHTML = html`${[a, b].map((n, p) => html`<div class="score p${p + 1}${game.buzzed === p ? " buzzed" : ""}"><span>${n}</span><b>${game.scores[p]}</b></div>`)}`;
   } else {
-    el.innerHTML = `<div class="score" style="color:var(--good)"><span>Gewusst</span><b>${game.known}</b></div><div class="score"><span>Noch mal</span><b>${game.againCount}</b></div>`;
+    el.innerHTML = html`<div class="score" style="color:var(--good)"><span>Gewusst</span><b>${game.known}</b></div><div class="score"><span>Noch mal</span><b>${game.againCount}</b></div>`;
   }
 }
 
@@ -621,20 +626,20 @@ function renderControls() {
   const [a, b] = names();
   if (!game.flipped) {
     if (settings.mode === "race") {
-      el.innerHTML = `
-        <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="buzz0" type="button">${esc(a)} knows it <span class="k">A</span></button>
+      el.innerHTML = html`
+        <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="buzz0" type="button">${(a)} knows it <span class="k">A</span></button>
         <button class="ctl big" data-act="flip" type="button">Flip <span class="k">Space</span></button>
-        <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="buzz1" type="button">${esc(b)} knows it <span class="k">L</span></button>`;
+        <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="buzz1" type="button">${(b)} knows it <span class="k">L</span></button>`;
     } else {
-      el.innerHTML = `<button class="ctl big" data-act="flip" type="button">Flip <span class="k">Space</span></button>`;
+      el.innerHTML = html`<button class="ctl big" data-act="flip" type="button">Flip <span class="k">Space</span></button>`;
     }
   } else if (settings.mode === "race") {
-    el.innerHTML = `
-      <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="win0" type="button">Point for ${esc(a)} <span class="k">A</span></button>
+    el.innerHTML = html`
+      <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="win0" type="button">Point for ${(a)} <span class="k">A</span></button>
       <button class="ctl" data-act="nobody" type="button">Nobody got it <span class="k">N</span></button>
-      <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="win1" type="button">Point for ${esc(b)} <span class="k">L</span></button>`;
+      <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="win1" type="button">Point for ${(b)} <span class="k">L</span></button>`;
   } else {
-    el.innerHTML = `
+    el.innerHTML = html`
       <button class="ctl" data-act="again" type="button">↺ Again <span class="k">1</span></button>
       <button class="ctl good" data-act="known" type="button">✓ Got it <span class="k">2</span></button>`;
   }
@@ -646,7 +651,7 @@ function flip() {
   $("card").classList.add("flipped");
   renderControls();
   if (settings.mode === "race" && game.buzzed !== null) {
-    $("status").innerHTML = `Did <span class="p${game.buzzed + 1}">${esc(names()[game.buzzed])}</span> get it right?`;
+    $("status").innerHTML = html`Did <span class="p${game.buzzed + 1}">${(names()[game.buzzed])}</span> get it right?`;
   }
   if (settings.speak) say(deSpeech(game.deck[game.i]));
 }
@@ -656,7 +661,7 @@ function buzz(p) {
   game.buzzed = p;
   beep(p === 0 ? 523 : 659);
   renderScores(); renderControls();
-  $("status").innerHTML = `<span class="p${p + 1}">${esc(names()[p])}</span> was first. Say it, then flip.`;
+  $("status").innerHTML = html`<span class="p${p + 1}">${(names()[p])}</span> was first. Say it, then flip.`;
 }
 
 function next() {
@@ -684,20 +689,20 @@ function finish() {
   if (settings.mode === "race") {
     const [sa, sb] = game.scores;
     $("doneTitle").textContent = sa === sb ? "Unentschieden!" : `${sa > sb ? a : b} gewinnt!`;
-    $("final").innerHTML = [a, b].map((n, p) => `<div class="score p${p + 1}"><span>${esc(n)}</span><b>${game.scores[p]}</b></div>`).join("");
+    $("final").innerHTML = html`${[a, b].map((n, p) => html`<div class="score p${p + 1}"><span>${n}</span><b>${game.scores[p]}</b></div>`)}`;
     $("missedLabel").textContent = "Nobody knew these";
   } else {
     $("doneTitle").textContent = "Gut gemacht!";
-    $("final").innerHTML = `<div class="score" style="color:var(--good)"><span>Cards done</span><b>${game.known}</b></div><div class="score"><span>Needed another go</span><b>${game.missed.length}</b></div>`;
+    $("final").innerHTML = html`<div class="score" style="color:var(--good)"><span>Cards done</span><b>${game.known}</b></div><div class="score"><span>Needed another go</span><b>${game.missed.length}</b></div>`;
     $("missedLabel").textContent = "Worth another look";
   }
   $("missedWrap").hidden = game.missed.length === 0;
   $("replayMissed").hidden = game.missed.length === 0;
-  $("missed").innerHTML = game.missed.map((c) => {
-    const ic = c.front.startsWith("#") ? `<span class="mi"><span class="dot" style="background:${c.front}"></span></span>`
-      : c.front.startsWith("n:") ? `<span class="mi num">${c.front.slice(2)}</span>` : `<span class="mi">${picImg(c.front, "") || c.front}</span>`;
-    return `<li>${ic}<span><b>${deHTML(c)}</b><small>${esc(c.en)} · ${esc(c.es)}</small></span></li>`;
-  }).join("");
+  $("missed").innerHTML = html`${game.missed.map((c) => {
+    const ic = c.front.startsWith("#") ? html`<span class="mi"><span class="dot" style="background:${c.front}"></span></span>`
+      : c.front.startsWith("n:") ? html`<span class="mi num">${c.front.slice(2)}</span>` : html`<span class="mi">${picImg(c.front, "") || c.front}</span>`;
+    return html`<li>${ic}<span><b>${deHTML(c)}</b><small>${c.en} · ${c.es}</small></span></li>`;
+  })}`;
 }
 
 $("controls").addEventListener("click", (e) => {
