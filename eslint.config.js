@@ -26,6 +26,11 @@ module.exports = [
     rules: { ...security.configs.recommended.rules },
   },
   {
+    // Local build script: paths and keys come from this repo, not from users.
+    files: ["scripts/**/*.js"],
+    rules: { "security/detect-object-injection": "off", "security/detect-non-literal-fs-filename": "off" },
+  },
+  {
     // Code inside page.evaluate() runs in the game page, where these are globals.
     files: ["tests/**/*.js"],
     languageOptions: { globals: { game: "readonly", TOPICS: "readonly", PICS: "readonly", dealCard: "readonly" } },

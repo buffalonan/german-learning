@@ -2,6 +2,8 @@
 
 Small web games for practising everyday German together.
 
+AI agents and reviewers: start with [AGENTS.md](AGENTS.md).
+
 ## Sag's auf Deutsch (picture cards)
 
 `index.html` plus `pictures.js` (the card pictures) make up the game: open `index.html` in any browser, no build step.
@@ -15,7 +17,7 @@ The word bank is the `TOPICS` array near the top of the script. Each card is `[f
 
 ## Pictures
 
-Card pictures are [Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji) 3D images (MIT licence), embedded in `pictures.js` and keyed by emoji. When you add a card with a new emoji, regenerate `pictures.js` so it has a picture; otherwise the card falls back to the plain emoji.
+Card pictures are [Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji) 3D images (MIT licence), embedded in `pictures.js` and keyed by emoji. When you add a card with a new emoji, run `node scripts/build-pictures.js` to regenerate `pictures.js`; otherwise the card falls back to the plain emoji.
 
 ## Development
 
