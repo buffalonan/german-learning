@@ -41,6 +41,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 - Elements are shown and hidden with `el.hidden`. The page's `[hidden] { display: none !important; }` rule is what makes that work, so keep it.
 - German must be correct: check the article, the plural and the spelling. Every card needs English and Spanish too.
 - A card with a new emoji needs a picture: run `node scripts/build-pictures.js`. The word bank test fails otherwise.
+- `scripts/build-pictures.js` evaluates the `TOPICS` literal from this repo's own `index.html` with `Function`. That's a deliberate exception for a local build script. The no-`eval` rule is about the game code.
 - New or changed behaviour needs a Playwright test. Never skip or delete a test to get CI green.
 - The page must work at phone width without scrolling sideways, and in light and dark mode (all colours are CSS variables on `:root`).
 

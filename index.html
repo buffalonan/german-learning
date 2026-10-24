@@ -443,7 +443,7 @@ const $ = (id) => document.getElementById(id);
 class SafeHTML { constructor(s) { this.s = s; } toString() { return this.s; } }
 const asHTML = (v) => (v instanceof SafeHTML ? v.s : Array.isArray(v) ? v.map(asHTML).join("") : v == null ? "" : esc(v));
 const html = (strings, ...vals) => new SafeHTML(strings.reduce((out, str, i) => out + str + (i < vals.length ? asHTML(vals[i]) : ""), ""));
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "race", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "" };
 let settings = { ...DEFAULTS };
@@ -457,7 +457,7 @@ function save() { try { localStorage.setItem("sagsDeutsch.settings", JSON.string
 function renderTopics() {
   $("topics").innerHTML = html`${TOPICS.map((t) => html`
     <button type="button" class="topic-chip" data-id="${t.id}" aria-pressed="${settings.topics.includes(t.id)}">
-      <span class="ico">${picImg(t.icon, "") || t.icon}</span><b>${(t.name)}</b><span class="sub">${(t.en)} · ${t.items.length}</span>
+      <span class="ico">${picImg(t.icon, "") || t.icon}</span><b>${t.name}</b><span class="sub">${t.en} · ${t.items.length}</span>
     </button>`)}`;
   updateAvail();
 }
@@ -547,7 +547,7 @@ function beep(freq) {
 const artWord = (a) => (a === "pl" ? "die" : a);
 function deHTML(c) {
   if (!c.art) return (c.de);
-  return html`<span class="art a-${c.art}">${artWord(c.art)}</span> ${(c.de)}${c.art === "pl" ? html`<span class="plnote">Pl.</span>` : ""}`;
+  return html`<span class="art a-${c.art}">${artWord(c.art)}</span> ${c.de}${c.art === "pl" ? html`<span class="plnote">Pl.</span>` : ""}`;
 }
 const deSpeech = (c) => ((c.art ? artWord(c.art) + " " : "") + c.de).replace("…", "");
 const PICTURES = window.PICS || {};
@@ -627,17 +627,17 @@ function renderControls() {
   if (!game.flipped) {
     if (settings.mode === "race") {
       el.innerHTML = html`
-        <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="buzz0" type="button">${(a)} knows it <span class="k">A</span></button>
+        <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="buzz0" type="button">${a} knows it <span class="k">A</span></button>
         <button class="ctl big" data-act="flip" type="button">Flip <span class="k">Space</span></button>
-        <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="buzz1" type="button">${(b)} knows it <span class="k">L</span></button>`;
+        <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="buzz1" type="button">${b} knows it <span class="k">L</span></button>`;
     } else {
       el.innerHTML = html`<button class="ctl big" data-act="flip" type="button">Flip <span class="k">Space</span></button>`;
     }
   } else if (settings.mode === "race") {
     el.innerHTML = html`
-      <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="win0" type="button">Point for ${(a)} <span class="k">A</span></button>
+      <button class="ctl p1${game.buzzed === 0 ? " hl" : ""}" data-act="win0" type="button">Point for ${a} <span class="k">A</span></button>
       <button class="ctl" data-act="nobody" type="button">Nobody got it <span class="k">N</span></button>
-      <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="win1" type="button">Point for ${(b)} <span class="k">L</span></button>`;
+      <button class="ctl p2${game.buzzed === 1 ? " hl" : ""}" data-act="win1" type="button">Point for ${b} <span class="k">L</span></button>`;
   } else {
     el.innerHTML = html`
       <button class="ctl" data-act="again" type="button">↺ Again <span class="k">1</span></button>
@@ -651,7 +651,7 @@ function flip() {
   $("card").classList.add("flipped");
   renderControls();
   if (settings.mode === "race" && game.buzzed !== null) {
-    $("status").innerHTML = html`Did <span class="p${game.buzzed + 1}">${(names()[game.buzzed])}</span> get it right?`;
+    $("status").innerHTML = html`Did <span class="p${game.buzzed + 1}">${names()[game.buzzed]}</span> get it right?`;
   }
   if (settings.speak) say(deSpeech(game.deck[game.i]));
 }
@@ -661,7 +661,7 @@ function buzz(p) {
   game.buzzed = p;
   beep(p === 0 ? 523 : 659);
   renderScores(); renderControls();
-  $("status").innerHTML = html`<span class="p${p + 1}">${(names()[p])}</span> was first. Say it, then flip.`;
+  $("status").innerHTML = html`<span class="p${p + 1}">${names()[p]}</span> was first. Say it, then flip.`;
 }
 
 function next() {
