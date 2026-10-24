@@ -56,8 +56,8 @@ Every pull request runs:
 
 - **Tests:** ESLint and the Playwright suite. The game's script in `index.html` is checked by `no-unsanitized` (unsafe HTML writes); the `.js` files are also checked by `eslint-plugin-security`.
 - **Security:** `npm audit` for known vulnerabilities, `npm audit signatures`, and gitleaks secret detection over the full history. It also runs weekly on `main`.
-- **Android:** builds the APK (see above).
-- **Dependabot** opens weekly update PRs for npm packages and GitHub Actions.
+- **Android:** Android Lint, a smoke test that opens the real app in an Android emulator and plays a card (`android-tests/`), and the APK build (see above).
+- **Dependabot** opens weekly update PRs for npm packages, GitHub Actions and the Android project's Gradle libraries.
 - **CodeQL** code scanning and **dependency review** of new packages. Both run only when the repo is public, since GitHub charges for them on private repos.
 
 The game writes markup only through the `html` tagged template, which escapes every value. The linter enforces this.
