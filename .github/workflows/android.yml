@@ -27,7 +27,7 @@ jobs:
       APP_VERSION_NAME: 1.${{ github.run_number }}
     steps:
       - uses: actions/checkout@v7
-      - uses: gradle/actions/wrapper-validation@v4
+      - uses: gradle/actions/wrapper-validation@v6
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
