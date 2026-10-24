@@ -22,6 +22,18 @@ test.describe("card faces", () => {
     await expect(page.locator("#fPic .num")).toHaveText(n);
   });
 
+  test("the back's frame takes the colour of the article", async ({ page }) => {
+    await open(page);
+    await startRound(page, { topics: ["food"] });
+    const art = await page.evaluate(() => game.deck[game.i].art);
+    await page.keyboard.press(" ");
+    const [frame, want] = await page.evaluate((a) => [
+      getComputedStyle(document.querySelector(".back"), "::before").borderTopColor,
+      getComputedStyle(document.querySelector(`#bDe .a-${a}`)).color,
+    ], art);
+    expect(frame).toBe(want);
+  });
+
   test("the hint option puts English on the front", async ({ page }) => {
     await open(page);
     await startRound(page, { hint: "en" });

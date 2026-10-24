@@ -32,7 +32,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
   - `article` is `der`, `die`, `das`, `pl` (shown as "die" with a Pl. mark) or `""` for none (verbs, colours, numbers, phrases).
   - `feminine` is the feminine job form, e.g. `"die Lehrerin"`.
   - `cue: true` (phrases) always shows a text cue on the front.
-  - Articles are colour-coded everywhere: der blue, die red, das green, plural brown.
+  - Articles are colour-coded everywhere: der blue, die red, das green, plural brown. The card back's inner frame takes the article's colour too.
 - **Settings** are kept in `localStorage` under `sagsDeutsch.settings`, always inside try/catch: topics, mode (`race` or `practice`), player names, cards per round (0 means all), front hint (`none`, `en`, `es`), read aloud, voice.
 - **State** is the global `game` (`deck`, `i`, `flipped`, `buzzed`, `scores`, `missed`, `known`, `againCount`). Rendering goes through `dealCard`, `renderScores`, `renderControls` and `finish`.
 - **Keys:** Space or Enter flips. Race: A and L buzz in before the flip and award a point after it, N means nobody, Enter awards the player who buzzed. Practice: 1 is Again (the same card turns back over), 2 is Got it.
@@ -48,6 +48,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 - A card with a new emoji needs a picture: run `node scripts/build-pictures.js`. The word bank test fails otherwise.
 - New or changed behaviour needs a Playwright test. Never skip or delete a test to get CI green.
 - The page must work at phone width without scrolling sideways, and in light and dark mode (all colours are CSS variables on `:root`).
+- **Look:** a dotted game table, white sheets and cards with large radii, chunky buttons that sink into a coloured bottom edge when pressed, and the yellow town sign (`--sign`) as the one loud colour. New screens reuse the tokens on `:root`: colours (`--table`, `--surface`, `--surface-2`, `--ink`, `--muted`, `--line`, `--sign`/`--sign-edge`/`--sign-ink`, `--focus`, article and player colours), radii `--r-s`/`--r-m`/`--r-l`, `--lift` for the button edge, `--display` (Bricolage Grotesque) for headings and German words and `--body` (Atkinson Hyperlegible) for the rest. Section labels are sentence case, not all caps. Reuse `.sheet`, `.label`, `.seg`, `.ctl`, `.btn-main` before writing new components.
 
 ## Commands
 
