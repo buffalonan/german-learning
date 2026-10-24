@@ -5,7 +5,7 @@ What reviewers (human or Claude) should check on pull requests in this repo.
 ## Blocking
 
 - **Wrong German.** Wrong article (der/die/das), wrong plural, misspelling, or a translation that doesn't match the English or Spanish. Every card must be correct; learners copy what they see.
-- **Unsafe HTML.** Markup must be built with the `html` tagged template, which escapes values. Flag any `innerHTML`, `outerHTML` or `insertAdjacentHTML` fed by a plain string, and any use of `eval` or `new Function`.
+- **Unsafe HTML.** Markup must be built with the `html` tagged template, which escapes values. Flag any `innerHTML`, `outerHTML` or `insertAdjacentHTML` fed by a plain string, and any use of `eval` or `new Function` in the game code. `scripts/build-pictures.js` is a local build script and may evaluate the word list.
 - **Broken game logic.** Scoring, card order, the Again and Got it buttons, keyboard shortcuts (Space, A, L, N, 1, 2), or settings that stop being remembered.
 - **New or changed behaviour without a test** in `tests/`.
 - **Secrets or personal data** committed to the repo.
