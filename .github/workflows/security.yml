@@ -29,6 +29,18 @@ jobs:
       - name: Package signatures and provenance
         run: npm audit signatures
 
+  dependency-review:
+    name: Dependency review
+    # Needs the dependency graph, which is free on public repos only; skipped while private.
+    if: ${{ github.event_name == 'pull_request' && !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+
   secrets:
     name: Secret detection
     runs-on: ubuntu-latest
