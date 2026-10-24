@@ -4,9 +4,12 @@
   "description": "Web games for practising everyday German",
   "scripts": {
     "serve": "python3 -m http.server 4173",
-    "test": "playwright test"
+    "test": "playwright test",
+    "app:web": "node scripts/build-app-web.js",
+    "app:sync": "node scripts/build-app-web.js && cap sync android"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.5.3",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.63.0",
     "eslint": "10.13.0",
@@ -16,6 +19,16 @@
     "globals": "17.13.0"
   },
   "engines": {
-    "node": ">=20.19"
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@capacitor-community/text-to-speech": "8.0.2",
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3"
+  },
+  "overrides": {
+    "xcode": {
+      "uuid": "^11.1.1"
+    }
   }
 }

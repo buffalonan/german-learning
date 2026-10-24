@@ -59,7 +59,9 @@ body {
   line-height: 1.5;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 20px 40px;
+  /* The Android app draws under the status and navigation bars. */
+  padding-top: max(20px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(40px, env(safe-area-inset-bottom, 0px));
 }
 main { max-width: 760px; margin: 0 auto; }
 button { font: inherit; color: inherit; cursor: pointer; }
@@ -496,9 +498,10 @@ $("speak").onchange = (e) => { settings.speak = e.target.checked; save(); };
 /* ---------- Speech ---------- */
 let deVoices = [], deVoice = null;
 const ss = window.speechSynthesis;
-function pickVoice() {
-  if (!ss) return;
-  deVoices = ss.getVoices().filter((v) => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("de"));
+// The Android app's WebView has no speechSynthesis, so there the phone's own text-to-speech engine reads aloud.
+const tts = window.Capacitor?.isNativePlatform?.() ? window.Capacitor.registerPlugin("TextToSpeech") : null;
+function showVoices(voices) {
+  deVoices = voices.filter((v) => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("de"));
   // Voices installed on the computer play reliably; online ones (e.g. "Google Deutsch") can fail silently inside the page frame.
   const local = deVoices.filter((v) => v.localService);
   deVoice = deVoices.find((v) => v.name === settings.voice)
@@ -507,13 +510,30 @@ function pickVoice() {
   const sel = $("voice");
   sel.innerHTML = html`${deVoices.length
     ? deVoices.map((v) => html`<option value="${v.name}"${v === deVoice ? " selected" : ""}>${v.name}${v.localService ? "" : " (online)"}</option>`)
-    : html`<option value="">Browser default</option>`}`;
+    : html`<option value="">${tts ? "Phone default" : "Browser default"}</option>`}`;
 }
-if (ss) { pickVoice(); ss.addEventListener?.("voiceschanged", pickVoice); }
+function pickVoice() {
+  if (tts) return loadNativeVoices();
+  if (ss) showVoices(ss.getVoices());
+}
+// The phone's engine takes a moment to start, so keep asking for its voices for a few seconds.
+async function loadNativeVoices(tries = 10) {
+  try {
+    const { voices } = await tts.getSupportedVoices();
+    if (!voices.length) throw new Error("no voices yet");
+    showVoices(voices.map((v, index) => ({ ...v, index }))); // the plugin picks a voice by its place in the full list
+  } catch (e) {
+    if (tries > 1) setTimeout(() => loadNativeVoices(tries - 1), 500);
+    else showVoices([]);
+  }
+}
+pickVoice();
+if (!tts) ss?.addEventListener?.("voiceschanged", pickVoice);
 function soundProblem(msg) {
   for (const id of ["soundNote", "cardNote"]) { $(id).textContent = msg; $(id).hidden = false; }
 }
 function say(text) {
+  if (tts) return sayNative(text);
   if (!ss) return soundProblem("This browser can't read text aloud. Try Chrome, Edge or Safari.");
   if (!deVoice) pickVoice();
   try {
@@ -528,6 +548,22 @@ function say(text) {
     ss.speak(u);
     setTimeout(() => { if (!started && !ss.speaking) soundProblem(deVoices.length ? "No sound? Check the volume, or pick another German voice in the menu." : "No German voice found. On a Mac add one in System Settings → Accessibility → Spoken Content → System voice → Manage voices (German, e.g. Anna)."); }, 1800);
   } catch (e) { soundProblem("The voice didn't play. Pick another German voice in the menu and press Test."); }
+}
+function sayNative(text) {
+  const id = (say.seq = (say.seq || 0) + 1);
+  if (!deVoices.length) pickVoice();
+  for (const note of ["cardNote", "soundNote"]) $(note).hidden = true;
+  // Each new card interrupts the last one; only the latest call reports a problem.
+  tts.speak({ text, lang: deVoice ? deVoice.lang : "de-DE", voice: deVoice?.index, rate: 0.9, volume: 1 }).catch((e) => {
+    if (id !== say.seq) return;
+    soundProblem(/not supported/i.test(e.message)
+      ? "This phone has no German voice yet. Add one in Android Settings → Accessibility → Text-to-speech output → Install voice data → Deutsch."
+      : "The voice didn't play. Pick another German voice in the menu and press Test.");
+  });
+}
+function hush() {
+  if (tts) tts.stop().catch(() => {});
+  else if (ss) ss.cancel();
 }
 $("voice").onchange = (e) => { settings.voice = e.target.value; save(); deVoice = deVoices.find((v) => v.name === settings.voice) || deVoice; };
 $("testVoice").onclick = () => say("Guten Tag! Wie geht's?");
@@ -740,7 +776,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 $("start").onclick = () => startGame(buildDeck());
-$("quit").onclick = () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); show("setup"); };
+$("quit").onclick = () => { hush(); show("setup"); };
 $("again").onclick = () => startGame(buildDeck());
 $("replayMissed").onclick = () => startGame(shuffle([...game.missed]));
 $("toSetup").onclick = () => show("setup");

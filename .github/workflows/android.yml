@@ -1,0 +1,152 @@
+name: Android
+
+# Builds the Android app (the same page wrapped with Capacitor) on every PR.
+# Each merge to main also publishes the signed APK as a GitHub release, ready to sideload.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  apk:
+    name: Build APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Grows with every run, so each new APK installs over the last one.
+      APP_VERSION_CODE: ${{ github.run_number }}
+      APP_VERSION_NAME: 1.${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gradle/actions/wrapper-validation@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: npm ci
+      - name: Copy the game into the Android project
+        run: npm run app:sync
+      - name: Signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          keystore="$RUNNER_TEMP/release.jks"
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$keystore"
+            echo "ANDROID_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "SIGNED_WITH=release" >> "$GITHUB_ENV"
+          else
+            # No release key yet: sign with a one-off key so the APK still installs.
+            # Phones must uninstall it before installing an APK signed with the real key.
+            echo "::warning::ANDROID_KEYSTORE_BASE64 and ANDROID_KEYSTORE_PASSWORD are not set, so this APK uses a one-off key."
+            password="$(openssl rand -hex 16)"
+            echo "::add-mask::$password"
+            keytool -genkeypair -keystore "$keystore" -storepass "$password" -keypass "$password" \
+              -alias sagsdeutsch -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Sag's auf Deutsch" -noprompt
+            echo "ANDROID_KEYSTORE_PASSWORD=$password" >> "$GITHUB_ENV"
+            echo "SIGNED_WITH=one-off" >> "$GITHUB_ENV"
+          fi
+          echo "ANDROID_KEYSTORE_FILE=$keystore" >> "$GITHUB_ENV"
+      - name: Android Lint
+        working-directory: android
+        run: ./gradlew lintRelease --no-daemon
+      - name: Build
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon
+      - name: Check the signature
+        run: |
+          apk=android/app/build/outputs/apk/release/app-release.apk
+          "$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner" verify --print-certs "$apk"
+          mkdir -p dist && cp "$apk" dist/sags-auf-deutsch.apk
+          echo "$SIGNED_WITH" > dist/signed-with.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sags-auf-deutsch-apk
+          path: dist/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-lint-report
+          path: android/app/build/reports/lint-results-release.html
+          retention-days: 7
+
+  emulator:
+    name: Smoke test in an emulator
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: npm ci
+      - run: npm run app:sync
+      # A debug build, because only debug builds let Playwright drive the app's WebView.
+      - name: Build the debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+      - name: Enable KVM so the emulator runs at full speed
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: |
+            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+            npx playwright test --config android-tests/playwright.config.js
+
+  release:
+    name: Publish release
+    needs: [apk, emulator]
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: sags-auf-deutsch-apk
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: app-v1.${{ github.run_number }}
+        run: |
+          {
+            echo "Sag's auf Deutsch for Android, built from ${GITHUB_SHA::7}."
+            echo
+            echo "On the phone, open this page in Chrome, tap **sags-auf-deutsch.apk**, then Open. If Android asks, allow Chrome to install unknown apps. A new version installs over the old one and keeps your settings."
+            if [ "$(cat signed-with.txt)" != "release" ]; then
+              echo
+              echo "⚠️ Signed with a one-off key because the repo's signing secrets aren't set. Uninstall any earlier copy before installing this one."
+            fi
+          } > notes.md
+          gh release create "$TAG" sags-auf-deutsch.apk --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "Sag's auf Deutsch 1.${{ github.run_number }}" --notes-file notes.md --latest

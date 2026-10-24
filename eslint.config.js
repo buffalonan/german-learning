@@ -6,7 +6,7 @@ const security = require("eslint-plugin-security");
 const globals = require("globals");
 
 module.exports = [
-  { ignores: ["node_modules/", "playwright-report/", "test-results/", "pictures.js"] },
+  { ignores: ["node_modules/", "playwright-report/", "test-results/", "pictures.js", "www/", "android/"] },
   js.configs.recommended,
   {
     files: ["**/*.html"],

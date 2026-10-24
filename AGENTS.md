@@ -17,6 +17,10 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 | `index.html` | The whole game: CSS, markup and one inline script. No framework, no build step. |
 | `pictures.js` | Generated. `window.PICS = { "🍎": "data:image/webp;base64,…" }` with 3D pictures keyed by emoji. Don't edit by hand. |
 | `scripts/build-pictures.js` | Regenerates `pictures.js` from the emoji used in `index.html`, using Microsoft Fluent Emoji 3D (MIT) from the npm package `@lobehub/fluent-emoji-3d`. |
+| `android/` | Capacitor's Android project. Edited by hand only in `app/build.gradle` (version and signing from env vars) and the icons/splash. `app/src/main/assets/public` is generated and ignored. |
+| `capacitor.config.json` | App id `io.github.buffalonan.sagsdeutsch`, name, and `webDir: www`. |
+| `scripts/build-app-web.js` | Copies the game into `www/` for the app, adding `<script src="capacitor.js">`. `www/` is generated and ignored. |
+| `android-tests/` | Emulator smoke test of the real app, run only in CI by `android.yml`. |
 | `tests/*.spec.js` | Playwright tests, run at desktop and phone (Pixel 7) sizes. `tests/helpers.js` has the speech mock and round helpers. |
 | `REVIEW.md` | What a reviewer should flag as blocking or as a suggestion. |
 | `.github/workflows/` | CI: `tests.yml`, `security.yml`, `codeql.yml`, and the Claude reviewer once that PR is merged. |
@@ -33,6 +37,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 - **State** is the global `game` (`deck`, `i`, `flipped`, `buzzed`, `scores`, `missed`, `known`, `againCount`). Rendering goes through `dealCard`, `renderScores`, `renderControls` and `finish`.
 - **Keys:** Space or Enter flips. Race: A and L buzz in before the flip and award a point after it, N means nobody, Enter awards the player who buzzed. Practice: 1 is Again (the same card turns back over), 2 is Got it.
 - **Voice:** the browser's `speechSynthesis`. Voices installed on the computer are preferred, because online ones such as "Google Deutsch" can fail silently inside an embedded page. The voice menu and Test button live on the setup screen, and a hint appears if nothing starts within 1.8 s. There is no pre-recorded audio.
+  - In the Android app (`window.Capacitor.isNativePlatform()`), the WebView has no `speechSynthesis`, so `tts` (the `TextToSpeech` plugin from `@capacitor-community/text-to-speech`) is used instead: `loadNativeVoices` retries while the phone's engine starts, the plugin picks a voice by its index in the full voice list, and `sayNative` reports only the latest call's error. Tests mock it with `mockNativeSpeech`.
 
 ## Rules
 
@@ -53,15 +58,18 @@ npm test                               # Playwright, desktop and phone
 npx eslint . --max-warnings 0          # lint, as CI runs it
 node scripts/build-pictures.js         # after adding emoji cards
 python3 -m http.server 8081 --bind 0.0.0.0   # play from a phone on the same Wi-Fi
+npm run app:sync                       # copy the game into the Android project (then npx cap open android)
 ```
 
 ## CI and workflow
 
 - Work on a branch and open a pull request into `main`. Don't push to `main` directly.
 - Every PR runs ESLint, Playwright, `npm audit --audit-level=moderate`, `npm audit signatures` and gitleaks. CodeQL and dependency review also run, since the repo is public. Security checks also run weekly. Dependabot opens weekly updates.
+- `android.yml` runs Android Lint and an emulator smoke test (`android-tests/`, Playwright driving the debug app's WebView over adb; not part of `npm test`), builds the APK on every PR (downloadable as a workflow artifact) and, on `main`, publishes it as release `app-v1.<run number>` with `sags-auf-deutsch.apk`. It signs with the `ANDROID_KEYSTORE_BASE64`/`ANDROID_KEYSTORE_PASSWORD` secrets, or a one-off key if they're missing (see README).
 - `.gitleaks.toml` allowlists `pictures.js`, whose base64 data looks like keys.
 
 ## Where it runs
 
+- **Android app:** sideloaded from the latest GitHub release (no Play Store). It updates when a new APK is installed over it.
 - **Local copy for phones:** the owner serves a copy from their computer on their home Wi-Fi (`python3 -m http.server <port> --bind 0.0.0.0`). It doesn't update by itself: copy `index.html` and `pictures.js` over after merging.
 - **Claude artifact:** a hosted copy for Claude's app is the same page with the `<!doctype>`, `<html>`, `<head>` and `<body>` wrapper lines removed, plus `pictures.js` as a supporting file.
