@@ -15,6 +15,10 @@ updates:
     directory: /android
     schedule:
       interval: weekly
+    # Capacitor sets the Gradle and Android plugin versions; major jumps come with a Capacitor upgrade instead.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       android:
         patterns: ["*"]
