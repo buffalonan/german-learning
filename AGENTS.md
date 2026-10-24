@@ -4,7 +4,7 @@ Context for AI agents and reviewers working on this repo. Read this first instea
 
 ## What this is
 
-Web games for two adults, Ferran and Meri, to practise everyday German. Both were once B1 level and are now rusty. The focus is vocabulary, useful daily phrases and listening. Translations are shown in English and Spanish.
+Web games for two adult learners to practise everyday German. Both were once B1 level and are now rusty. The focus is vocabulary, useful daily phrases and listening. Translations are shown in English and Spanish.
 
 They play together on one laptop, racing to answer first, or on their phones over home Wi-Fi. The current game is **Sag's auf Deutsch**: picture cards where you say the German word, then flip to check.
 
@@ -63,5 +63,5 @@ python3 -m http.server 8081 --bind 0.0.0.0   # play from a phone on the same Wi-
 
 ## Where it runs
 
-- **Ferran's Mac:** a copy lives in `~/Documents/german-learning`, served on port 8081 for phones on the home Wi-Fi. Port 8080 is a different app of theirs, so leave it alone. That copy doesn't update by itself: copy `index.html` and `pictures.js` over after merging.
+- **Local copy for phones:** the owner serves a copy from their computer on their home Wi-Fi (`python3 -m http.server <port> --bind 0.0.0.0`). It doesn't update by itself: copy `index.html` and `pictures.js` over after merging.
 - **Claude artifact:** a hosted copy for Claude's app is the same page with the `<!doctype>`, `<html>`, `<head>` and `<body>` wrapper lines removed, plus `pictures.js` as a supporting file.

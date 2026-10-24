@@ -33,7 +33,7 @@ To play from a phone on the same Wi-Fi, serve the folder on all interfaces (`pyt
 
 Every pull request runs:
 
-- **Tests:** ESLint (with `no-unsanitized` and `security` rules) and the Playwright suite.
+- **Tests:** ESLint and the Playwright suite. The game's script in `index.html` is checked by `no-unsanitized` (unsafe HTML writes); the `.js` files are also checked by `eslint-plugin-security`.
 - **Security:** `npm audit` for known vulnerabilities, `npm audit signatures`, and gitleaks secret detection over the full history. It also runs weekly on `main`.
 - **Dependabot** opens weekly update PRs for npm packages and GitHub Actions.
 - **CodeQL** code scanning and **dependency review** of new packages. Both run only when the repo is public, since GitHub charges for them on private repos.
