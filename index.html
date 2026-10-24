@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sag's auf Deutsch</title>
+<link rel="icon" href="data:,">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -551,8 +552,9 @@ let deVoices = [], deVoice = null;
 const ss = window.speechSynthesis;
 // The Android app's WebView has no speechSynthesis, so there the phone's own text-to-speech engine reads aloud.
 const tts = window.Capacitor?.isNativePlatform?.() ? window.Capacitor.registerPlugin("TextToSpeech") : null;
+const isGerman = (v) => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("de");
 function showVoices(voices) {
-  deVoices = voices.filter((v) => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("de"));
+  deVoices = voices.filter(isGerman);
   // Voices installed on the computer play reliably; online ones (e.g. "Google Deutsch") can fail silently inside the page frame.
   const local = deVoices.filter((v) => v.localService);
   deVoice = deVoices.find((v) => v.name === settings.voice)
@@ -560,7 +562,7 @@ function showVoices(voices) {
     || local[0] || deVoices[0] || null;
   const sel = $("voice");
   sel.innerHTML = html`${deVoices.length
-    ? deVoices.map((v) => html`<option value="${v.name}"${v === deVoice ? " selected" : ""}>${v.name}${v.localService ? "" : " (online)"}</option>`)
+    ? deVoices.map((v) => html`<option value="${v.name}"${v === deVoice ? " selected" : ""}>${v.label || v.name}${v.localService ? "" : " (online)"}</option>`)
     : html`<option value="">${tts ? "Phone default" : "Browser default"}</option>`}`;
 }
 function pickVoice() {
@@ -572,11 +574,26 @@ async function loadNativeVoices(tries = 10) {
   try {
     const { voices } = await tts.getSupportedVoices();
     if (!voices.length) throw new Error("no voices yet");
-    showVoices(voices.map((v, index) => ({ ...v, index }))); // the plugin picks a voice by its place in the full list
+    showVoices(phoneVoices(voices));
   } catch (e) {
     if (tries > 1) setTimeout(() => loadNativeVoices(tries - 1), 500);
     else showVoices([]);
   }
+}
+// The plugin names every voice after its language ("German Germany"), so tell them apart by the engine's id
+// (voiceURI, e.g. "de-de-x-deb-local"). Each voice comes as a "-local" and a "-network" copy that sound the same:
+// keep one, preferring the installed copy, and skip "-language" ids, which are aliases for the default voice.
+function phoneVoices(voices) {
+  const byId = new Map();
+  voices.forEach((v, index) => { // the plugin picks a voice by its place in the full list
+    const id = v.voiceURI || v.name;
+    if (!isGerman(v) || /-language$/.test(id)) return;
+    const key = id.replace(/-(local|network)$/, "");
+    const seen = byId.get(key);
+    if (!seen || (!seen.localService && v.localService)) byId.set(key, { name: id, lang: v.lang, localService: v.localService, index, key });
+  });
+  return [...byId.values()].sort((a, b) => a.key.localeCompare(b.key))
+    .map((v, i) => ({ ...v, label: `Stimme ${i + 1} (${v.key.split("-x-")[1] || v.key})` }));
 }
 pickVoice();
 if (!tts) ss?.addEventListener?.("voiceschanged", pickVoice);
