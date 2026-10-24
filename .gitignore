@@ -1,3 +1,6 @@
 node_modules/
 test-results/
 playwright-report/
+
+# Built by scripts/build-app-web.js for the Android app
+www/

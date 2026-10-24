@@ -18,6 +18,29 @@ function mockSpeech(page, { voices = [{ name: "Anna", lang: "de-DE", localServic
   }, { voices, plays });
 }
 
+// Pretends to be the Android app: no speechSynthesis, and Capacitor's TextToSpeech plugin instead.
+// The plugin isn't ready for the first `notReadyFor` voice requests, like the phone's engine at start-up.
+function mockNativeSpeech(page, { voices = [], notReadyFor = 1, speakError = null } = {}) {
+  return page.addInitScript(({ voices, notReadyFor, speakError }) => {
+    window.__spoken = [];
+    window.__stopped = 0;
+    let asked = 0;
+    const plugin = {
+      async getSupportedVoices() {
+        if (asked++ < notReadyFor) throw new Error("Not yet initialized or not available on this device.");
+        return { voices };
+      },
+      async speak(o) {
+        window.__spoken.push({ text: o.text, voice: o.voice, lang: o.lang });
+        if (speakError) throw new Error(speakError);
+      },
+      async stop() { window.__stopped++; },
+    };
+    Object.defineProperty(window, "speechSynthesis", { value: undefined, configurable: true });
+    window.Capacitor = { isNativePlatform: () => true, registerPlugin: (name) => (name === "TextToSpeech" ? plugin : null) };
+  }, { voices, notReadyFor, speakError });
+}
+
 const spoken = (page) => page.evaluate(() => window.__spoken.map((s) => s.text));
 
 async function open(page) {
@@ -45,4 +68,4 @@ async function startRound(page, { mode = "race", topics = ["food"], count = "10"
 
 const isFlipped = (page) => page.locator("#card").evaluate((el) => el.classList.contains("flipped"));
 
-module.exports = { mockSpeech, spoken, open, chooseTopics, startRound, isFlipped };
+module.exports = { mockSpeech, mockNativeSpeech, spoken, open, chooseTopics, startRound, isFlipped };
