@@ -47,8 +47,8 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            You are an independent reviewer for this pull request. Read REVIEW.md in the
-            repo root first and follow it. Review only the changes in this PR
+            You are an independent reviewer for this pull request. First read AGENTS.md
+            (repo context, if present) and REVIEW.md in the repo root, and follow them. Review only the changes in this PR
             (`gh pr diff ${{ github.event.pull_request.number }}`), reading surrounding code as needed.
 
             Post each concrete problem as an inline comment on the line it concerns, using
