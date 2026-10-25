@@ -237,20 +237,77 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-he
 .missed .mi .dot { display: inline-block; width: 1.4rem; height: 1.4rem; border-radius: 50%; box-shadow: 0 0 0 2px var(--line); vertical-align: middle; }
 .missed small { color: var(--muted); display: block; }
 
+/* Areas: word cards or grammar */
+.areas { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.areas button { background: var(--surface); border: 2px solid var(--line); border-radius: 999px; padding: 7px 18px; font-weight: 700; color: var(--muted); box-shadow: 0 3px 0 var(--line); }
+.areas button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); box-shadow: 0 3px 0 var(--sign); }
+
+/* Grammar */
+.lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.lesson { background: var(--surface-2); border-radius: var(--r-m); padding: 16px; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: center; }
+.lesson .ico { grid-row: 1 / 3; font-family: var(--emoji); font-size: 2rem; line-height: 1; }
+.lesson h3 { font-size: 1.5rem; font-weight: 800; }
+.lesson p { margin: 0; color: var(--muted); font-size: .9rem; }
+.lesson .row { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.theory { gap: 18px; }
+.theory h2 { font-size: clamp(2rem, 7vw, 2.8rem); }
+.theory h3 { font-size: 1.45rem; margin-top: 6px; }
+.theory p, .theory li { margin: 0; max-width: 66ch; }
+.theory ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.theory .lead { color: var(--muted); font-size: 1.05rem; }
+.boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.box { background: var(--surface-2); border-radius: var(--r-m); padding: 12px 14px; display: grid; gap: 4px; align-content: start; }
+.box b { font-family: var(--display); font-weight: 800; font-size: 1.3rem; }
+.box .q { font-weight: 700; color: var(--muted); }
+.ex { background: none; border: 0; padding: 0; text-align: left; font-style: italic; text-decoration: underline dotted var(--muted); text-underline-offset: 4px; }
+.ex::before { content: "🔊 "; font-style: normal; font-size: .85em; }
+.tbl { overflow-x: auto; }
+.tbl table { border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 100%; }
+.tbl th, .tbl td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+.tbl th { font-weight: 700; color: var(--muted); }
+.tbl td.chg { background: var(--surface-2); font-weight: 700; }
+.tip { background: var(--glow); border-left: 5px solid var(--sign); border-radius: var(--r-s); padding: 12px 16px; }
+
+.qcard { position: relative; background: var(--surface); border-radius: var(--r-l); box-shadow: var(--shadow); padding: 28px 24px; display: grid; gap: 14px; text-align: center; }
+.qcard::before { content: ""; position: absolute; inset: 10px; border: 2px solid var(--line); border-radius: 20px; pointer-events: none; }
+.qcard .ctopic { position: static; }
+.turn { font-weight: 700; min-height: 1.5em; margin: 0; }
+.turn .p1 { color: var(--p1); } .turn .p2 { color: var(--p2); }
+.sentence { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: clamp(1.7rem, 6vw, 2.4rem); line-height: 1.2; margin: 0; overflow-wrap: anywhere; }
+.blank { display: inline-block; min-width: 3.2em; border-bottom: 3px solid var(--ink); }
+.blank.ok { color: var(--good); border-color: var(--good); }
+.qtr { margin: 0; color: var(--muted); }
+.opts { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.opt { min-width: 5.5em; border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 10px 18px; box-shadow: 0 4px 0 var(--line); transition: transform .08s, box-shadow .08s; font-weight: 700; font-size: 1.15rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.opt .k { opacity: .6; }
+.opt.ok { border-color: var(--good); color: var(--good); box-shadow: 0 4px 0 var(--good); }
+.opt.bad { border-color: var(--die); color: var(--die); box-shadow: 0 4px 0 var(--die); }
+.opt:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--line); }
+.opt:disabled { cursor: default; }
+.feedback { display: grid; gap: 8px; justify-items: center; }
+.feedback .verdict { margin: 0; font-family: var(--display); font-weight: 800; font-size: 1.6rem; }
+.feedback .verdict.ok { color: var(--good); } .feedback .verdict.bad { color: var(--die); }
+.feedback .why { margin: 0; max-width: 46ch; }
+.mistakes li { grid-template-columns: 1fr; }
+
 @media (max-width: 480px) {
   .sheet { padding: 20px 16px; border-radius: 22px; }
   .scores { width: 100%; }
   .score { flex: 1; justify-content: space-between; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .inner, .track i, .btn-main, .ctl, .seg button, .say, .ghost, .topic-chip { transition: none; }
-  .btn-main:active:not(:disabled), .ctl:active, .say:active, .ghost:active { transform: none; }
+  .inner, .track i, .btn-main, .ctl, .seg button, .say, .ghost, .topic-chip, .opt { transition: none; }
+  .btn-main:active:not(:disabled), .ctl:active, .say:active, .ghost:active, .opt:active:not(:disabled) { transform: none; }
 }
 </style>
 </head>
 <body>
 
 <main>
+  <nav class="areas" id="areas" aria-label="Sections">
+    <button type="button" data-v="setup">Wortkarten</button>
+    <button type="button" data-v="grammar">Grammatik</button>
+  </nav>
   <section id="setup">
     <div class="intro">
       <div class="plate"><h1>Sag's auf Deutsch</h1><small>Bildkarten · Wortspiel</small></div>
@@ -362,6 +419,171 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-he
         <button class="btn-main" id="again" type="button">Noch mal</button>
         <button class="ctl" id="replayMissed" type="button">Replay the missed cards</button>
         <button class="ctl" id="toSetup" type="button">Change topics</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="grammar" hidden>
+    <div class="intro">
+      <div class="plate"><h1>Grammatik</h1><small>Fälle · Präpositionen</small></div>
+      <p>Read a short explanation, then fill the gaps in everyday sentences. Each answer shows why, and you can hear the sentence.</p>
+    </div>
+    <div class="sheet">
+      <div class="lessons" id="lessons"></div>
+      <div class="field">
+        <span class="label">Spielart</span>
+        <div class="seg" id="gmodeSeg">
+          <button type="button" data-v="turns">Take turns, points each</button>
+          <button type="button" data-v="together">Together</button>
+        </div>
+        <p class="help" id="gmodeHelp"></p>
+      </div>
+      <div class="field">
+        <span class="label">Sätze pro Runde</span>
+        <div class="seg" id="gcountSeg">
+          <button type="button" data-v="10">10</button>
+          <button type="button" data-v="20">20</button>
+          <button type="button" data-v="0">All</button>
+        </div>
+      </div>
+      <div class="start-row">
+        <button class="btn-main" id="mixQuiz" type="button">Alles mischen</button>
+        <span class="avail">Both lessons in one round</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="theory" hidden>
+    <div class="bar"><button class="ghost" id="theoryBack" type="button">← Grammatik</button></div>
+
+    <article class="sheet theory" data-lesson="cases">
+      <h2>Akkusativ &amp; Dativ</h2>
+      <p class="lead">German shows what a noun does in the sentence by changing its article: der Mann, den Mann, dem Mann. Ask the right question to find the case.</p>
+      <div class="boxes">
+        <div class="box"><b>Nominativ</b><span class="q">Wer? Was?</span><span>The subject: who does it.</span><button class="ex" type="button">Der Mann trinkt Kaffee.</button></div>
+        <div class="box"><b>Akkusativ</b><span class="q">Wen? Was?</span><span>The direct object: what the action is done to.</span><button class="ex" type="button">Ich sehe den Mann.</button></div>
+        <div class="box"><b>Dativ</b><span class="q">Wem?</span><span>The receiver: who gets it, or who it's done for.</span><button class="ex" type="button">Ich gebe dem Mann den Kaffee.</button></div>
+      </div>
+
+      <h3>The articles</h3>
+      <div class="tbl"><table>
+        <thead><tr><th></th><th>der (m.)</th><th>die (f.)</th><th>das (n.)</th><th>die (Pl.)</th></tr></thead>
+        <tbody>
+          <tr><th>Nom.</th><td><span class="art a-der">der</span><br>ein</td><td><span class="art a-die">die</span><br>eine</td><td><span class="art a-das">das</span><br>ein</td><td><span class="art a-pl">die</span><br>–</td></tr>
+          <tr><th>Akk.</th><td class="chg"><span class="art a-der">den</span><br>einen</td><td><span class="art a-die">die</span><br>eine</td><td><span class="art a-das">das</span><br>ein</td><td><span class="art a-pl">die</span><br>–</td></tr>
+          <tr><th>Dat.</th><td class="chg"><span class="art a-der">dem</span><br>einem</td><td class="chg"><span class="art a-die">der</span><br>einer</td><td class="chg"><span class="art a-das">dem</span><br>einem</td><td class="chg"><span class="art a-pl">den</span><br>(noun +n)</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li>In the <b>Akkusativ</b> only the masculine changes: der → den, ein → einen. <button class="ex" type="button">Ich brauche einen Termin.</button></li>
+        <li>In the <b>Dativ</b> every article changes, and plural nouns add <b>-n</b>: die Kinder → den Kindern. <button class="ex" type="button">Ich helfe den Kindern.</button></li>
+        <li>kein, mein, dein, sein, ihr and unser take the same endings as ein: meinen Bruder, meiner Mutter, keinem Kind.</li>
+      </ul>
+
+      <h3>Pronouns</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Nom.</th><th>Akk.</th><th>Dat.</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>ich</td><td>mich</td><td>mir</td><td>I, me</td></tr>
+          <tr><td>du</td><td>dich</td><td>dir</td><td>you</td></tr>
+          <tr><td>er</td><td>ihn</td><td>ihm</td><td>he, him</td></tr>
+          <tr><td>sie</td><td>sie</td><td>ihr</td><td>she, her</td></tr>
+          <tr><td>es</td><td>es</td><td>ihm</td><td>it</td></tr>
+          <tr><td>wir</td><td>uns</td><td>uns</td><td>we, us</td></tr>
+          <tr><td>ihr</td><td>euch</td><td>euch</td><td>you (all)</td></tr>
+          <tr><td>sie / Sie</td><td>sie / Sie</td><td>ihnen / Ihnen</td><td>they / you (formal)</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Which verbs take which case?</h3>
+      <ul>
+        <li>Most verbs with an object take the <b>Akkusativ</b>: haben, brauchen, sehen, kaufen, nehmen, essen, trinken, kennen, besuchen, fragen, anrufen. <button class="ex" type="button">Ich rufe dich morgen an.</button></li>
+        <li>Some everyday verbs always take the <b>Dativ</b>: helfen, danken, gefallen, gehören, schmecken, passen, antworten, gratulieren, vertrauen. <button class="ex" type="button">Kannst du mir helfen?</button></li>
+        <li>Verbs of giving take both: the person gets the <b>Dativ</b>, the thing the <b>Akkusativ</b>. geben, schenken, zeigen, bringen, schicken, schreiben, erklären. <button class="ex" type="button">Ich schenke meiner Mutter einen Schal.</button></li>
+        <li>Fixed phrases with the Dativ: <button class="ex" type="button">Wie geht es dir?</button> <button class="ex" type="button">Es tut mir leid.</button> <button class="ex" type="button">Mir ist kalt.</button></li>
+      </ul>
+      <p class="tip"><b>Para hispanohablantes:</b> gefallen works like gustar: <i>me gusta</i> → <i>es gefällt mir</i>. But fragen, anrufen and besuchen take the Akkusativ even where Spanish says <i>le</i>: <i>le pregunto</i> → <i>ich frage ihn</i>.</p>
+      <div class="start-row"><button class="btn-main" data-quiz="cases" type="button">Jetzt üben</button></div>
+    </article>
+
+    <article class="sheet theory" data-lesson="preps">
+      <h2>Präpositionen</h2>
+      <p class="lead">After a preposition the case is set by the preposition itself. Learn them in three groups.</p>
+      <div class="boxes">
+        <div class="box"><b>Always Akkusativ</b><span class="q">durch, für, gegen, ohne, um</span><button class="ex" type="button">Das ist für dich.</button><button class="ex" type="button">Kaffee ohne Zucker, bitte.</button></div>
+        <div class="box"><b>Always Dativ</b><span class="q">aus, bei, mit, nach, seit, von, zu</span><button class="ex" type="button">Ich fahre mit dem Bus.</button><span>„Aus, bei, mit, nach, seit, von, zu – fährst immer mit dem Dativ du!“</span></div>
+        <div class="box"><b>Wo or wohin?</b><span class="q">an, auf, hinter, in, neben, über, unter, vor, zwischen</span><span>Akkusativ or Dativ, depending on the question.</span></div>
+      </div>
+
+      <h3>Two-way prepositions: wohin or wo?</h3>
+      <ul>
+        <li><b>Wohin?</b> Movement to a place → <b>Akkusativ</b>. Verbs: legen, stellen, setzen, hängen (to put).</li>
+        <li><b>Wo?</b> Where something is → <b>Dativ</b>. Verbs: liegen, stehen, sitzen, hängen (to be).</li>
+      </ul>
+      <div class="tbl"><table>
+        <thead><tr><th>Wohin? + Akk.</th><th>Wo? + Dat.</th></tr></thead>
+        <tbody>
+          <tr><td><button class="ex" type="button">Ich lege das Buch auf den Tisch.</button></td><td><button class="ex" type="button">Das Buch liegt auf dem Tisch.</button></td></tr>
+          <tr><td><button class="ex" type="button">Ich hänge das Bild an die Wand.</button></td><td><button class="ex" type="button">Das Bild hängt an der Wand.</button></td></tr>
+          <tr><td><button class="ex" type="button">Wir gehen ins Kino.</button></td><td><button class="ex" type="button">Wir sind im Kino.</button></td></tr>
+          <tr><td><button class="ex" type="button">Ich setze mich neben dich.</button></td><td><button class="ex" type="button">Ich sitze neben dir.</button></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Short forms</h3>
+      <div class="tbl"><table>
+        <tbody>
+          <tr><td>an dem → <b>am</b></td><td>an das → <b>ans</b></td><td>in dem → <b>im</b></td><td>in das → <b>ins</b></td></tr>
+          <tr><td>zu dem → <b>zum</b></td><td>zu der → <b>zur</b></td><td>bei dem → <b>beim</b></td><td>von dem → <b>vom</b></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Everyday uses</h3>
+      <ul>
+        <li><b>Places:</b> nach Spanien, nach Berlin (countries and cities); zum Arzt, zur Arbeit; in die Stadt; bei meiner Mutter, bei Siemens. <button class="ex" type="button">Ich gehe nach Hause.</button> <button class="ex" type="button">Ich bin zu Hause.</button></li>
+        <li><b>Time:</b> um acht Uhr; am Montag, am Abend; im Juli, im Sommer; seit zwei Jahren (and still now); vor einer Woche (a week ago); nach dem Essen (after).</li>
+        <li><b>Verbs with a fixed preposition:</b> warten auf + Akk., denken an + Akk., sich freuen auf + Akk. (look forward to), Angst haben vor + Dat. <button class="ex" type="button">Ich warte auf dich.</button></li>
+      </ul>
+      <p class="tip"><b>Para hispanohablantes:</b> <i>esperar a alguien</i> is warten auf, never für. <i>Hace una semana</i> is vor einer Woche, and <i>desde hace dos años</i> is seit zwei Jahren with the present tense.</p>
+      <div class="start-row"><button class="btn-main" data-quiz="preps" type="button">Jetzt üben</button></div>
+    </article>
+  </section>
+
+  <section id="quiz" hidden>
+    <div class="bar">
+      <button class="ghost" id="quizQuit" type="button">← Grammatik</button>
+      <div class="progress"><span id="qprog">1 / 10</span><div class="track"><i id="qprogbar"></i></div></div>
+      <div class="scores" id="qscores"></div>
+    </div>
+    <div class="qcard">
+      <div class="ctopic"><span id="qTopic"></span></div>
+      <p class="turn" id="qTurn"></p>
+      <p class="sentence" id="qSentence"></p>
+      <p class="qtr" id="qTr"></p>
+      <div class="opts" id="qOpts"></div>
+      <div class="feedback" id="qFeedback" aria-live="polite" hidden>
+        <p class="verdict" id="qVerdict"></p>
+        <p class="why" id="qWhy"></p>
+        <div class="controls">
+          <button class="say" id="qSay" type="button">🔊 Anhören</button>
+          <button class="ctl big" id="qNext" type="button">Weiter <span class="k">Enter</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="qdone" hidden>
+    <div class="sheet result">
+      <h2 id="qdoneTitle"></h2>
+      <div class="final" id="qfinal"></div>
+      <div class="field" id="qmissedWrap">
+        <span class="label">Look at these again</span>
+        <ul class="missed mistakes" id="qmissed"></ul>
+      </div>
+      <div class="start-row">
+        <button class="btn-main" id="qagain" type="button">Noch mal</button>
+        <button class="ctl" id="qtheory" type="button">Read the theory</button>
+        <button class="ctl" id="qtoGrammar" type="button">Grammatik</button>
       </div>
     </div>
   </section>
@@ -492,6 +714,90 @@ const TOPICS = [
   ]}
 ];
 
+// Gap-fill sentence: [sentence with ___, answer, [wrong options], english, spanish, why]
+const GRAMMAR = [
+  { id: "cases", name: "Akkusativ & Dativ", en: "Accusative & dative", icon: "⚖️", items: [
+    ["Ich sehe ___ Hund.", "den", ["dem", "der"], "I see the dog.", "Veo al perro.", "sehen + Akkusativ (wen?): der Hund → den Hund."],
+    ["Ich helfe ___ Frau.", "der", ["die", "den"], "I help the woman.", "Ayudo a la mujer.", "helfen always takes the Dativ (wem?): die Frau → der Frau."],
+    ["Wir kaufen ___ Auto.", "ein", ["einen", "einem"], "We're buying a car.", "Compramos un coche.", "kaufen + Akkusativ. Neuter doesn't change: ein Auto."],
+    ["Ich gebe ___ Kind einen Apfel.", "dem", ["das", "den"], "I give the child an apple.", "Le doy una manzana al niño.", "geben: the person who gets something is Dativ (wem?): das Kind → dem Kind."],
+    ["Das Buch gehört ___ Lehrer.", "dem", ["den", "der"], "The book belongs to the teacher.", "El libro es del profesor.", "gehören + Dativ: der Lehrer → dem Lehrer."],
+    ["Hast du ___ Schlüssel?", "den", ["dem", "der"], "Have you got the key?", "¿Tienes la llave?", "haben + Akkusativ: der Schlüssel → den Schlüssel."],
+    ["Ich schenke ___ Mutter Blumen.", "meiner", ["meine", "meinem"], "I'm giving my mother flowers.", "Le regalo flores a mi madre.", "schenken: the person who gets the present is Dativ: die Mutter → meiner Mutter."],
+    ["Kannst du ___ helfen?", "mir", ["mich", "ich"], "Can you help me?", "¿Me puedes ayudar?", "helfen + Dativ: ich → mir."],
+    ["Ich liebe ___.", "dich", ["dir", "du"], "I love you.", "Te quiero.", "lieben + Akkusativ: du → dich."],
+    ["Wie geht es ___?", "dir", ["dich", "du"], "How are you?", "¿Cómo estás?", "Fixed phrase with the Dativ: Wie geht es dir? Es geht mir gut."],
+    ["Die Suppe schmeckt ___ nicht.", "mir", ["mich", "ich"], "I don't like the soup.", "No me gusta la sopa.", "schmecken + Dativ: the soup tastes (good) to me."],
+    ["Ich rufe ___ morgen an.", "dich", ["dir", "du"], "I'll call you tomorrow.", "Te llamo mañana.", "anrufen + Akkusativ: du → dich."],
+    ["Wir danken ___ für die Hilfe.", "Ihnen", ["Sie", "Ihr"], "We thank you for your help.", "Le agradecemos la ayuda.", "danken + Dativ: Sie (formal) → Ihnen."],
+    ["Ich brauche ___ neuen Computer.", "einen", ["ein", "einem"], "I need a new computer.", "Necesito un ordenador nuevo.", "brauchen + Akkusativ: der Computer → einen Computer."],
+    ["Der Kellner bringt ___ Gästen die Rechnung.", "den", ["die", "dem"], "The waiter brings the guests the bill.", "El camarero les trae la cuenta a los clientes.", "bringen: the people who get it are Dativ. Plural Dativ is den, and the noun adds -n: den Gästen."],
+    ["Gefällt ___ das Kleid?", "dir", ["dich", "du"], "Do you like the dress?", "¿Te gusta el vestido?", "gefallen + Dativ, just like gustar: te gusta → es gefällt dir."],
+    ["Ich besuche ___ Großeltern am Sonntag.", "meine", ["meinen", "meiner"], "I'm visiting my grandparents on Sunday.", "Visito a mis abuelos el domingo.", "besuchen + Akkusativ. In the plural the Akkusativ looks like the Nominativ: meine Großeltern."],
+    ["Zeig ___ bitte das Foto!", "mir", ["mich", "ich"], "Show me the photo, please!", "¡Enséñame la foto, por favor!", "zeigen: the person who gets to see it is Dativ: ich → mir."],
+    ["Er fragt ___ Arzt.", "den", ["dem", "der"], "He asks the doctor.", "Le pregunta al médico.", "fragen + Akkusativ, even though Spanish says le: der Arzt → den Arzt."],
+    ["Ich antworte ___ Chef.", "dem", ["den", "der"], "I answer the boss.", "Le contesto al jefe.", "antworten + Dativ: der Chef → dem Chef."],
+    ["Die Jacke passt ___ nicht.", "ihm", ["ihn", "er"], "The jacket doesn't fit him.", "La chaqueta no le queda bien.", "passen + Dativ: er → ihm."],
+    ["Kennst du ___?", "ihn", ["ihm", "er"], "Do you know him?", "¿Lo conoces?", "kennen + Akkusativ: er → ihn."],
+    ["Wir gratulieren ___ Nachbarin zum Geburtstag.", "der", ["die", "den"], "We wish our neighbour a happy birthday.", "Felicitamos a la vecina por su cumpleaños.", "gratulieren + Dativ: die Nachbarin → der Nachbarin."],
+    ["Ich schreibe ___ Freund eine E-Mail.", "meinem", ["meinen", "mein"], "I'm writing my friend an email.", "Le escribo un correo a mi amigo.", "schreiben: the person who gets it is Dativ, the email is Akkusativ: der Freund → meinem Freund."],
+    ["Ich trinke ___ Kaffee mit Milch.", "einen", ["ein", "einem"], "I drink a coffee with milk.", "Me tomo un café con leche.", "trinken + Akkusativ: der Kaffee → einen Kaffee."],
+    ["Wir haben ___ Zeit.", "keine", ["keinen", "keiner"], "We have no time.", "No tenemos tiempo.", "haben + Akkusativ. die Zeit is feminine, so it stays keine."],
+    ["Es tut ___ leid.", "mir", ["mich", "ich"], "I'm sorry.", "Lo siento.", "Fixed phrase with the Dativ: Es tut mir leid."],
+    ["Ich erkläre ___ Kindern die Regel.", "den", ["die", "dem"], "I explain the rule to the children.", "Les explico la regla a los niños.", "erklären: the people it's explained to are Dativ. Plural Dativ: den Kindern."],
+    ["Kannst du ___ Fenster aufmachen?", "das", ["dem", "den"], "Can you open the window?", "¿Puedes abrir la ventana?", "aufmachen + Akkusativ. Neuter doesn't change: das Fenster."],
+    ["Wer ist ___ Mann dort?", "der", ["den", "dem"], "Who is the man over there?", "¿Quién es el hombre de allí?", "sein never takes an object: the man is the subject, so Nominativ: der Mann."],
+    ["Ich nehme ___ Fisch, bitte.", "den", ["dem", "der"], "I'll have the fish, please.", "Para mí el pescado, por favor.", "nehmen + Akkusativ: der Fisch → den Fisch."],
+    ["Ich vertraue ___.", "dir", ["dich", "du"], "I trust you.", "Confío en ti.", "vertrauen + Dativ: du → dir."],
+    ["Ich verstehe ___ nicht.", "Sie", ["Ihnen", "Ihr"], "I don't understand you.", "No le entiendo.", "verstehen + Akkusativ: Sie (formal) stays Sie."],
+    ["Ich schicke ___ das Paket.", "ihr", ["sie", "ihre"], "I'm sending her the parcel.", "Le envío el paquete.", "schicken: the person who gets it is Dativ: sie (she) → ihr."]
+  ]},
+  { id: "preps", name: "Präpositionen", en: "Prepositions", icon: "🧭", items: [
+    ["Ich fahre ___ dem Bus zur Arbeit.", "mit", ["bei", "von", "für"], "I go to work by bus.", "Voy al trabajo en autobús.", "mit + Dativ, also for transport: mit dem Bus, mit dem Auto."],
+    ["Das Geschenk ist ___ dich.", "für", ["mit", "zu", "von"], "The present is for you.", "El regalo es para ti.", "für + Akkusativ: dich."],
+    ["Ich wohne ___ drei Jahren in Berlin.", "seit", ["vor", "für", "ab"], "I've lived in Berlin for three years.", "Vivo en Berlín desde hace tres años.", "seit + Dativ for something that started in the past and still goes on, with the present tense."],
+    ["Ich komme ___ Spanien.", "aus", ["von", "zu", "bei"], "I'm from Spain.", "Soy de España.", "aus + Dativ for where you come from: aus Spanien, aus Barcelona."],
+    ["Morgen fliegen wir ___ Deutschland.", "nach", ["zu", "bei", "seit"], "Tomorrow we're flying to Germany.", "Mañana volamos a Alemania.", "nach for countries and cities without an article: nach Deutschland, nach Berlin."],
+    ["Ich gehe ___ Arzt.", "zum", ["zur", "beim", "ins"], "I'm going to the doctor.", "Voy al médico.", "zu + Dativ for people and places: zu dem Arzt → zum Arzt."],
+    ["Wir gehen jetzt ___ Hause.", "nach", ["zu", "in", "bei"], "We're going home now.", "Ahora nos vamos a casa.", "Going home: nach Hause. Being at home: zu Hause."],
+    ["Ich bin heute Abend ___ Hause.", "zu", ["nach", "in", "bei"], "I'm at home tonight.", "Esta noche estoy en casa.", "Being at home: zu Hause. Going home: nach Hause."],
+    ["Er arbeitet ___ Siemens.", "bei", ["zu", "von", "nach"], "He works at Siemens.", "Trabaja en Siemens.", "bei + Dativ: at a company or at someone's home (bei meiner Mutter)."],
+    ["Wir gehen ___ den Park.", "durch", ["mit", "aus", "seit"], "We walk through the park.", "Caminamos por el parque.", "durch + Akkusativ: through."],
+    ["Ich trinke Kaffee ___ Zucker.", "ohne", ["aus", "seit", "um"], "I drink coffee without sugar.", "Tomo el café sin azúcar.", "ohne + Akkusativ: without."],
+    ["Der Film beginnt ___ acht Uhr.", "um", ["am", "im", "seit"], "The film starts at eight.", "La película empieza a las ocho.", "Clock times take um: um acht Uhr."],
+    ["Wir treffen uns ___ Montag.", "am", ["um", "im", "zum"], "We're meeting on Monday.", "Nos vemos el lunes.", "Days and parts of the day take am (an dem): am Montag, am Abend."],
+    ["___ Sommer fahren wir ans Meer.", "Im", ["Am", "Um", "Zum"], "In summer we go to the seaside.", "En verano vamos a la playa.", "Months and seasons take im (in dem): im Juli, im Sommer."],
+    ["Das ist ein Brief ___ meiner Oma.", "von", ["aus", "bei", "mit"], "This is a letter from my grandma.", "Es una carta de mi abuela.", "von + Dativ: from a person."],
+    ["Ich gehe ___ Supermarkt.", "zum", ["zur", "beim", "nach"], "I'm going to the supermarket.", "Voy al supermercado.", "zu + der Supermarkt (masculine) → zu dem → zum."],
+    ["Ich fahre ___ Arbeit.", "zur", ["zum", "nach", "im"], "I'm driving to work.", "Voy al trabajo.", "zu + die Arbeit (feminine) → zu der → zur."],
+    ["Hast du etwas ___ Kopfschmerzen?", "gegen", ["mit", "aus", "seit"], "Have you got something for a headache?", "¿Tienes algo para el dolor de cabeza?", "gegen + Akkusativ: against, also for medicine: etwas gegen Kopfschmerzen."],
+    ["___ dem Essen gehen wir spazieren.", "Nach", ["Seit", "Um", "Bis"], "After the meal we go for a walk.", "Después de comer vamos a pasear.", "nach + Dativ also means after: nach dem Essen."],
+    ["Ich habe ihn ___ einer Woche gesehen.", "vor", ["seit", "um", "für"], "I saw him a week ago.", "Lo vi hace una semana.", "vor + Dativ with the past means ago: vor einer Woche."],
+    ["Ich lege das Handy auf ___ Tisch.", "den", ["dem"], "I put the phone on the table.", "Pongo el móvil en la mesa.", "Wohin? legen is movement to a place → Akkusativ: auf den Tisch."],
+    ["Das Handy liegt auf ___ Tisch.", "dem", ["den"], "The phone is on the table.", "El móvil está en la mesa.", "Wo? liegen says where it is → Dativ: auf dem Tisch."],
+    ["Ich hänge das Bild an ___ Wand.", "die", ["der"], "I'm hanging the picture on the wall.", "Cuelgo el cuadro en la pared.", "Wohin? → Akkusativ. die Wand stays die."],
+    ["Das Bild hängt an ___ Wand.", "der", ["die"], "The picture is hanging on the wall.", "El cuadro está colgado en la pared.", "Wo? → Dativ: die Wand → an der Wand."],
+    ["Die Katze schläft unter ___ Bett.", "dem", ["das"], "The cat is sleeping under the bed.", "El gato duerme debajo de la cama.", "Wo? → Dativ: unter dem Bett."],
+    ["Die Katze springt auf ___ Sofa.", "das", ["dem"], "The cat jumps onto the sofa.", "El gato salta al sofá.", "Wohin? → Akkusativ: auf das Sofa (aufs Sofa)."],
+    ["Wir gehen heute Abend ___ Kino.", "ins", ["im", "am"], "We're going to the cinema tonight.", "Esta noche vamos al cine.", "Wohin? in + das Kino → ins Kino."],
+    ["Wir sind gerade ___ Kino.", "im", ["ins", "am"], "We're at the cinema right now.", "Ahora estamos en el cine.", "Wo? in + dem Kino → im Kino."],
+    ["Stell die Flaschen in ___ Kühlschrank!", "den", ["dem"], "Put the bottles in the fridge!", "¡Mete las botellas en la nevera!", "Wohin? stellen is movement → Akkusativ: in den Kühlschrank."],
+    ["Die Milch steht ___ Kühlschrank.", "im", ["ins", "in den"], "The milk is in the fridge.", "La leche está en la nevera.", "Wo? stehen says where it is → Dativ: in dem → im Kühlschrank."],
+    ["Ich setze mich neben ___ Fenster.", "das", ["dem"], "I sit down next to the window.", "Me siento junto a la ventana.", "Wohin? sich setzen is movement → Akkusativ."],
+    ["Er sitzt neben ___ Fenster.", "dem", ["das"], "He's sitting next to the window.", "Está sentado junto a la ventana.", "Wo? sitzen says where he is → Dativ."],
+    ["Das Auto steht vor ___ Haus.", "dem", ["das"], "The car is in front of the house.", "El coche está delante de la casa.", "Wo? → Dativ: vor dem Haus."],
+    ["Die Lampe hängt über ___ Tisch.", "dem", ["den"], "The lamp hangs above the table.", "La lámpara cuelga encima de la mesa.", "Wo? → Dativ: über dem Tisch."],
+    ["Ich fahre in ___ Stadt.", "die", ["der"], "I'm going into town.", "Voy al centro.", "Wohin? → Akkusativ: in die Stadt."],
+    ["Ich wohne in ___ Stadt.", "der", ["die"], "I live in the city.", "Vivo en la ciudad.", "Wo? → Dativ: die Stadt → in der Stadt."],
+    ["Am Wochenende fahren wir an ___ Meer.", "das", ["dem"], "At the weekend we're going to the seaside.", "El fin de semana vamos a la playa.", "Wohin? → Akkusativ: an das Meer (ans Meer)."],
+    ["Der Schlüssel liegt zwischen ___ Büchern.", "den", ["die"], "The key is between the books.", "La llave está entre los libros.", "Wo? → Dativ. Plural Dativ: den Büchern."],
+    ["Ich warte ___ dich.", "auf", ["für", "an", "mit"], "I'm waiting for you.", "Te espero.", "warten auf + Akkusativ, never für."],
+    ["Ich denke oft ___ dich.", "an", ["auf", "mit", "für"], "I often think of you.", "Pienso a menudo en ti.", "denken an + Akkusativ."],
+    ["Ich freue mich ___ das Wochenende.", "auf", ["für", "an", "mit"], "I'm looking forward to the weekend.", "Tengo ganas de que llegue el fin de semana.", "sich freuen auf + Akkusativ: looking forward to something still to come."],
+    ["Hast du Angst ___ Hunden?", "vor", ["von", "für", "mit"], "Are you afraid of dogs?", "¿Te dan miedo los perros?", "Angst haben vor + Dativ. Plural Dativ adds -n: Hunden."]
+  ]}
+];
+
 const $ = (id) => document.getElementById(id);
 // html`...` builds markup and escapes every value in it, unless the value was itself built with html`...`.
 class SafeHTML { constructor(s) { this.s = s; } toString() { return this.s; } }
@@ -499,7 +805,7 @@ const asHTML = (v) => (v instanceof SafeHTML ? v.s : Array.isArray(v) ? v.map(as
 const html = (strings, ...vals) => new SafeHTML(strings.reduce((out, str, i) => out + str + (i < vals.length ? asHTML(vals[i]) : ""), ""));
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "race", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "" };
+const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "race", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "", gmode: "turns", gcount: 10 };
 let settings = { ...DEFAULTS };
 try {
   const saved = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null");
@@ -543,8 +849,8 @@ $("noTopics").onclick = () => { settings.topics = []; renderTopics(); save(); };
 $("modeSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.mode = b.dataset.v; updateMode(); save(); };
 $("countSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.count = Number(b.dataset.v); setSeg("countSeg", settings.count); save(); };
 $("hintSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.hint = b.dataset.v; setSeg("hintSeg", settings.hint); save(); };
-$("p1").oninput = (e) => { settings.p1 = e.target.value; save(); };
-$("p2").oninput = (e) => { settings.p2 = e.target.value; save(); };
+$("p1").oninput = (e) => { settings.p1 = e.target.value; save(); updateGMode(); };
+$("p2").oninput = (e) => { settings.p2 = e.target.value; save(); updateGMode(); };
 $("speak").onchange = (e) => { settings.speak = e.target.checked; save(); };
 
 /* ---------- Speech ---------- */
@@ -683,7 +989,9 @@ function startGame(deck) {
 }
 
 function show(screen) {
-  for (const s of ["setup", "play", "done"]) $(s).hidden = s !== screen;
+  for (const s of ["setup", "play", "done", "grammar", "theory", "quiz", "qdone"]) $(s).hidden = s !== screen;
+  $("areas").hidden = screen !== "setup" && screen !== "grammar";
+  setSeg("areas", screen);
   window.scrollTo(0, 0);
 }
 
@@ -849,10 +1157,151 @@ $("again").onclick = () => startGame(buildDeck());
 $("replayMissed").onclick = () => startGame(shuffle([...game.missed]));
 $("toSetup").onclick = () => show("setup");
 
+/* ---------- Grammar ---------- */
+$("areas").onclick = (e) => { const b = e.target.closest("button"); if (b) show(b.dataset.v); };
+
+function renderLessons() {
+  $("lessons").innerHTML = html`${GRAMMAR.map((l) => html`
+    <div class="lesson">
+      <span class="ico">${picImg(l.icon, "") || l.icon}</span><h3>${l.name}</h3><p>${l.en} · ${l.items.length} sentences</p>
+      <div class="row">
+        <button class="ctl" type="button" data-theory="${l.id}">📖 Theorie</button>
+        <button class="ctl good" type="button" data-quiz="${l.id}">Üben</button>
+      </div>
+    </div>`)}`;
+}
+function updateGMode() {
+  setSeg("gmodeSeg", settings.gmode);
+  const [a, b] = names();
+  $("gmodeHelp").textContent = settings.gmode === "turns"
+    ? `${a} and ${b} answer one sentence each, in turn. A right answer is a point.`
+    : "Work out each sentence together and see how many you get right.";
+}
+function openTheory(id) {
+  for (const a of $("theory").querySelectorAll("article")) a.hidden = a.dataset.lesson !== id;
+  show("theory");
+}
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-theory]"); if (t) return openTheory(t.dataset.theory);
+  const q = e.target.closest("[data-quiz]"); if (q) startQuiz([q.dataset.quiz]);
+});
+$("theory").addEventListener("click", (e) => { const b = e.target.closest(".ex"); if (b) say(b.textContent); });
+$("theoryBack").onclick = () => { hush(); show("grammar"); };
+$("gmodeSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.gmode = b.dataset.v; updateGMode(); save(); };
+$("gcountSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.gcount = Number(b.dataset.v); setSeg("gcountSeg", settings.gcount); save(); };
+$("mixQuiz").onclick = () => startQuiz(GRAMMAR.map((l) => l.id));
+
+let quiz = null;
+const filled = (q) => q.s.replace("___", q.a);
+function startQuiz(ids, deck) {
+  if (!deck) {
+    deck = [];
+    for (const l of GRAMMAR) {
+      if (!ids.includes(l.id)) continue;
+      for (const [s, a, wrong, en, es, why] of l.items) deck.push({ s, a, wrong, en, es, why, lesson: l.name });
+    }
+    shuffle(deck);
+    if (settings.gcount) deck = deck.slice(0, settings.gcount);
+  }
+  quiz = { ids, deck, i: 0, answer: null, scores: [0, 0], right: 0, missed: [] };
+  show("quiz");
+  dealQuestion();
+}
+function dealQuestion() {
+  const q = quiz.deck[quiz.i];
+  quiz.answer = null;
+  quiz.opts = shuffle([q.a, ...q.wrong]);
+  $("qTopic").textContent = q.lesson;
+  const turns = settings.gmode === "turns";
+  const p = quiz.i % 2;
+  $("qTurn").innerHTML = html`${turns ? html`<span class="p${p + 1}">${names()[p]}</span>, your turn` : ""}`;
+  renderSentence();
+  $("qTr").textContent = `${q.en} · ${q.es}`;
+  $("qOpts").innerHTML = html`${quiz.opts.map((o, n) => html`<button class="opt" type="button" data-n="${n}">${o} <span class="k">${n + 1}</span></button>`)}`;
+  $("qFeedback").hidden = true;
+  $("qprog").textContent = `Satz ${quiz.i + 1} / ${quiz.deck.length}`;
+  $("qprogbar").style.width = `${(quiz.i / quiz.deck.length) * 100}%`;
+  renderQScores();
+}
+function renderSentence() {
+  const q = quiz.deck[quiz.i];
+  const [before, after] = q.s.split("___");
+  // Once answered, the gap always shows the right word.
+  const blank = quiz.answer === null ? html`<span class="blank">&nbsp;</span>` : html`<span class="blank ok">${q.a}</span>`;
+  $("qSentence").innerHTML = html`${before}${blank}${after}`;
+}
+function renderQScores() {
+  const el = $("qscores");
+  if (settings.gmode === "turns") {
+    el.innerHTML = html`${names().map((n, p) => html`<div class="score p${p + 1}"><span>${n}</span><b>${quiz.scores[p]}</b></div>`)}`;
+  } else {
+    el.innerHTML = html`<div class="score" style="color:var(--good)"><span>Richtig</span><b>${quiz.right}</b></div>`;
+  }
+}
+function choose(n) {
+  if (!quiz || quiz.answer !== null || !(n in quiz.opts)) return;
+  const q = quiz.deck[quiz.i];
+  quiz.answer = quiz.opts[n];
+  const ok = quiz.answer === q.a;
+  if (ok) { quiz.right++; quiz.scores[quiz.i % 2]++; } else quiz.missed.push(q);
+  quiz.opts.forEach((o, k) => {
+    const b = $("qOpts").children[k];
+    b.disabled = true;
+    if (o === q.a) b.classList.add("ok");
+    else if (k === n) b.classList.add("bad");
+  });
+  renderSentence(); renderQScores();
+  $("qVerdict").textContent = ok ? "Richtig!" : `Leider falsch: „${q.a}“`;
+  $("qVerdict").className = "verdict " + (ok ? "ok" : "bad");
+  $("qWhy").textContent = q.why;
+  $("qFeedback").hidden = false;
+  beep(ok ? 784 : 220);
+  if (settings.speak) say(filled(q));
+}
+function nextQuestion() {
+  if (!quiz || quiz.answer === null) return;
+  quiz.i++;
+  if (quiz.i >= quiz.deck.length) return finishQuiz();
+  dealQuestion();
+}
+function finishQuiz() {
+  hush();
+  show("qdone");
+  const total = quiz.deck.length;
+  if (settings.gmode === "turns") {
+    const [a, b] = names(), [sa, sb] = quiz.scores;
+    $("qdoneTitle").textContent = sa === sb ? "Unentschieden!" : `${sa > sb ? a : b} gewinnt!`;
+    $("qfinal").innerHTML = html`${[a, b].map((n, p) => html`<div class="score p${p + 1}"><span>${n}</span><b>${quiz.scores[p]}</b></div>`)}`;
+  } else {
+    $("qdoneTitle").textContent = quiz.right === total ? "Perfekt!" : "Gut gemacht!";
+    $("qfinal").innerHTML = html`<div class="score" style="color:var(--good)"><span>Right</span><b>${quiz.right} / ${total}</b></div>`;
+  }
+  $("qmissedWrap").hidden = quiz.missed.length === 0;
+  $("qmissed").innerHTML = html`${quiz.missed.map((q) => html`<li><span><b>${filled(q)}</b><small>${q.why}</small></span></li>`)}`;
+  $("qtheory").hidden = quiz.ids.length !== 1;
+}
+$("qOpts").addEventListener("click", (e) => { const b = e.target.closest(".opt"); if (b) choose(Number(b.dataset.n)); });
+$("qNext").onclick = nextQuestion;
+$("qSay").onclick = () => say(filled(quiz.deck[quiz.i]));
+$("quizQuit").onclick = () => { hush(); show("grammar"); };
+$("qagain").onclick = () => startQuiz(quiz.ids);
+$("qtheory").onclick = () => openTheory(quiz.ids[0]);
+$("qtoGrammar").onclick = () => show("grammar");
+document.addEventListener("keydown", (e) => {
+  if ($("quiz").hidden || !quiz) return;
+  if (e.target.matches("input, select") || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (quiz.answer === null) {
+    if (/^[1-4]$/.test(e.key)) choose(Number(e.key) - 1);
+  } else if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") {
+    e.preventDefault(); nextQuestion();
+  }
+});
+
 /* ---------- Init ---------- */
 $("p1").value = settings.p1; $("p2").value = settings.p2; $("speak").checked = settings.speak;
 setSeg("countSeg", settings.count); setSeg("hintSeg", settings.hint);
 renderTopics(); updateMode();
+setSeg("gcountSeg", settings.gcount); renderLessons(); updateGMode(); setSeg("areas", "setup");
 </script>
 </body>
 </html>

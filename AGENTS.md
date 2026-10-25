@@ -6,7 +6,7 @@ Context for AI agents and reviewers working on this repo. Read this first instea
 
 Web games for two adult learners to practise everyday German. Both were once B1 level and are now rusty. The focus is vocabulary, useful daily phrases and listening. Translations are shown in English and Spanish.
 
-They play together on one laptop, racing to answer first, or on their phones over home Wi-Fi. The current game is **Sag's auf Deutsch**: picture cards where you say the German word, then flip to check.
+They play together on one laptop, racing to answer first, or on their phones over home Wi-Fi. The app has two areas, switched by the tabs at the top: **Wortkarten** (Sag's auf Deutsch: picture cards where you say the German word, then flip to check) and **Grammatik** (short theory pages for Akkusativ & Dativ and for prepositions, each with a gap-fill quiz).
 
 Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sentences; (3) session setup with listening and writing modes; (4) installable phone version, then an Android app.
 
@@ -33,7 +33,9 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
   - `feminine` is the feminine job form, e.g. `"die Lehrerin"`.
   - `cue: true` (phrases) always shows a text cue on the front.
   - Articles are colour-coded everywhere: der blue, die red, das green, plural brown. The card back's inner frame takes the article's colour too.
-- **Settings** are kept in `localStorage` under `sagsDeutsch.settings`, always inside try/catch: topics, mode (`race` or `practice`), player names, cards per round (0 means all), front hint (`none`, `en`, `es`), read aloud, voice.
+- **Grammar:** the `GRAMMAR` array, one lesson per entry `{ id, name, en, icon, items }`. Each item is `[sentence with ___, answer, [1–3 wrong options], english, spanish, why]`; `why` is the English explanation shown after answering. The theory text is plain markup in `#theory`, one `<article data-lesson="…">` per lesson; `.ex` buttons there read their sentence aloud. Quiz state is the global `quiz`; `dealQuestion`, `choose`, `nextQuestion` and `finishQuiz` render it. Keys: 1–4 answer, Enter/Space next. "Take turns" alternates the players (names from the cards setup) with a point each; "Together" counts right answers.
+- **Screens:** `show(id)` switches between `setup`, `play`, `done`, `grammar`, `theory`, `quiz` and `qdone`; the area tabs show only on `setup` and `grammar`.
+- **Settings** are kept in `localStorage` under `sagsDeutsch.settings`, always inside try/catch: topics, mode (`race` or `practice`), player names, cards per round (0 means all), front hint (`none`, `en`, `es`), read aloud, voice, and for grammar `gmode` (`turns` or `together`) and `gcount` (0 means all).
 - **State** is the global `game` (`deck`, `i`, `flipped`, `buzzed`, `scores`, `missed`, `known`, `againCount`). Rendering goes through `dealCard`, `renderScores`, `renderControls` and `finish`.
 - **Keys:** Space or Enter flips. Race: A and L buzz in before the flip and award a point after it, N means nobody, Enter awards the player who buzzed. Practice: 1 is Again (the same card turns back over), 2 is Got it.
 - **Voice:** the browser's `speechSynthesis`. Voices installed on the computer are preferred, because online ones such as "Google Deutsch" can fail silently inside an embedded page. The voice menu and Test button live on the setup screen, and a hint appears if nothing starts within 1.8 s. There is no pre-recorded audio.
