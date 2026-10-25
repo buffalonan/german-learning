@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import sys
+import unicodedata
 
 from PIL import Image
 
@@ -15,7 +16,8 @@ SIZE = 640
 
 
 def art_name(word):
-    word = word.lower()
+    # macOS file names often spell ü as u + a combining mark, so compose them first.
+    word = unicodedata.normalize("NFC", word).lower()
     for a, b in (("ä", "ae"), ("ö", "oe"), ("ü", "ue"), ("ß", "ss")):
         word = word.replace(a, b)
     return re.sub(r"[^a-z0-9]+", "-", word).strip("-")
