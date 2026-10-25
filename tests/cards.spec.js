@@ -15,7 +15,14 @@ test.describe("card faces", () => {
   test("colour cards show a swatch and number cards show the numeral", async ({ page }) => {
     await open(page);
     await startRound(page, { topics: ["colors"] });
-    await expect(page.locator("#fPic .swatch")).toBeVisible();
+    const swatch = page.locator("#fPic .swatch");
+    await expect(swatch).toBeVisible();
+    // The colour fills most of the card, so cards don't all look alike.
+    const box = await swatch.boundingBox();
+    expect(box.width).toBeGreaterThan(180);
+    const front = await page.evaluate(() => game.deck[game.i].front);
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(front.slice(i, i + 2), 16));
+    await expect(swatch).toHaveCSS("background-color", `rgb(${r}, ${g}, ${b})`);
     await page.click("#quit");
     await startRound(page, { topics: ["numbers"] });
     const n = await page.evaluate(() => game.deck[game.i].front.slice(2));

@@ -223,7 +223,9 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .pic { font-family: var(--emoji); font-size: clamp(6rem, 30vw, 9.5rem); line-height: 1; }
 .pic3d { width: min(62%, 220px); aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 12px 14px rgba(55, 48, 163, .22)); }
 .pic.num { font-family: var(--display); font-weight: 900; font-size: clamp(6rem, 32vw, 10rem); font-variant-numeric: tabular-nums; color: var(--primary); }
-.swatch { width: 58%; aspect-ratio: 1; border-radius: 50%; border: 5px solid var(--surface); box-shadow: 0 0 0 3px var(--line), inset 0 -10px 0 rgba(0, 0, 0, .12), inset 0 8px 0 rgba(255, 255, 255, .25), 0 14px 22px -10px var(--drop); }
+/* Colour cards: one big blob of the colour fills the card; the pastel disc behind pictures would only dilute it. */
+.front:has(.swatch)::before { display: none; }
+.swatch { width: min(250px, 64vw); max-width: 100%; aspect-ratio: 1; border-radius: 50%; border: 5px solid var(--surface); box-shadow: 0 0 0 3px var(--line), inset 0 -10px 0 rgba(0, 0, 0, .12), inset 0 8px 0 rgba(255, 255, 255, .25), 0 14px 22px -10px var(--drop); }
 .cue { margin: 0; font-size: 1.15rem; font-weight: 700; max-width: 26ch; }
 .tap { bottom: 18px; font-size: .8rem; color: var(--muted); }
 .de { font-family: var(--display); font-weight: 900; font-size: 3rem; line-height: 1.05; overflow-wrap: anywhere; }
