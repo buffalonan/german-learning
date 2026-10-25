@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sag's auf Deutsch</title>
+<script>/* Apply a saved light/dark choice before the page paints. */ try { const t = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null")?.theme; if (t) document.documentElement.dataset.theme = t; } catch (e) { /* no storage */ }</script>
 <link rel="icon" href="data:,">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -108,10 +109,12 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .i-book { --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E"); }
 .i-redo { --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3C/svg%3E"); }
 .i-check { --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"); }
+.i-sun { --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4'/%3E%3C/svg%3E"); }
+.i-moon { --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/%3E%3C/svg%3E"); }
 
 /* Squishy buttons: they press in on tap without moving anything around them. */
-.btn-main, .ctl, .seg button, .say, .ghost, .opt, .areas button, .topic-chip { transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .18s ease-out, background-color .18s, border-color .18s; }
-.btn-main:active:not(:disabled), .ctl:active, .say:active, .ghost:active, .opt:active:not(:disabled), .areas button:active, .seg button:active, .topic-chip:active { transform: scale(.96); }
+.btn-main, .ctl, .seg button, .say, .ghost, .opt, .areas button, .topic-chip, .theme-btn { transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .18s ease-out, background-color .18s, border-color .18s; }
+.btn-main:active:not(:disabled), .ctl:active, .say:active, .ghost:active, .opt:active:not(:disabled), .areas button:active, .seg button:active, .topic-chip:active, .theme-btn:active { transform: scale(.96); }
 
 /* Title */
 .plate { display: grid; gap: 8px; justify-items: start; }
@@ -122,7 +125,10 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .intro p { margin: 0; max-width: 46ch; color: var(--muted); font-size: 1.05rem; }
 
 /* Section tabs */
-.areas { display: inline-flex; gap: 4px; padding: 5px; margin-bottom: 22px; background: var(--surface); border: 3px solid var(--line); border-radius: 999px; box-shadow: var(--clay-sm); flex-wrap: wrap; }
+/* Top bar: section tabs on the left, the light/dark switch on the right. */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+.theme-btn { flex: none; width: 48px; height: 48px; display: grid; place-items: center; margin-left: auto; padding: 0; border-radius: 50%; background: var(--surface); border: 3px solid var(--line); color: var(--ink); font-size: 1.25rem; box-shadow: var(--clay-sm); }
+.areas { display: inline-flex; gap: 4px; padding: 5px; background: var(--surface); border: 3px solid var(--line); border-radius: 999px; box-shadow: var(--clay-sm); flex-wrap: wrap; }
 .areas button { background: transparent; border: 0; border-radius: 999px; padding: 9px 20px; min-height: 44px; font-family: var(--display); font-weight: 800; font-size: 1.02rem; color: var(--muted); }
 .areas button[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); box-shadow: var(--press); }
 
@@ -316,17 +322,20 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 }
 @media (prefers-reduced-motion: reduce) {
   .inner, .track i, .btn-main, .ctl, .seg button, .say, .ghost, .topic-chip, .opt, .areas button { transition: none; }
-  .btn-main:active:not(:disabled), .ctl:active, .say:active, .ghost:active, .opt:active:not(:disabled), .areas button:active, .seg button:active, .topic-chip:active { transform: none; }
+  .btn-main:active:not(:disabled), .ctl:active, .say:active, .ghost:active, .opt:active:not(:disabled), .areas button:active, .seg button:active, .topic-chip:active, .theme-btn:active { transform: none; }
 }
 </style>
 </head>
 <body>
 
 <main>
-  <nav class="areas" id="areas" aria-label="Sections">
-    <button type="button" data-v="setup">Wortkarten</button>
-    <button type="button" data-v="grammar">Grammatik</button>
-  </nav>
+  <div class="topbar" id="topbar">
+    <nav class="areas" id="areas" aria-label="Sections">
+      <button type="button" data-v="setup">Wortkarten</button>
+      <button type="button" data-v="grammar">Grammatik</button>
+    </nav>
+    <button class="theme-btn" id="theme" type="button"></button>
+  </div>
   <section id="setup">
     <div class="intro">
       <div class="plate"><h1>Sag's auf Deutsch</h1><small>Bildkarten · Wortspiel</small></div>
@@ -824,13 +833,28 @@ const asHTML = (v) => (v instanceof SafeHTML ? v.s : Array.isArray(v) ? v.map(as
 const html = (strings, ...vals) => new SafeHTML(strings.reduce((out, str, i) => out + str + (i < vals.length ? asHTML(vals[i]) : ""), ""));
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "practice", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "", gmode: "turns", gcount: 10 };
+const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "practice", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "", gmode: "turns", gcount: 10, theme: "" };
 let settings = { ...DEFAULTS };
 try {
   const saved = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null");
   if (saved) settings = { ...DEFAULTS, ...saved };
 } catch (e) { /* storage or audio unavailable: carry on without it */ }
 function save() { try { localStorage.setItem("sagsDeutsch.settings", JSON.stringify(settings)); } catch (e) { /* storage or audio unavailable: carry on without it */ } }
+
+/* ---------- Light / dark ---------- */
+// With no saved choice the page follows the system (or the host page's data-theme); the button saves an explicit one.
+const darkQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+const isDark = () => { const t = document.documentElement.dataset.theme; return t ? t === "dark" : !!darkQuery?.matches; };
+function applyTheme() {
+  if (settings.theme) document.documentElement.dataset.theme = settings.theme;
+  const dark = isDark(), label = dark ? "Switch to light mode" : "Switch to dark mode";
+  $("theme").innerHTML = html`<span class="i ${dark ? "i-sun" : "i-moon"}" aria-hidden="true"></span>`;
+  $("theme").setAttribute("aria-label", label);
+  $("theme").title = label;
+}
+$("theme").onclick = () => { settings.theme = isDark() ? "light" : "dark"; save(); applyTheme(); };
+darkQuery?.addEventListener?.("change", applyTheme);
+applyTheme();
 
 /* ---------- Setup screen ---------- */
 function renderTopics() {
@@ -1063,7 +1087,7 @@ function startGame(deck) {
 
 function show(screen) {
   for (const s of ["setup", "play", "done", "grammar", "theory", "quiz", "qdone"]) $(s).hidden = s !== screen;
-  $("areas").hidden = screen !== "setup" && screen !== "grammar";
+  $("topbar").hidden = $("areas").hidden = screen !== "setup" && screen !== "grammar";
   setSeg("areas", screen);
   window.scrollTo(0, 0);
 }
