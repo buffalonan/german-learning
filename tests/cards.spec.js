@@ -88,18 +88,27 @@ test.describe("voice", () => {
     expect(await spoken(page)).toEqual([]);
   });
 
-  test("an installed German voice is preferred over an online one", async ({ page }) => {
+  test("Chrome's Google Deutsch is the default when it's there", async ({ page }) => {
     await mockSpeech(page, { voices: [
-      { name: "Google Deutsch", lang: "de-DE", localService: false },
       { name: "Anna", lang: "de-DE", localService: true },
+      { name: "Google Deutsch", lang: "de-DE", localService: false },
       { name: "Samantha", lang: "en-US", localService: true },
     ] });
     await open(page);
     await expect(page.locator("#voice option")).toHaveCount(2);
-    await expect(page.locator("#voice")).toHaveValue("Anna");
+    await expect(page.locator("#voice")).toHaveValue("Google Deutsch");
     await page.click("#testVoice");
     const s = await page.evaluate(() => window.__spoken[0]);
-    expect(s).toMatchObject({ text: "Guten Tag! Wie geht's?", voice: "Anna" });
+    expect(s).toMatchObject({ text: "Guten Tag! Wie geht's?", voice: "Google Deutsch" });
+  });
+
+  test("otherwise an installed German voice is preferred over an online one", async ({ page }) => {
+    await mockSpeech(page, { voices: [
+      { name: "Microsoft Katja Online", lang: "de-DE", localService: false },
+      { name: "Anna", lang: "de-DE", localService: true },
+    ] });
+    await open(page);
+    await expect(page.locator("#voice")).toHaveValue("Anna");
   });
 
   test("a chosen voice is used and remembered", async ({ page }) => {
