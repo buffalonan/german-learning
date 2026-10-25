@@ -76,6 +76,19 @@ test.describe("recorded voices", () => {
     expect(requested).toEqual([]);
   });
 
+  test("the browser default voice, picked when there's no German voice, stays picked", async ({ page }) => {
+    await mockSpeech(page, { voices: [] });
+    const requested = await withRecordings(page);
+    await open(page);
+    await expect(page.locator("#voice option")).toHaveText(["Kerstin (aufgenommen)", "Thorsten (aufgenommen)", "Browser default"]);
+    await page.selectOption("#voice", "device");
+    await page.reload();
+    await expect(page.locator("#voice")).toHaveValue("device");
+    await page.click("#testVoice");
+    await expect.poll(() => spoken(page)).toEqual(["Guten Tag! Wie geht's?"]);
+    expect(requested).toEqual([]);
+  });
+
   test("file names stay the same, so recordings from earlier builds still match", async ({ page }) => {
     await open(page);
     expect(await nameOf(page, "Guten Tag! Wie geht's?")).toBe("22-8847c897");

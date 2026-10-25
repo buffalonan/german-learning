@@ -905,9 +905,9 @@ const tts = window.Capacitor?.isNativePlatform?.() ? window.Capacitor.registerPl
 const isGerman = (v) => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("de");
 function showVoices(voices) {
   deVoices = voices.filter(isGerman);
-  // A recorded voice is the default unless the player picked a device voice.
-  recVoice = REC_VOICES.find((r) => `rec:${r.id}` === settings.voice)
-    || (deVoices.some((v) => v.name === settings.voice) ? null : REC_VOICES[0] || null);
+  // A recorded voice is the default unless the player picked a device voice ("device" is the browser's or phone's default).
+  const pickedDevice = settings.voice === "device" || deVoices.some((v) => v.name === settings.voice);
+  recVoice = REC_VOICES.find((r) => `rec:${r.id}` === settings.voice) || (pickedDevice ? null : REC_VOICES[0] || null);
   // "Google Deutsch" only exists in Chrome, where the Mac's own voices (Anna…) get read by the English system voice instead.
   // Elsewhere (Safari, iPhone), the installed voices are the good ones.
   const local = deVoices.filter((v) => v.localService);
@@ -918,7 +918,7 @@ function showVoices(voices) {
   const sel = $("voice");
   sel.innerHTML = html`${REC_VOICES.map((r) => html`<option value="rec:${r.id}"${r === recVoice ? " selected" : ""}>${r.name} (aufgenommen)</option>`)}${deVoices.length
     ? deVoices.map((v) => html`<option value="${v.name}"${!recVoice && v === deVoice ? " selected" : ""}>${v.label || v.name}${v.localService ? "" : " (online)"}</option>`)
-    : html`<option value=""${recVoice ? "" : " selected"}>${tts ? "Phone default" : "Browser default"}</option>`}`;
+    : html`<option value="device"${recVoice ? "" : " selected"}>${tts ? "Phone default" : "Browser default"}</option>`}`;
 }
 function pickVoice() {
   if (tts) { showVoices(deVoices); return loadNativeVoices(); }
