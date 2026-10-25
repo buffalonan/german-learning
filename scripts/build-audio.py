@@ -17,8 +17,13 @@ from piper.download_voices import download_voice
 
 # Folder name in audio/ -> Piper voice. Licences are in the .onnx.json files copied next to the recordings.
 VOICES = {"kerstin": "de_DE-kerstin-low", "thorsten": "de_DE-thorsten-high"}
-LENGTH_SCALE = 1.1  # a little slower than normal speech, for learners
-MP3_BITRATE = "48k"
+# Slow and clear, for learners: 1.0 is Piper's normal speed. Lower noise makes the voice steadier and less breathy.
+LENGTH_SCALE = 1.4
+NOISE_SCALE = 0.45
+NOISE_W_SCALE = 0.5
+# Even loudness for every file, with a short pause first so phones don't clip the first sound.
+AUDIO_FILTER = "adelay=150:all=1,loudnorm=I=-16:TP=-1.5:LRA=11"
+MP3_BITRATE = "64k"
 ROOT = Path(__file__).resolve().parent.parent
 MODELS = ROOT / ".piper-voices"
 
@@ -32,7 +37,7 @@ def main() -> None:
         voice = PiperVoice.load(MODELS / f"{model}.onnx")
         out = ROOT / "audio" / folder
         # Recordings made with other settings (restored from an older CI cache) are thrown away.
-        settings = f"{model} {LENGTH_SCALE} {MP3_BITRATE}\n"
+        settings = f"{model} {LENGTH_SCALE} {NOISE_SCALE} {NOISE_W_SCALE} {AUDIO_FILTER} {MP3_BITRATE}\n"
         marker = out / "settings.txt"
         if marker.exists() and marker.read_text() != settings:
             shutil.rmtree(out)
@@ -49,9 +54,10 @@ def main() -> None:
                 continue
             with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
                 with wave.open(tmp.name, "wb") as wav:
-                    voice.synthesize_wav(item["text"], wav, syn_config=SynthesisConfig(length_scale=LENGTH_SCALE))
+                    voice.synthesize_wav(item["text"], wav, syn_config=SynthesisConfig(
+                        length_scale=LENGTH_SCALE, noise_scale=NOISE_SCALE, noise_w_scale=NOISE_W_SCALE))
                 subprocess.run(
-                    ["ffmpeg", "-loglevel", "error", "-y", "-i", tmp.name, "-ac", "1", "-b:a", MP3_BITRATE, str(mp3)],
+                    ["ffmpeg", "-loglevel", "error", "-y", "-i", tmp.name, "-af", AUDIO_FILTER, "-ar", "24000", "-ac", "1", "-b:a", MP3_BITRATE, str(mp3)],
                     check=True,
                 )
             made += 1

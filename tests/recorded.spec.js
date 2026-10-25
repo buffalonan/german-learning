@@ -35,7 +35,7 @@ test.describe("recorded voices", () => {
     await mockSpeech(page);
     const requested = await withRecordings(page);
     await open(page);
-    await expect(page.locator("#voice option")).toHaveText(["Kerstin (aufgenommen)", "Thorsten (aufgenommen)", "Anna"]);
+    await expect(page.locator("#voice option")).toHaveText(["Kerstin (aufgenommen)", "Thorsten (aufgenommen)"]);
     await expect(page.locator("#voice")).toHaveValue("rec:kerstin");
     await startRound(page, { topics: ["food"] });
     const c = await page.evaluate(() => game.deck[game.i]);
@@ -64,29 +64,29 @@ test.describe("recorded voices", () => {
     await expect.poll(() => spoken(page)).toEqual(["Guten Tag! Wie geht's?"]);
   });
 
-  test("a device voice the player picked stays picked", async ({ page }) => {
-    await mockSpeech(page);
+  test("the menu offers only them and Google Deutsch, which stays picked", async ({ page }) => {
+    await mockSpeech(page, { voices: [
+      { name: "Anna", lang: "de-DE", localService: true },
+      { name: "Google Deutsch", lang: "de-DE", localService: false },
+      { name: "Petra", lang: "de-DE", localService: true },
+    ] });
     const requested = await withRecordings(page);
     await open(page);
-    await page.selectOption("#voice", "Anna");
+    await expect(page.locator("#voice option")).toHaveText(["Kerstin (aufgenommen)", "Thorsten (aufgenommen)", "Google Deutsch (online)"]);
+    await page.selectOption("#voice", "Google Deutsch");
     await page.reload();
-    await expect(page.locator("#voice")).toHaveValue("Anna");
+    await expect(page.locator("#voice")).toHaveValue("Google Deutsch");
     await page.click("#testVoice");
-    expect(await spoken(page)).toEqual(["Guten Tag! Wie geht's?"]);
+    await expect.poll(() => page.evaluate(() => window.__spoken.map((s) => s.voice))).toEqual(["Google Deutsch"]);
     expect(requested).toEqual([]);
   });
 
-  test("the browser default voice, picked when there's no German voice, stays picked", async ({ page }) => {
-    await mockSpeech(page, { voices: [] });
-    const requested = await withRecordings(page);
+  test("a device voice saved before, no longer in the menu, gives way to Kerstin", async ({ page }) => {
+    await mockSpeech(page);
+    await page.addInitScript(() => localStorage.setItem("sagsDeutsch.settings", JSON.stringify({ voice: "Anna" })));
+    await withRecordings(page);
     await open(page);
-    await expect(page.locator("#voice option")).toHaveText(["Kerstin (aufgenommen)", "Thorsten (aufgenommen)", "Browser default"]);
-    await page.selectOption("#voice", "device");
-    await page.reload();
-    await expect(page.locator("#voice")).toHaveValue("device");
-    await page.click("#testVoice");
-    await expect.poll(() => spoken(page)).toEqual(["Guten Tag! Wie geht's?"]);
-    expect(requested).toEqual([]);
+    await expect(page.locator("#voice")).toHaveValue("rec:kerstin");
   });
 
   test("file names stay the same, so recordings from earlier builds still match", async ({ page }) => {
