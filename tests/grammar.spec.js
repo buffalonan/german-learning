@@ -131,6 +131,7 @@ test("keys do nothing until an answer is chosen, and only once", async ({ page }
 
 test("player names stay plain text in the turn line", async ({ page }) => {
   await open(page);
+  await page.click('#modeSeg [data-v="race"]');
   await page.fill("#p1", "<b>Ana</b>");
   await page.click('#areas [data-v="grammar"]');
   await page.click('#gmodeSeg [data-v="turns"]');

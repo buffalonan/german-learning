@@ -824,7 +824,7 @@ const asHTML = (v) => (v instanceof SafeHTML ? v.s : Array.isArray(v) ? v.map(as
 const html = (strings, ...vals) => new SafeHTML(strings.reduce((out, str, i) => out + str + (i < vals.length ? asHTML(vals[i]) : ""), ""));
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "race", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "", gmode: "turns", gcount: 10 };
+const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "practice", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "", gmode: "turns", gcount: 10 };
 let settings = { ...DEFAULTS };
 try {
   const saved = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null");

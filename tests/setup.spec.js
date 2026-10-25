@@ -24,8 +24,11 @@ test("start is disabled with no topics and enabled again with Select all", async
   await expect(page.locator("#avail")).toHaveText(`${total} cards in the chosen topics`);
 });
 
-test("player names only show in race mode", async ({ page }) => {
+test("practice is the default mode, and player names only show in race mode", async ({ page }) => {
   await open(page);
+  await expect(page.locator('#modeSeg [data-v="practice"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#players")).toBeHidden();
+  await page.click('#modeSeg [data-v="race"]');
   await expect(page.locator("#players")).toBeVisible();
   await page.click('#modeSeg [data-v="practice"]');
   await expect(page.locator("#players")).toBeHidden();
@@ -34,15 +37,15 @@ test("player names only show in race mode", async ({ page }) => {
 test("settings are remembered after a reload", async ({ page }) => {
   await open(page);
   await chooseTopics(page, ["animals"]);
+  await page.click('#modeSeg [data-v="race"]');
   await page.fill("#p1", "Ana");
-  await page.click('#modeSeg [data-v="practice"]');
   await page.click('#countSeg [data-v="40"]');
   await page.click('#hintSeg [data-v="es"]');
   await page.uncheck("#speak");
   await page.reload();
   await expect(page.locator('#topics [data-id="animals"]')).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator('#topics [data-id="food"]')).toHaveAttribute("aria-pressed", "false");
-  await expect(page.locator('#modeSeg [data-v="practice"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator('#modeSeg [data-v="race"]')).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator('#countSeg [data-v="40"]')).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator('#hintSeg [data-v="es"]')).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("#p1")).toHaveValue("Ana");
@@ -59,6 +62,7 @@ test("player names are shown as text, never run as code", async ({ page }) => {
   await open(page);
   const evil = "<svg/onload=f()>"; // fits the 16-character name limit
   await page.evaluate(() => { window.f = () => { window.__xss = 1; }; });
+  await page.click('#modeSeg [data-v="race"]');
   await page.fill("#p1", evil);
   await chooseTopics(page, ["food"]);
   await page.click("#start");
