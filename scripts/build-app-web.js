@@ -1,6 +1,7 @@
 // Copies the game into a folder ready to publish: www/ for the Android app (Capacitor packs it), or _site/ for the web.
 // Usage: node scripts/build-app-web.js [out dir, default www] [--web]
 //   --web leaves out capacitor.js, which only the app needs. npm run app:sync runs this and then cap sync.
+// The painted card illustrations (art.js and art/) are copied too.
 // If audio/ exists (recorded voices from scripts/build-audio.py), it's copied too and the page is told which voices it has.
 const fs = require("fs");
 const path = require("path");
@@ -34,5 +35,7 @@ if (voices.length) {
 
 fs.writeFileSync(path.join(out, "index.html"), page);
 fs.copyFileSync(path.join(root, "pictures.js"), path.join(out, "pictures.js"));
+fs.copyFileSync(path.join(root, "art.js"), path.join(out, "art.js"));
+fs.cpSync(path.join(root, "art"), path.join(out, "art"), { recursive: true });
 
 console.log(`Wrote ${fs.readdirSync(out).join(", ")} to ${path.relative(root, out) || "."}${voices.length ? ` with recorded voices: ${voices.join(", ")}` : ""}`);

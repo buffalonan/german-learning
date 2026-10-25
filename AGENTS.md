@@ -16,6 +16,8 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 | --- | --- |
 | `index.html` | The whole game: CSS, markup and one inline script. No framework, no build step. |
 | `pictures.js` | Generated. `window.PICS = { "🍎": "data:image/webp;base64,…" }` with 3D pictures keyed by emoji. Don't edit by hand. |
+| `art/<topic id>/<name>.webp`, `art.js` | Painted card illustrations (Ghibli-style, made by Ferran in Nano Banana from Claude's prompts), 640px WebP, about 20 KB each. `art.js` is generated: `window.ART` lists them. |
+| `scripts/add-art.py`, `scripts/build-art.js` | `python3 scripts/add-art.py <topic id> <pictures…>` crops, shrinks and saves pictures named after the German word into `art/<topic>/`, then runs `build-art.js` to rewrite `art.js`. Needs Pillow. |
 | `scripts/build-pictures.js` | Regenerates `pictures.js` from the emoji used in `index.html`, using Microsoft Fluent Emoji 3D (MIT) from the npm package `@lobehub/fluent-emoji-3d`. |
 | `android/` | Capacitor's Android project. Edited by hand only in `app/build.gradle` (version and signing from env vars) and the icons/splash. `app/src/main/assets/public` is generated and ignored. |
 | `capacitor.config.json` | App id `io.github.buffalonan.sagsdeutsch`, name, and `webDir: www`. |
@@ -30,6 +32,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 
 - **Word bank:** the `TOPICS` array. Each topic is `{ id, name (German), en, icon, items, cue? }`. Each card is `[front, german, article, english, spanish, feminine?]`.
   - `front` is an emoji, a `#rrggbb` colour swatch, or `n:12` for a numeral.
+  - A card with a painted illustration in `art/<topic id>/<artName(german)>.webp` (listed in `art.js`) shows it instead, on a rounded tile with no pastel disc. `artName` lowercases, turns ä/ö/ü/ß into ae/oe/ue/ss and other characters into `-` ("sich setzen" → `sich-setzen`), and must match `art_name` in `scripts/add-art.py`. Illustrations are keyed by topic and word, not emoji, because some emoji are shared (🪑 is both "sich setzen" and "Stuhl").
   - `article` is `der`, `die`, `das`, `pl` (shown as "die" with a Pl. mark) or `""` for none (verbs, colours, numbers, phrases).
   - `feminine` is the feminine job form, e.g. `"die Lehrerin"`.
   - `cue: true` (phrases) always shows a text cue on the front.
@@ -50,6 +53,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 - Elements are shown and hidden with `el.hidden`. The page's `[hidden] { display: none !important; }` rule is what makes that work, so keep it.
 - German must be correct: check the article, the plural and the spelling. Every card needs English and Spanish too.
 - A card with a new emoji needs a picture: run `node scripts/build-pictures.js`. The word bank test fails otherwise.
+- New illustrations go in with `scripts/add-art.py`, never by hand-editing `art.js`. Prompts and the approved originals are in the project's shared files (`illustrations/`). Each picture must belong to a card, and a test checks this.
 - `scripts/build-pictures.js` evaluates the `TOPICS` literal from this repo's own `index.html` with `Function`. That's a deliberate exception for a local build script. The no-`eval` rule is about the game code.
 - New or changed behaviour needs a Playwright test. Never skip or delete a test to get CI green.
 - The page must work at phone width without scrolling sideways, and in light and dark mode (all colours are CSS variables on `:root`).
@@ -76,7 +80,7 @@ npm run app:sync                       # copy the game into the Android project 
 
 ## Where it runs
 
-- **Web:** <https://buffalonan.github.io/german-learning/>, deployed by `pages.yml` on each merge to `main` that changes `index.html` or `pictures.js` (Pages source must be "GitHub Actions" in the repo settings).
+- **Web:** <https://buffalonan.github.io/german-learning/>, deployed by `pages.yml` on each merge to `main` that changes `index.html`, `pictures.js` or the illustrations (Pages source must be "GitHub Actions" in the repo settings).
 - **Android app:** sideloaded from the latest GitHub release (no Play Store). It updates when a new APK is installed over it.
-- **Local copy for phones:** the owner serves a copy from their computer on their home Wi-Fi (`python3 -m http.server <port> --bind 0.0.0.0`). It doesn't update by itself: copy `index.html` and `pictures.js` over after merging.
-- **Claude artifact:** a hosted copy for Claude's app is the same page with the `<!doctype>`, `<html>`, `<head>` and `<body>` wrapper lines removed, plus `pictures.js` as a supporting file.
+- **Local copy for phones:** the owner serves a copy from their computer on their home Wi-Fi (`python3 -m http.server <port> --bind 0.0.0.0`). It doesn't update by itself: copy `index.html`, `pictures.js`, `art.js` and `art/` over after merging.
+- **Claude artifact:** a hosted copy for Claude's app is the same page with the `<!doctype>`, `<html>`, `<head>` and `<body>` wrapper lines removed, plus `pictures.js`, `art.js` and the `art/` pictures as supporting files.

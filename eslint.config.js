@@ -33,7 +33,7 @@ module.exports = [
   {
     // Code inside page.evaluate() runs in the game page, where these are globals.
     files: ["tests/**/*.js"],
-    languageOptions: { globals: { game: "readonly", TOPICS: "readonly", PICS: "readonly", dealCard: "readonly", quiz: "readonly", GRAMMAR: "readonly" } },
+    languageOptions: { globals: { game: "readonly", TOPICS: "readonly", PICS: "readonly", dealCard: "readonly", quiz: "readonly", GRAMMAR: "readonly", startGame: "readonly", buildDeck: "readonly", artName: "readonly" } },
     // Index lookups on test fixtures are not user input.
     rules: { "security/detect-object-injection": "off", "security/detect-non-literal-regexp": "off" },
   },

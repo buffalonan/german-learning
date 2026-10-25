@@ -24,3 +24,20 @@ test("every card is complete and every picture exists", async ({ page }) => {
   });
   expect(problems).toEqual([]);
 });
+
+test("every illustration belongs to a card and its file exists", async ({ page, request }) => {
+  await open(page);
+  const { names, cards } = await page.evaluate(() => ({
+    names: window.ART,
+    cards: TOPICS.flatMap((t) => t.items.map((it) => `${t.id}/${artName(it[1])}`)),
+  }));
+  expect(names.length).toBeGreaterThan(0);
+  expect(names.filter((n) => !cards.includes(n))).toEqual([]);
+  for (const n of names) expect((await request.get(`/art/${n}.webp`)).ok(), n).toBe(true);
+});
+
+test("art names match the ones scripts/add-art.py makes", async ({ page }) => {
+  await open(page);
+  const got = await page.evaluate(() => ["aufstehen", "sich setzen", "Glühbirne", "Fuß", "E-Mail", "Öl"].map(artName));
+  expect(got).toEqual(["aufstehen", "sich-setzen", "gluehbirne", "fuss", "e-mail", "oel"]);
+});
