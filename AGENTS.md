@@ -72,6 +72,7 @@ npm run app:sync                       # copy the game into the Android project 
 
 ## Where it runs
 
+- **Web:** <https://buffalonan.github.io/german-learning/>, deployed by `pages.yml` on each merge to `main` that changes `index.html` or `pictures.js` (Pages source must be "GitHub Actions" in the repo settings).
 - **Android app:** sideloaded from the latest GitHub release (no Play Store). It updates when a new APK is installed over it.
 - **Local copy for phones:** the owner serves a copy from their computer on their home Wi-Fi (`python3 -m http.server <port> --bind 0.0.0.0`). It doesn't update by itself: copy `index.html` and `pictures.js` over after merging.
 - **Claude artifact:** a hosted copy for Claude's app is the same page with the `<!doctype>`, `<html>`, `<head>` and `<body>` wrapper lines removed, plus `pictures.js` as a supporting file.
