@@ -10,6 +10,8 @@ AI agents and reviewers: start with [AGENTS.md](AGENTS.md).
 
 **Play online:** <https://buffalonan.github.io/german-learning/>, published by `.github/workflows/pages.yml` on every merge to `main`.
 
+**Voices:** the online game and the Android app come with two recorded German voices, Kerstin and Thorsten, made with [Piper](https://github.com/OHF-Voice/piper1-gpl) during the build (`scripts/build-audio.py`), so they sound the same on every device. The device's own voices are still in the menu, and read anything that has no recording.
+
 - Pick topics (colours, numbers, food, verbs, home, work, animals, body, clothes, weather, science, town, everyday phrases).
 - **Race mode:** two players on one laptop. Player 1 claims a card with `A`, player 2 with `L`, `Space` flips, then award the point (`A`, `L`, or `N` for nobody).
 - **Practice mode:** flip, then `1` for "again" (the same card turns back over to try once more) or `2` for "got it".

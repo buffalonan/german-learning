@@ -4,7 +4,7 @@ name: Web
 on:
   push:
     branches: [main]
-    paths: ["index.html", "pictures.js", ".github/workflows/pages.yml"]
+    paths: ["index.html", "pictures.js", "scripts/**", ".github/**"]
   workflow_dispatch:
 
 permissions:
@@ -27,8 +27,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: ./.github/actions/recorded-voices
       - name: Collect the game's files
-        run: mkdir _site && cp index.html pictures.js _site/
+        run: node scripts/build-app-web.js _site --web
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
       - id: deployment
