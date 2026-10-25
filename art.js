@@ -84,6 +84,7 @@ window.ART = [
  "work/feuerwehrmann",
  "work/geld",
  "work/koch",
+ "work/kugelschreiber",
  "work/lehrer",
  "work/mechaniker",
  "work/papier",
