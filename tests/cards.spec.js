@@ -12,6 +12,24 @@ test.describe("card faces", () => {
     expect(loaded).toBe(true);
   });
 
+  test("cards with a painted illustration show it instead of the emoji", async ({ page }) => {
+    await open(page);
+    await startRound(page, { topics: ["verbs", "animals"], count: "0" });
+    await page.evaluate(() => startGame(buildDeck().filter((c) => c.de === "aufstehen")));
+    const img = page.locator("#fPic img.illo");
+    await expect(img).toHaveAttribute("src", "art/verbs/aufstehen.webp");
+    await expect.poll(() => img.evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
+    // The pastel disc is hidden behind illustrations, and the tile fits the card at phone width.
+    expect(await page.evaluate(() => getComputedStyle(document.querySelector(".front"), "::before").display)).toBe("none");
+    const [tile, card] = await page.evaluate(() => [document.querySelector(".illo").getBoundingClientRect(), document.querySelector(".front").getBoundingClientRect()].map((r) => [r.left, r.right]));
+    expect(tile[0]).toBeGreaterThanOrEqual(card[0]);
+    expect(tile[1]).toBeLessThanOrEqual(card[1]);
+    // A card without an illustration keeps its emoji picture.
+    await page.evaluate(() => startGame(buildDeck().filter((c) => c.de === "Hund")));
+    await expect(page.locator("#fPic img.pic3d")).toBeVisible();
+    await expect(page.locator("#fPic img.illo")).toHaveCount(0);
+  });
+
   test("colour cards show a swatch and number cards show the numeral", async ({ page }) => {
     await open(page);
     await startRound(page, { topics: ["colors"] });
