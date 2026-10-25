@@ -875,11 +875,39 @@ $("speak").onchange = (e) => { settings.speak = e.target.checked; save(); };
 /* ---------- Speech ---------- */
 let deVoices = [], deVoice = null;
 const ss = window.speechSynthesis;
+// Recorded voices: CI reads every German text aloud with Piper into audio/<voice>/<audioName(text)>.mp3
+// (scripts/build-audio.py). They sound the same on every device; anything missing falls back to the device voice.
+// The published copies (web and app) list the recorded voices in <meta name="recorded-voices">, added by
+// scripts/build-app-web.js; the plain index.html has none and uses the device voices only.
+const REC_NAMES = { kerstin: "Kerstin", thorsten: "Thorsten" };
+const REC_VOICES = (document.querySelector('meta[name="recorded-voices"]')?.content || "").split(" ")
+  .filter((id) => REC_NAMES[id]).map((id) => ({ id, name: REC_NAMES[id] }));
+const TEST_PHRASE = "Guten Tag! Wie geht's?";
+let recVoice = null, player = null;
+// File name for a text: its length and 32-bit FNV-1a hash. scripts/list-spoken.js gets names from this same function.
+function audioName(text) {
+  let h = 0x811c9dc5;
+  for (const ch of text) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+  return `${text.length}-${h.toString(16).padStart(8, "0")}`;
+}
+// Every text the game can read aloud; the audio build (scripts/list-spoken.js) records exactly these.
+// eslint-disable-next-line no-unused-vars
+function spokenTexts() {
+  const texts = new Set([TEST_PHRASE]);
+  for (const t of TOPICS) for (const [, de, art] of t.items) texts.add(deSpeech({ de, art }));
+  for (const l of GRAMMAR) for (const [s, a] of l.items) texts.add(filled({ s, a }));
+  for (const b of document.querySelectorAll("#theory .ex")) texts.add(b.textContent);
+  return [...texts];
+}
+const recPath = (v, text) => `audio/${v.id}/${audioName(text)}.mp3`;
 // The Android app's WebView has no speechSynthesis, so there the phone's own text-to-speech engine reads aloud.
 const tts = window.Capacitor?.isNativePlatform?.() ? window.Capacitor.registerPlugin("TextToSpeech") : null;
 const isGerman = (v) => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("de");
 function showVoices(voices) {
   deVoices = voices.filter(isGerman);
+  // A recorded voice is the default unless the player picked a device voice.
+  recVoice = REC_VOICES.find((r) => `rec:${r.id}` === settings.voice)
+    || (deVoices.some((v) => v.name === settings.voice) ? null : REC_VOICES[0] || null);
   // "Google Deutsch" only exists in Chrome, where the Mac's own voices (Anna…) get read by the English system voice instead.
   // Elsewhere (Safari, iPhone), the installed voices are the good ones.
   const local = deVoices.filter((v) => v.localService);
@@ -888,13 +916,13 @@ function showVoices(voices) {
     || local.find((v) => /anna|helena|katja|petra|markus|yannick/i.test(v.name))
     || local[0] || deVoices[0] || null;
   const sel = $("voice");
-  sel.innerHTML = html`${deVoices.length
-    ? deVoices.map((v) => html`<option value="${v.name}"${v === deVoice ? " selected" : ""}>${v.label || v.name}${v.localService ? "" : " (online)"}</option>`)
-    : html`<option value="">${tts ? "Phone default" : "Browser default"}</option>`}`;
+  sel.innerHTML = html`${REC_VOICES.map((r) => html`<option value="rec:${r.id}"${r === recVoice ? " selected" : ""}>${r.name} (aufgenommen)</option>`)}${deVoices.length
+    ? deVoices.map((v) => html`<option value="${v.name}"${!recVoice && v === deVoice ? " selected" : ""}>${v.label || v.name}${v.localService ? "" : " (online)"}</option>`)
+    : html`<option value=""${recVoice ? "" : " selected"}>${tts ? "Phone default" : "Browser default"}</option>`}`;
 }
 function pickVoice() {
-  if (tts) return loadNativeVoices();
-  if (ss) showVoices(ss.getVoices());
+  if (tts) { showVoices(deVoices); return loadNativeVoices(); }
+  showVoices(ss ? ss.getVoices() : []);
 }
 // The phone's engine takes a moment to start, so keep asking for its voices for a few seconds.
 async function loadNativeVoices(tries = 10) {
@@ -928,6 +956,22 @@ function soundProblem(msg) {
   for (const id of ["soundNote", "cardNote"]) { $(id).textContent = msg; $(id).hidden = false; }
 }
 function say(text) {
+  if (recVoice) { hush(); return sayRecorded(text); }
+  stopRecording(); // the device voices cut themselves off
+  deviceSay(text);
+}
+function stopRecording() {
+  if (player) { const a = player; player = null; a.pause(); }
+}
+// Plays the recording; if it's missing or won't play, the device voice reads the text instead.
+function sayRecorded(text) {
+  const a = player = new Audio(recPath(recVoice, text));
+  const fallback = () => { if (player === a) { player = null; deviceSay(text); } };
+  a.onerror = fallback;
+  a.onplaying = () => { $("cardNote").hidden = true; $("soundNote").hidden = true; };
+  a.play().catch((e) => { if (e.name !== "AbortError") fallback(); });
+}
+function deviceSay(text) {
   if (tts) return sayNative(text);
   if (!ss) return soundProblem("This browser can't read text aloud. Try Chrome, Edge or Safari.");
   if (!deVoice) pickVoice();
@@ -957,11 +1001,16 @@ function sayNative(text) {
   });
 }
 function hush() {
+  stopRecording();
   if (tts) tts.stop().catch(() => {});
-  else if (ss) ss.cancel();
+  else if (ss && (ss.speaking || ss.pending)) ss.cancel();
 }
-$("voice").onchange = (e) => { settings.voice = e.target.value; save(); deVoice = deVoices.find((v) => v.name === settings.voice) || deVoice; };
-$("testVoice").onclick = () => say("Guten Tag! Wie geht's?");
+$("voice").onchange = (e) => {
+  settings.voice = e.target.value; save();
+  recVoice = REC_VOICES.find((r) => `rec:${r.id}` === settings.voice) || null;
+  deVoice = deVoices.find((v) => v.name === settings.voice) || deVoice;
+};
+$("testVoice").onclick = () => say(TEST_PHRASE);
 
 let actx = null;
 function beep(freq) {

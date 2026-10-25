@@ -38,6 +38,7 @@ jobs:
           java-version: 21
           cache: gradle
       - run: npm ci
+      - uses: ./.github/actions/recorded-voices
       - name: Copy the game into the Android project
         run: npm run app:sync
       - name: Signing key

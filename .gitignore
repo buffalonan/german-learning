@@ -2,5 +2,9 @@ node_modules/
 test-results/
 playwright-report/
 
-# Built by scripts/build-app-web.js for the Android app
+# Built by scripts/build-app-web.js (app and web copies)
 www/
+_site/
+# Recorded voices, made in CI by scripts/build-audio.py
+audio/
+.piper-voices/
