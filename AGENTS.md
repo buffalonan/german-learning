@@ -32,7 +32,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
   - `article` is `der`, `die`, `das`, `pl` (shown as "die" with a Pl. mark) or `""` for none (verbs, colours, numbers, phrases).
   - `feminine` is the feminine job form, e.g. `"die Lehrerin"`.
   - `cue: true` (phrases) always shows a text cue on the front.
-  - Articles are colour-coded everywhere: der blue, die red, das green, plural brown.
+  - Articles are colour-coded everywhere: der blue, die red, das green, plural brown. The card back's border takes the article's colour too.
 - **Grammar:** the `GRAMMAR` array, one lesson per entry `{ id, name, en, icon, items }`. Each item is `[sentence with ___, answer, [1–3 wrong options], english, spanish, why]`; `why` is the English explanation shown after answering. The theory text is plain markup in `#theory`, one `<article data-lesson="…">` per lesson; `.ex` buttons there read their sentence aloud. Quiz state is the global `quiz`; `dealQuestion`, `choose`, `nextQuestion` and `finishQuiz` render it. Keys: 1–4 answer, Enter/Space next. "Take turns" alternates the players (names from the cards setup) with a point each; "Together" counts right answers.
 - **Screens:** `show(id)` switches between `setup`, `play`, `done`, `grammar`, `theory`, `quiz` and `qdone`; the area tabs show only on `setup` and `grammar`.
 - **Settings** are kept in `localStorage` under `sagsDeutsch.settings`, always inside try/catch: topics, mode (`race` or `practice`), player names, cards per round (0 means all), front hint (`none`, `en`, `es`), read aloud, voice, and for grammar `gmode` (`turns` or `together`) and `gcount` (0 means all).
@@ -50,6 +50,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 - A card with a new emoji needs a picture: run `node scripts/build-pictures.js`. The word bank test fails otherwise.
 - New or changed behaviour needs a Playwright test. Never skip or delete a test to get CI green.
 - The page must work at phone width without scrolling sideways, and in light and dark mode (all colours are CSS variables on `:root`).
+- **Look:** "claymorphism" chosen with the ui-ux-pro-max skill: soft 3D surfaces with 3-4px borders, double shadows (outer drop plus inner highlight), 18-28px radii, pastel tints for selected topics and lessons, and squishy buttons that scale down when pressed. Indigo `--primary` is the brand colour, `--good` green means progress and right answers. New screens reuse the tokens on `:root`: colours (`--table`, `--surface`, `--surface-2`, `--ink`, `--muted`, `--line`, `--primary`/`--primary-deep`/`--on-primary`, `--focus`, `--glow`, `--pastel-1`…`--pastel-5`, article and player colours), shadows `--clay`/`--clay-sm`/`--press`, radii `--r-s`/`--r-m`/`--r-l`, `--display` (Nunito, 800-900) for headings and German words and `--body` (DM Sans) for the rest. Controls use the `.i` line icons (`i-vol`, `i-back`, `i-book`, `i-redo`, `i-check`), never emoji. Tap targets are at least 44px. Section labels are sentence case, not all caps. Reuse `.sheet`, `.label`, `.seg`, `.ctl`, `.btn-main` before writing new components.
 
 ## Commands
 
