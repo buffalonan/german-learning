@@ -24,7 +24,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 | `scripts/build-app-web.js` | Copies the game into `www/` for the app (adding `<script src="capacitor.js">`) or, with `--web`, into `_site/` for Pages, plus `audio/` if it exists. Both folders are generated and ignored. |
 | `scripts/list-spoken.js`, `scripts/build-audio.py` | Make the recorded voices in `audio/` (run in CI, see below). |
 | `android-tests/` | Emulator smoke test of the real app, run only in CI by `android.yml`. |
-| `tests/*.spec.js` | Playwright tests, run at desktop and phone (Pixel 7) sizes. `tests/helpers.js` has the speech mock and round helpers. |
+| `tests/*.spec.js` | Playwright tests, run at desktop and phone (Pixel 7) sizes. `tests/helpers.js` has the speech mock and round helpers. `tests/palette.json` holds every Farben colour and every colour token in light and dark; `tests/colours.spec.js` fails if one changes, and also checks each colour card's colour on screen. After an intended colour change, run `UPDATE_PALETTE=1 npx playwright test colours --project=desktop` and commit the new `palette.json`. |
 | `REVIEW.md` | What a reviewer should flag as blocking or as a suggestion. |
 | `.github/workflows/` | CI: `tests.yml`, `security.yml`, `codeql.yml`, and `claude-review.yml`: Claude reviews each PR once when it opens (start a PR comment with `@claude review` for another look after new pushes), skipping generated and binary files such as `pictures.js`. |
 
