@@ -24,7 +24,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 | `android-tests/` | Emulator smoke test of the real app, run only in CI by `android.yml`. |
 | `tests/*.spec.js` | Playwright tests, run at desktop and phone (Pixel 7) sizes. `tests/helpers.js` has the speech mock and round helpers. |
 | `REVIEW.md` | What a reviewer should flag as blocking or as a suggestion. |
-| `.github/workflows/` | CI: `tests.yml`, `security.yml`, `codeql.yml`, and the Claude reviewer once that PR is merged. |
+| `.github/workflows/` | CI: `tests.yml`, `security.yml`, `codeql.yml`, and `claude-review.yml`: Claude reviews each PR once when it opens (start a PR comment with `@claude review` for another look after new pushes), skipping generated and binary files such as `pictures.js`. |
 
 ## How the game code works (index.html)
 
