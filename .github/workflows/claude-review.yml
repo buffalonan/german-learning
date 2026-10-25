@@ -30,7 +30,7 @@ jobs:
       )
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Comments never cancel a review.
+    # A new "@claude review" replaces a review that is still running; other comments never cancel it.
     concurrency:
       group: claude-review-${{ github.event.pull_request.number || github.event.issue.number }}
       cancel-in-progress: true
