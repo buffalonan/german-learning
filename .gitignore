@@ -8,3 +8,4 @@ _site/
 # Recorded voices, made in CI by scripts/build-audio.py
 audio/
 .piper-voices/
+__pycache__/
