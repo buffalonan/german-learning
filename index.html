@@ -880,9 +880,11 @@ const tts = window.Capacitor?.isNativePlatform?.() ? window.Capacitor.registerPl
 const isGerman = (v) => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("de");
 function showVoices(voices) {
   deVoices = voices.filter(isGerman);
-  // Voices installed on the computer play reliably; online ones (e.g. "Google Deutsch") can fail silently inside the page frame.
+  // "Google Deutsch" only exists in Chrome, where the Mac's own voices (Anna…) get read by the English system voice instead.
+  // Elsewhere (Safari, iPhone), the installed voices are the good ones.
   const local = deVoices.filter((v) => v.localService);
   deVoice = deVoices.find((v) => v.name === settings.voice)
+    || deVoices.find((v) => v.name === "Google Deutsch")
     || local.find((v) => /anna|helena|katja|petra|markus|yannick/i.test(v.name))
     || local[0] || deVoices[0] || null;
   const sel = $("voice");
