@@ -8,6 +8,8 @@ AI agents and reviewers: start with [AGENTS.md](AGENTS.md).
 
 `index.html` plus `pictures.js` (the card pictures) make up the game: open `index.html` in any browser, no build step.
 
+**Play online:** <https://buffalonan.github.io/german-learning/>, published by `.github/workflows/pages.yml` on every merge to `main`.
+
 - Pick topics (colours, numbers, food, verbs, home, work, animals, body, clothes, weather, science, town, everyday phrases).
 - **Race mode:** two players on one laptop. Player 1 claims a card with `A`, player 2 with `L`, `Space` flips, then award the point (`A`, `L`, or `N` for nobody).
 - **Practice mode:** flip, then `1` for "again" (the same card turns back over to try once more) or `2` for "got it".
