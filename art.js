@@ -76,12 +76,17 @@ window.ART = [
  "verbs/waschen",
  "verbs/weinen",
  "work/arzt",
+ "work/bauer",
  "work/buero",
  "work/chef",
  "work/computer",
  "work/e-mail",
+ "work/feuerwehrmann",
  "work/geld",
+ "work/koch",
  "work/lehrer",
+ "work/mechaniker",
  "work/papier",
+ "work/polizist",
  "work/termin"
 ];
