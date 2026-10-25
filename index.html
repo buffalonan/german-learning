@@ -939,16 +939,15 @@ function showVoices(voices) {
   const best = deVoices.find((v) => v.name === "Google Deutsch")
     || local.find((v) => /anna|helena|katja|petra|markus|yannick/i.test(v.name))
     || local[0] || deVoices[0] || null;
-  // With recordings, the menu offers only them and that one device voice; the device voice also reads any text without a recording.
+  // With recordings, the menu offers that one device voice and the recordings; the device voice also reads any text without a recording.
   const listed = REC_VOICES.length ? (best ? [best] : []) : deVoices;
-  // A recorded voice is the default unless the player picked a listed device voice ("device" is the browser's or phone's default).
-  const pickedDevice = (!REC_VOICES.length && settings.voice === "device") || listed.some((v) => v.name === settings.voice);
-  recVoice = REC_VOICES.find((r) => `rec:${r.id}` === settings.voice) || (pickedDevice ? null : REC_VOICES[0] || null);
+  // The device voice is the default (Ferran's choice); a recording plays only when picked, or when the device has no German voice.
+  recVoice = REC_VOICES.find((r) => `rec:${r.id}` === settings.voice) || (listed.length ? null : REC_VOICES[0] || null);
   deVoice = listed.find((v) => v.name === settings.voice) || best;
   const sel = $("voice");
-  sel.innerHTML = html`${REC_VOICES.map((r) => html`<option value="rec:${r.id}"${r === recVoice ? " selected" : ""}>${r.name} (aufgenommen)</option>`)}${listed.length
+  sel.innerHTML = html`${listed.length
     ? listed.map((v) => html`<option value="${v.name}"${!recVoice && v === deVoice ? " selected" : ""}>${v.label || v.name}${v.localService ? "" : " (online)"}</option>`)
-    : REC_VOICES.length ? "" : html`<option value="device" selected>${tts ? "Phone default" : "Browser default"}</option>`}`;
+    : REC_VOICES.length ? "" : html`<option value="device" selected>${tts ? "Phone default" : "Browser default"}</option>`}${REC_VOICES.map((r) => html`<option value="rec:${r.id}"${r === recVoice ? " selected" : ""}>${r.name} (aufgenommen)</option>`)}`;
 }
 function pickVoice() {
   if (tts) { showVoices(deVoices); return loadNativeVoices(); }
