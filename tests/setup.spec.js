@@ -68,3 +68,14 @@ test("player names are shown as text, never run as code", async ({ page }) => {
   expect(await page.evaluate(() => window.__xss)).toBeUndefined();
   expect(await page.locator("#play svg").count()).toBe(0);
 });
+
+test("voice names are shown as text, never run as code", async ({ page }) => {
+  const evil = "<img src=x onerror=f()>";
+  await mockSpeech(page, { voices: [{ name: evil, lang: "de-DE", localService: true }] });
+  await page.addInitScript(() => { window.f = () => { window.__xss = 1; }; });
+  await open(page);
+  await expect(page.locator("#voice option")).toHaveText(evil);
+  await expect(page.locator("#voice")).toHaveValue(evil);
+  expect(await page.evaluate(() => window.__xss)).toBeUndefined();
+  expect(await page.locator("#setup img[src='x']").count()).toBe(0);
+});
