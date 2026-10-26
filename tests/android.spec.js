@@ -31,7 +31,7 @@ test.describe("in the Android app", () => {
     await page.keyboard.press(" ");
     const art = c.art === "pl" ? "die" : c.art;
     // The plugin picks a voice by its place in the phone's full voice list.
-    expect(await page.evaluate(() => window.__spoken)).toEqual([{ text: `${art} ${c.de}`, voice: 1, lang: "de-DE" }]);
+    expect(await page.evaluate(() => window.__spoken)).toEqual([{ text: `${art} ${c.de}`, voice: 1, lang: "de-DE", pitch: 1 }]);
     await page.click("#quit");
     expect(await page.evaluate(() => window.__stopped)).toBe(1);
   });
@@ -54,6 +54,16 @@ test.describe("in the Android app", () => {
     await page.click("#testVoice");
     await expect(page.locator("#soundNote")).toContainText("Install voice data → Deutsch");
     expect(await page.evaluate(() => window.__spoken[0].lang)).toBe("de-DE");
+  });
+
+  test("a listening conversation is read line by line, the second speaker lower", async ({ page }) => {
+    await mockNativeSpeech(page, { voices: phoneVoices });
+    await open(page);
+    await page.click('#areas [data-v="listen"]');
+    for (const id of ["announce", "voicemail", "radio"]) await page.click(`#kinds [data-id="${id}"]`);
+    await page.click("#lstart");
+    const lines = await page.evaluate(() => listen.deck[listen.i].lines);
+    await expect.poll(() => page.evaluate(() => window.__spoken.map((s) => [s.text, s.pitch]))).toEqual(lines.map((l, n) => [l, n % 2 ? 0.7 : 1]));
   });
 });
 

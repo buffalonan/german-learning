@@ -9,8 +9,8 @@ function mockSpeech(page, { voices = [{ name: "Anna", lang: "de-DE", localServic
       getVoices: () => voices,
       cancel() {}, resume() {}, addEventListener() {},
       speak(u) {
-        window.__spoken.push({ text: u.text, voice: u.voice ? u.voice.name : null, lang: u.lang });
-        if (plays) setTimeout(() => u.onstart && u.onstart(), 0);
+        window.__spoken.push({ text: u.text, voice: u.voice ? u.voice.name : null, lang: u.lang, pitch: u.pitch });
+        if (plays) setTimeout(() => { if (u.onstart) u.onstart(); if (u.onend) u.onend(); }, 0);
       },
     };
     Object.defineProperty(window, "speechSynthesis", { value: synth, configurable: true });
@@ -31,7 +31,7 @@ function mockNativeSpeech(page, { voices = [], notReadyFor = 1, speakError = nul
         return { voices };
       },
       async speak(o) {
-        window.__spoken.push({ text: o.text, voice: o.voice, lang: o.lang });
+        window.__spoken.push({ text: o.text, voice: o.voice, lang: o.lang, pitch: o.pitch });
         if (speakError) throw new Error(speakError);
       },
       async stop() { window.__stopped++; },
