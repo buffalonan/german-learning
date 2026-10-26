@@ -47,6 +47,8 @@ test.describe("card faces", () => {
     await expect(swatch).toHaveCSS("background-color", `rgb(${r}, ${g}, ${b})`);
     await page.click("#quit");
     await startRound(page, { topics: ["numbers"] });
+    // Every number has a painted picture too, so use a made-up number card for the plain numeral.
+    await page.evaluate(() => startGame([{ ...buildDeck()[0], front: "n:77", de: "siebenundsiebzig" }]));
     const n = await page.evaluate(() => game.deck[game.i].front.slice(2));
     await expect(page.locator("#fPic .num")).toHaveText(n);
   });
