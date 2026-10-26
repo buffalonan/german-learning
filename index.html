@@ -147,7 +147,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .topic-chip .ico { grid-row: 1 / 3; font-family: var(--emoji); font-size: 1.6rem; line-height: 1; transition: filter .18s, opacity .18s; }
 .ico img, .mi img { width: 2.4rem; height: 2.4rem; display: block; }
 .topic-chip b { font-family: var(--display); font-weight: 800; font-size: 1.02rem; line-height: 1.2; min-width: 0; hyphens: auto; overflow-wrap: anywhere; }
-.topic-chip span.sub { font-size: .8rem; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+.topic-chip span.sub { font-size: .8rem; color: var(--muted); min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
 .topic-chip[aria-pressed="true"] { border-color: var(--primary); box-shadow: var(--clay-sm); background: var(--pastel-2); }
 .topic-chip[aria-pressed="true"]:nth-child(5n+1) { background: var(--pastel-1); }
 .topic-chip[aria-pressed="true"]:nth-child(5n+3) { background: var(--pastel-3); }
@@ -320,8 +320,23 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .feedback .why { margin: 0; max-width: 46ch; }
 .mistakes li { grid-template-columns: 1fr; }
 
+/* Listening */
+.play-row { margin-top: 0; }
+.lq { font-family: var(--display); font-weight: 900; font-size: clamp(1.4rem, 5vw, 1.9rem); line-height: 1.2; margin: 0; overflow-wrap: anywhere; }
+.lopts { flex-direction: column; align-items: stretch; max-width: 460px; width: 100%; margin: 0 auto; }
+.lopts .opt { justify-content: space-between; text-align: left; font-size: 1.1rem; }
+.lopts.locked .opt:not(.bad) { opacity: .55; }
+.script { display: grid; gap: 6px; width: 100%; max-width: 560px; text-align: left; background: var(--surface-2); border-radius: var(--r-m); padding: 12px 16px; }
+.script p { margin: 0; }
+.script .who { font-weight: 800; font-size: .8rem; color: var(--muted); margin-right: 6px; }
+.ltr { max-width: 560px; }
+.ltr div { grid-template-columns: 2.4em 1fr; }
+.ltr dd { font-size: .95rem; }
+
 @media (max-width: 480px) {
   .sheet { padding: 20px 16px; border-radius: 24px; }
+  .areas { gap: 2px; }
+  .areas button { padding: 9px 11px; font-size: .94rem; }
   .scores { width: 100%; }
   .score { flex: 1; justify-content: space-between; }
 }
@@ -338,6 +353,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
     <nav class="areas" id="areas" aria-label="Sections">
       <button type="button" data-v="setup">Wortkarten</button>
       <button type="button" data-v="grammar">Grammatik</button>
+      <button type="button" data-v="listen">Hören</button>
     </nav>
     <button class="theme-btn" id="theme" type="button"></button>
   </div>
@@ -580,6 +596,84 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
       <p class="tip"><b>Para hispanohablantes:</b> <i>esperar a alguien</i> is warten auf, never für. <i>Hace una semana</i> is vor einer Woche, and <i>desde hace dos años</i> is seit zwei Jahren with the present tense.</p>
       <div class="start-row"><button class="btn-main" data-quiz="preps" type="button">Jetzt üben</button></div>
     </article>
+  </section>
+
+  <section id="listen" hidden>
+    <div class="intro">
+      <div class="plate"><h1>Hören</h1><small>Durchsagen · Anrufe · Gespräche</small></div>
+      <p>Read the question, listen to a short announcement, voicemail or conversation, and pick the right answer, like in the Goethe A2 and B1 listening test. Play it as often as you need.</p>
+    </div>
+    <div class="sheet">
+      <div class="field">
+        <div class="field-head">
+          <span class="label">Texte</span>
+          <span><button class="linkish" id="allKinds" type="button">Select all</button></span>
+        </div>
+        <div class="topics" id="kinds"></div>
+      </div>
+      <div class="field">
+        <span class="label">Spielart</span>
+        <div class="seg" id="lmodeSeg">
+          <button type="button" data-v="race">Race</button>
+          <button type="button" data-v="practice">Practice</button>
+        </div>
+        <p class="help" id="lmodeHelp"></p>
+      </div>
+      <div class="field">
+        <span class="label">Texte pro Runde</span>
+        <div class="seg" id="lcountSeg">
+          <button type="button" data-v="5">5</button>
+          <button type="button" data-v="10">10</button>
+          <button type="button" data-v="0">All</button>
+        </div>
+        <p class="help">The voice is the one picked under Wortkarten. In conversations the second speaker gets the other recorded voice, or a lower one.</p>
+      </div>
+      <div class="start-row">
+        <button class="btn-main" id="lstart" type="button">Los geht's</button>
+        <span class="avail" id="lavail"></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="hear" hidden>
+    <div class="bar">
+      <button class="ghost" id="hearQuit" type="button"><span class="i i-back" aria-hidden="true"></span> Hören</button>
+      <div class="progress"><span id="lprog">1 / 10</span><div class="track"><i id="lprogbar"></i></div></div>
+      <div class="scores" id="lscores"></div>
+    </div>
+    <div class="qcard">
+      <div class="ctopic"><span id="lKind"></span></div>
+      <div class="controls play-row"><button class="ctl big" id="lPlay" type="button"><span class="i i-vol" aria-hidden="true"></span> Anhören <span class="k">R</span></button></div>
+      <p class="lq" id="lQuestion"></p>
+      <p class="turn" id="lTurn" aria-live="polite"></p>
+      <div class="opts lopts" id="lOpts"></div>
+      <div class="controls" id="lBuzz"></div>
+      <div class="feedback" id="lFeedback" aria-live="polite" hidden>
+        <p class="verdict" id="lVerdict"></p>
+        <div class="script" id="lScript"></div>
+        <dl class="tr ltr">
+          <div><dt>EN</dt><dd id="lEn"></dd></div>
+          <div><dt>ES</dt><dd id="lEs"></dd></div>
+        </dl>
+        <div class="controls"><button class="ctl big" id="lNext" type="button">Weiter <span class="k">Enter</span></button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ldone" hidden>
+    <div class="sheet result">
+      <h2 id="ldoneTitle"></h2>
+      <div class="final" id="lfinal"></div>
+      <div class="field" id="lmissedWrap">
+        <span class="label">Listen to these again</span>
+        <ul class="missed mistakes" id="lmissed"></ul>
+      </div>
+      <div class="start-row">
+        <button class="btn-main" id="lagain" type="button">Noch mal</button>
+        <button class="ctl" id="lreplayMissed" type="button">Replay the missed texts</button>
+        <button class="ctl" id="ltoMenu" type="button">Hören</button>
+      </div>
+    </div>
   </section>
 
   <section id="quiz" hidden>
@@ -878,6 +972,148 @@ const GRAMMAR = [
   ]}
 ];
 
+// Listening text: [lines read aloud, question, answer, [wrong options], english, spanish]
+// Numbers in the lines are written as words so every voice reads them the same way.
+// In a dialogue (dialogue: true) the lines alternate between two speakers.
+const LISTENING = [
+  { id: "announce", name: "Durchsagen", en: "Public notices", icon: "🚉", items: [
+    [["Achtung an Gleis sieben: Der ICE nach München, planmäßige Abfahrt vierzehn Uhr zweiunddreißig, hat heute circa zwanzig Minuten Verspätung. Wir bitten um Entschuldigung."],
+      "Wann fährt der Zug nach München ab?", "ungefähr um 14:52 Uhr", ["um 14:32 Uhr", "um 14:20 Uhr"],
+      "Attention, platform 7: the ICE to Munich, scheduled to leave at 14:32, is running about 20 minutes late today. We apologise.",
+      "Atención, vía 7: el ICE a Múnich, con salida prevista a las 14:32, lleva hoy unos 20 minutos de retraso. Disculpen las molestias."],
+    [["Bitte beachten Sie: Der Regionalexpress nach Hamburg fährt heute nicht von Gleis drei, sondern von Gleis acht ab."],
+      "Wo fährt der Zug nach Hamburg ab?", "von Gleis 8", ["von Gleis 3", "von Gleis 13"],
+      "Please note: today the regional express to Hamburg leaves from platform 8, not platform 3.",
+      "Atención: hoy el regional exprés a Hamburgo no sale de la vía 3, sino de la vía 8."],
+    [["Liebe Kundinnen und Kunden, heute im Angebot: ein Kilo Tomaten für nur einen Euro neunundneunzig. Und an unserer Käsetheke bekommen Sie zwanzig Prozent Rabatt auf alle Käsesorten."],
+      "Was ist heute billiger?", "Tomaten und Käse", ["Brot und Käse", "Tomaten und Wurst"],
+      "Dear customers, on offer today: a kilo of tomatoes for just €1.99. And at our cheese counter you get 20 percent off all cheeses.",
+      "Estimados clientes, hoy en oferta: un kilo de tomates por solo 1,99 euros. Y en nuestro mostrador de quesos tienen un 20 % de descuento en todos los quesos."],
+    [["Letzter Aufruf für die Passagiere des Fluges nach Barcelona. Bitte kommen Sie sofort zum Gate B zwölf. Das Gate schließt in fünf Minuten."],
+      "Was sollen die Passagiere tun?", "sofort zum Gate gehen", ["fünf Minuten warten", "zur Information gehen"],
+      "Last call for passengers on the flight to Barcelona. Please come to gate B12 immediately. The gate closes in five minutes.",
+      "Última llamada para los pasajeros del vuelo a Barcelona. Por favor, vayan inmediatamente a la puerta B12. La puerta se cierra en cinco minutos."],
+    [["Liebe Kunden, unser Geschäft schließt in fünfzehn Minuten. Bitte kommen Sie jetzt zur Kasse. Morgen sind wir ab neun Uhr wieder für Sie da."],
+      "Wann öffnet das Geschäft morgen?", "um 9 Uhr", ["in 15 Minuten", "um 10 Uhr"],
+      "Dear customers, our shop closes in fifteen minutes. Please come to the checkout now. We'll be open again tomorrow from 9 o'clock.",
+      "Estimados clientes, nuestra tienda cierra en quince minutos. Por favor, pasen ahora por caja. Mañana volvemos a abrir a partir de las nueve."],
+    [["Nächster Halt: Hauptbahnhof. Ausstieg in Fahrtrichtung links. Sie haben Anschluss an die U-Bahn-Linien zwei und vier."],
+      "Auf welcher Seite steigt man aus?", "links", ["rechts", "auf beiden Seiten"],
+      "Next stop: main station. Exit on the left in the direction of travel. Connections to underground lines 2 and 4.",
+      "Próxima parada: estación central. Salida por la izquierda en el sentido de la marcha. Correspondencia con las líneas 2 y 4 del metro."],
+    [["Liebe Besucherinnen und Besucher, um fünfzehn Uhr gibt es eine kostenlose Führung durch die neue Ausstellung. Wir treffen uns vor dem Museumscafé im ersten Stock."],
+      "Wo ist der Treffpunkt für die Führung?", "vor dem Café", ["an der Kasse", "im Erdgeschoss"],
+      "Dear visitors, at 3 pm there is a free guided tour of the new exhibition. We meet in front of the museum café on the first floor.",
+      "Estimados visitantes, a las tres hay una visita guiada gratuita por la nueva exposición. Nos vemos delante de la cafetería del museo, en la primera planta."],
+    [["Wegen Bauarbeiten fahren am Wochenende zwischen Ostbahnhof und Flughafen keine Züge. Bitte benutzen Sie die Busse vor dem Bahnhof."],
+      "Wie kommt man am Wochenende zum Flughafen?", "mit dem Bus", ["mit dem Zug", "mit dem Taxi"],
+      "Because of building work there are no trains between the east station and the airport at the weekend. Please use the buses in front of the station.",
+      "Por obras, el fin de semana no circulan trenes entre la estación del este y el aeropuerto. Por favor, utilicen los autobuses que hay delante de la estación."]
+  ]},
+  { id: "voicemail", name: "Anrufbeantworter", en: "Voicemails", icon: "📱", items: [
+    [["Hallo Anna, hier ist Julia. Wir wollten doch heute Abend ins Kino gehen. Leider muss ich länger arbeiten. Können wir den Film morgen sehen? Ruf mich bitte zurück!"],
+      "Was möchte Julia?", "morgen ins Kino gehen", ["heute Abend kochen", "allein ins Kino gehen"],
+      "Hi Anna, it's Julia. We were going to go to the cinema tonight. Unfortunately I have to work late. Can we see the film tomorrow? Please call me back!",
+      "Hola, Anna, soy Julia. Íbamos a ir al cine esta noche, pero tengo que trabajar hasta tarde. ¿Podemos ver la película mañana? ¡Llámame, por favor!"],
+    [["Guten Tag, Frau Schneider, hier ist die Praxis Doktor Weber. Ihr Termin am Donnerstag um zehn Uhr muss leider ausfallen. Können Sie stattdessen am Freitag um halb neun kommen? Bitte rufen Sie uns kurz an."],
+      "Wann soll Frau Schneider kommen?", "am Freitag um 8:30 Uhr", ["am Donnerstag um 10 Uhr", "am Freitag um 9:30 Uhr"],
+      "Hello Ms Schneider, this is Dr Weber's surgery. Unfortunately your appointment on Thursday at 10 has to be cancelled. Could you come on Friday at half past eight instead? Please give us a quick call.",
+      "Buenos días, señora Schneider, le llamamos de la consulta del doctor Weber. Lamentablemente tenemos que anular su cita del jueves a las diez. ¿Podría venir el viernes a las ocho y media? Llámenos, por favor."],
+    [["Hallo Herr Fischer, hier ist die Autowerkstatt Braun. Ihr Auto ist fertig. Sie können es heute bis achtzehn Uhr abholen. Die Reparatur kostet zweihundertdreißig Euro."],
+      "Was soll Herr Fischer heute machen?", "das Auto abholen", ["das Auto in die Werkstatt bringen", "morgen wieder anrufen"],
+      "Hello Mr Fischer, this is Braun's garage. Your car is ready. You can pick it up today until 6 pm. The repair costs 230 euros.",
+      "Hola, señor Fischer, le llamamos del taller Braun. Su coche ya está listo. Puede recogerlo hoy hasta las seis de la tarde. La reparación cuesta 230 euros."],
+    [["Hallo Schatz, hier ist Mama. Am Sonntag hat Oma Geburtstag. Wir essen um zwölf Uhr bei uns. Kannst du bitte einen Kuchen mitbringen? Getränke haben wir genug."],
+      "Was soll man am Sonntag mitbringen?", "einen Kuchen", ["Getränke", "Blumen"],
+      "Hi love, it's Mum. It's Grandma's birthday on Sunday. We're eating at our place at 12. Could you bring a cake, please? We've got plenty to drink.",
+      "Hola, cariño, soy mamá. El domingo es el cumpleaños de la abuela. Comemos en casa a las doce. ¿Puedes traer un pastel? Bebidas tenemos de sobra."],
+    [["Hi, hier ist Tobias. Ich bin krank und komme heute nicht ins Büro. Kannst du bitte um vierzehn Uhr die Besprechung mit Frau Klein machen? Die Unterlagen liegen auf meinem Schreibtisch."],
+      "Wo sind die Unterlagen?", "auf dem Schreibtisch von Tobias", ["bei Frau Klein", "im Besprechungsraum"],
+      "Hi, it's Tobias. I'm ill and won't be in the office today. Could you do the meeting with Ms Klein at 2 pm, please? The papers are on my desk.",
+      "Hola, soy Tobias. Estoy enfermo y hoy no voy a la oficina. ¿Puedes hacer tú la reunión con la señora Klein a las dos? Los documentos están en mi escritorio."],
+    [["Guten Tag, hier spricht Herr Wolf, der Hausmeister. Morgen zwischen acht und zwölf Uhr gibt es im ganzen Haus kein Wasser, weil wir die Rohre reparieren. Vielen Dank für Ihr Verständnis."],
+      "Was gibt es morgen Vormittag nicht?", "Wasser", ["Strom", "Heizung"],
+      "Hello, this is Mr Wolf, the caretaker. Tomorrow between 8 and 12 there will be no water in the whole building, because we're repairing the pipes. Thank you for your understanding.",
+      "Buenos días, le habla el señor Wolf, el conserje. Mañana entre las ocho y las doce no habrá agua en todo el edificio, porque vamos a reparar las tuberías. Gracias por su comprensión."],
+    [["Guten Abend, hier ist das Restaurant Da Marco. Sie haben für Samstag einen Tisch für vier Personen reserviert. Leider ist um neunzehn Uhr schon alles voll. Wir haben aber um einundzwanzig Uhr noch einen Tisch frei. Passt Ihnen das?"],
+      "Wann ist am Samstag noch ein Tisch frei?", "um 21 Uhr", ["um 19 Uhr", "um 20 Uhr"],
+      "Good evening, this is the restaurant Da Marco. You booked a table for four on Saturday. Unfortunately we're already full at 7 pm. But we still have a table free at 9 pm. Does that suit you?",
+      "Buenas tardes, le llamamos del restaurante Da Marco. Ha reservado una mesa para cuatro personas el sábado. Por desgracia, a las siete ya está todo lleno, pero a las nueve todavía tenemos una mesa libre. ¿Le viene bien?"],
+    [["Hey, hier ist Lukas. Ich ziehe am Samstag um und brauche Hilfe. Kannst du um neun Uhr zu meiner alten Wohnung kommen? Für Pizza und Getränke ist gesorgt!"],
+      "Warum ruft Lukas an?", "Er braucht Hilfe beim Umzug.", ["Er lädt zum Pizzaessen ein.", "Er sucht eine neue Wohnung."],
+      "Hey, it's Lukas. I'm moving house on Saturday and I need help. Can you come to my old flat at 9? Pizza and drinks are on me!",
+      "Hola, soy Lukas. El sábado me mudo y necesito ayuda. ¿Puedes venir a mi piso antiguo a las nueve? ¡Pizza y bebida corren de mi cuenta!"]
+  ]},
+  { id: "talks", name: "Gespräche", en: "Conversations", icon: "🗣️", dialogue: true, items: [
+    [["Guten Morgen! Was darf es sein?", "Ich hätte gern vier Brötchen und ein Vollkornbrot.", "Das Vollkornbrot ist leider aus. Möchten Sie ein Roggenbrot?", "Ja, gut, dann nehme ich das."],
+      "Welches Brot gibt es nicht mehr?", "Vollkornbrot", ["Roggenbrot", "Brötchen"],
+      "– Good morning! What can I get you? – I'd like four bread rolls and a wholemeal loaf. – I'm afraid the wholemeal bread has sold out. Would you like a rye loaf? – Yes, fine, I'll take that.",
+      "– ¡Buenos días! ¿Qué le pongo? – Quería cuatro panecillos y un pan integral. – Lo siento, el pan integral se ha acabado. ¿Quiere un pan de centeno? – Vale, pues me llevo ese."],
+    [["Praxis Doktor Lang, guten Tag.", "Guten Tag, ich brauche einen Termin. Ich habe seit drei Tagen Halsschmerzen.", "Können Sie heute um sechzehn Uhr kommen?", "Ja, das passt. Vielen Dank!"],
+      "Wann ist der Termin?", "heute um 16 Uhr", ["in drei Tagen", "morgen um 16 Uhr"],
+      "– Dr Lang's surgery, hello. – Hello, I need an appointment. I've had a sore throat for three days. – Can you come today at 4 pm? – Yes, that works. Thank you very much!",
+      "– Consulta del doctor Lang, buenos días. – Buenos días, necesito una cita. Me duele la garganta desde hace tres días. – ¿Puede venir hoy a las cuatro? – Sí, me va bien. ¡Muchas gracias!"],
+    [["Entschuldigung, wie komme ich zur Post?", "Gehen Sie hier geradeaus bis zur Ampel und dann links. Die Post ist neben der Apotheke.", "Ist das weit?", "Nein, nur fünf Minuten zu Fuß."],
+      "Wo ist die Post?", "neben der Apotheke", ["an der Ampel", "gegenüber der Bank"],
+      "– Excuse me, how do I get to the post office? – Go straight on here to the traffic lights and then left. The post office is next to the pharmacy. – Is it far? – No, only five minutes on foot.",
+      "– Perdone, ¿cómo llego a correos? – Siga recto hasta el semáforo y luego a la izquierda. Correos está al lado de la farmacia. – ¿Está lejos? – No, solo a cinco minutos a pie."],
+    [["Kann ich Ihnen helfen?", "Ja, ich suche diese Jacke in Größe M.", "In M haben wir sie nur noch in Schwarz. Die blaue gibt es nur noch in L.", "Schade. Dann probiere ich die schwarze."],
+      "Welche Farbe gibt es in Größe M?", "Schwarz", ["Blau", "Grau"],
+      "– Can I help you? – Yes, I'm looking for this jacket in size M. – In M we only have it in black now. The blue one is only left in L. – Pity. I'll try the black one, then.",
+      "– ¿Le puedo ayudar? – Sí, busco esta chaqueta en la talla M. – En la M solo nos queda en negro. La azul solo queda en la L. – Qué pena. Entonces me pruebo la negra."],
+    [["Was machst du am Samstag?", "Vormittags gehe ich einkaufen, aber nachmittags habe ich Zeit.", "Wollen wir dann zusammen schwimmen gehen?", "Gute Idee! Treffen wir uns um drei am Schwimmbad?"],
+      "Wann treffen sich die beiden?", "am Samstag um 15 Uhr", ["am Samstagvormittag", "am Sonntag um 15 Uhr"],
+      "– What are you doing on Saturday? – In the morning I'm going shopping, but I'm free in the afternoon. – Shall we go swimming together, then? – Good idea! Shall we meet at three at the pool?",
+      "– ¿Qué haces el sábado? – Por la mañana voy a la compra, pero por la tarde tengo tiempo. – ¿Vamos a nadar juntos? – ¡Buena idea! ¿Quedamos a las tres en la piscina?"],
+    [["Haben Sie schon gewählt?", "Ja, ich nehme die Tomatensuppe und danach das Schnitzel mit Pommes.", "Und was möchten Sie trinken?", "Ein großes Wasser, bitte. Ohne Kohlensäure."],
+      "Was trinkt der Gast?", "stilles Wasser", ["Wasser mit Kohlensäure", "Apfelsaft"],
+      "– Are you ready to order? – Yes, I'll have the tomato soup and then the schnitzel with chips. – And what would you like to drink? – A large water, please. Still.",
+      "– ¿Ya han elegido? – Sí, tomaré la sopa de tomate y después el escalope con patatas fritas. – ¿Y para beber? – Un agua grande, por favor. Sin gas."],
+    [["Eine Fahrkarte nach Köln, bitte.", "Einfach oder hin und zurück?", "Hin und zurück. Ich komme am Sonntag wieder.", "Das macht neunundfünfzig Euro, bitte."],
+      "Wie viel kostet die Fahrkarte?", "59 Euro", ["95 Euro", "49 Euro"],
+      "– A ticket to Cologne, please. – Single or return? – Return. I'm coming back on Sunday. – That's 59 euros, please.",
+      "– Un billete a Colonia, por favor. – ¿Solo ida o ida y vuelta? – Ida y vuelta. Vuelvo el domingo. – Son 59 euros, por favor."],
+    [["Hallo, wie geht's dir? Du siehst müde aus.", "Ach, ich habe schlecht geschlafen. Die Nachbarn haben bis drei Uhr morgens gefeiert.", "Oh nein! Trink einen Kaffee, dann geht's dir besser."],
+      "Warum ist die Person müde?", "Die Nachbarn haben gefeiert.", ["Die Arbeit war anstrengend.", "Der Kaffee war zu stark."],
+      "– Hi, how are you? You look tired. – Oh, I slept badly. The neighbours partied until three in the morning. – Oh no! Have a coffee, you'll feel better.",
+      "– Hola, ¿qué tal? Pareces cansado. – Ay, he dormido mal. Los vecinos estuvieron de fiesta hasta las tres de la mañana. – ¡Qué mal! Tómate un café y te sentirás mejor."],
+    [["Guten Abend, ich habe ein Zimmer reserviert. Mein Name ist Berger.", "Herzlich willkommen! Ein Einzelzimmer für zwei Nächte. Frühstück gibt es von sieben bis zehn Uhr.", "Prima. Gibt es auch WLAN?", "Ja, das Passwort steht auf Ihrer Zimmerkarte."],
+      "Bis wann gibt es Frühstück?", "bis 10 Uhr", ["bis 7 Uhr", "bis 9 Uhr"],
+      "– Good evening, I've booked a room. My name is Berger. – Welcome! A single room for two nights. Breakfast is from 7 to 10. – Great. Is there Wi-Fi as well? – Yes, the password is on your room card.",
+      "– Buenas noches, tengo una habitación reservada. Me llamo Berger. – ¡Bienvenido! Una habitación individual para dos noches. El desayuno es de siete a diez. – Estupendo. ¿Hay wifi? – Sí, la contraseña está en la tarjeta de su habitación."],
+    [["Kannst du mir kurz helfen? Der Drucker funktioniert nicht.", "Hast du schon Papier nachgelegt?", "Ja, aber er druckt trotzdem nicht.", "Dann ruf am besten die IT an."],
+      "Was ist das Problem?", "Der Drucker druckt nicht.", ["Es gibt kein Papier mehr.", "Der Computer ist kaputt."],
+      "– Can you help me for a moment? The printer isn't working. – Have you put more paper in? – Yes, but it still won't print. – Then you'd better call IT.",
+      "– ¿Me ayudas un momento? La impresora no funciona. – ¿Ya has puesto más papel? – Sí, pero sigue sin imprimir. – Entonces mejor llama a los informáticos."]
+  ]},
+  { id: "radio", name: "Radio", en: "Weather & traffic", icon: "🌤️", items: [
+    [["Und jetzt das Wetter für morgen: Am Vormittag ist es noch sonnig, aber ab dem Nachmittag gibt es im ganzen Land Regen und Gewitter. Die Temperaturen liegen zwischen achtzehn und zweiundzwanzig Grad."],
+      "Wie wird das Wetter morgen Nachmittag?", "Es regnet.", ["Es ist sonnig.", "Es schneit."],
+      "And now tomorrow's weather: the morning will still be sunny, but from the afternoon there will be rain and thunderstorms across the country. Temperatures between 18 and 22 degrees.",
+      "Y ahora, el tiempo para mañana: por la mañana todavía hará sol, pero a partir de la tarde habrá lluvia y tormentas en todo el país. Las temperaturas estarán entre 18 y 22 grados."],
+    [["Die Verkehrsmeldungen: Auf der A acht zwischen Stuttgart und Ulm gibt es nach einem Unfall zehn Kilometer Stau. Bitte fahren Sie vorsichtig."],
+      "Warum gibt es Stau?", "wegen eines Unfalls", ["wegen Bauarbeiten", "wegen Schnee"],
+      "The traffic news: on the A8 between Stuttgart and Ulm there's a 10-kilometre jam after an accident. Please drive carefully.",
+      "El tráfico: en la A8 entre Stuttgart y Ulm hay diez kilómetros de atasco tras un accidente. Conduzcan con precaución."],
+    [["Das Wetter am Wochenende: Es bleibt kalt. Am Samstag schneit es in den Bergen, am Sonntag scheint wieder die Sonne, bei minus zwei Grad."],
+      "Wie ist das Wetter am Sonntag?", "sonnig und kalt", ["Es schneit.", "sonnig und warm"],
+      "The weather at the weekend: it stays cold. On Saturday it will snow in the mountains, on Sunday the sun comes out again, at minus two degrees.",
+      "El tiempo para el fin de semana: sigue haciendo frío. El sábado nevará en la montaña y el domingo volverá a salir el sol, con dos grados bajo cero."],
+    [["Am Wochenende ist wieder Stadtfest! Von Freitag bis Sonntag gibt es auf dem Marktplatz Musik, gutes Essen und ein Programm für Kinder. Der Eintritt ist frei."],
+      "Wie viel kostet der Eintritt?", "nichts", ["fünf Euro", "zehn Euro"],
+      "It's the town festival again this weekend! From Friday to Sunday there's music, good food and a programme for children on the market square. Entry is free.",
+      "¡Este fin de semana vuelven las fiestas de la ciudad! De viernes a domingo hay música, buena comida y actividades para niños en la plaza del mercado. La entrada es gratuita."],
+    [["Achtung, Pendler: Wegen eines Streiks fahren morgen ab vier Uhr früh keine S-Bahnen. Die U-Bahnen und Busse fahren normal."],
+      "Was fährt morgen nicht?", "die S-Bahn", ["die U-Bahn", "der Bus"],
+      "Attention, commuters: because of a strike there will be no suburban trains from 4 am tomorrow. Underground trains and buses are running normally.",
+      "Atención, viajeros: por una huelga, mañana a partir de las cuatro de la madrugada no circulan trenes de cercanías. El metro y los autobuses funcionan con normalidad."],
+    [["Es wird heiß! Morgen erwarten wir bis zu fünfunddreißig Grad. Trinken Sie viel Wasser und bleiben Sie mittags am besten im Schatten."],
+      "Was soll man morgen tun?", "viel trinken", ["in die Sonne gehen", "warme Kleidung tragen"],
+      "It's going to be hot! Tomorrow we expect up to 35 degrees. Drink plenty of water and stay in the shade at midday if you can.",
+      "¡Llega el calor! Mañana esperamos hasta 35 grados. Beban mucha agua y, a mediodía, mejor quédense a la sombra."]
+  ]}
+];
+
 const $ = (id) => document.getElementById(id);
 // html`...` builds markup and escapes every value in it, unless the value was itself built with html`...`.
 class SafeHTML { constructor(s) { this.s = s; } toString() { return this.s; } }
@@ -885,7 +1121,8 @@ const asHTML = (v) => (v instanceof SafeHTML ? v.s : Array.isArray(v) ? v.map(as
 const html = (strings, ...vals) => new SafeHTML(strings.reduce((out, str, i) => out + str + (i < vals.length ? asHTML(vals[i]) : ""), ""));
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "practice", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "", gmode: "turns", gcount: 10, theme: "" };
+const DEFAULTS = { topics: ["colors", "numbers", "food", "verbs"], mode: "practice", p1: "Ferran", p2: "Meri", count: 20, hint: "none", speak: true, voice: "", gmode: "turns", gcount: 10, theme: "",
+  lkinds: LISTENING.map((k) => k.id), lmode: "practice", lcount: 10 };
 let settings = { ...DEFAULTS };
 try {
   const saved = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null");
@@ -944,8 +1181,8 @@ $("noTopics").onclick = () => { settings.topics = []; renderTopics(); save(); };
 $("modeSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.mode = b.dataset.v; updateMode(); save(); };
 $("countSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.count = Number(b.dataset.v); setSeg("countSeg", settings.count); save(); };
 $("hintSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.hint = b.dataset.v; setSeg("hintSeg", settings.hint); save(); };
-$("p1").oninput = (e) => { settings.p1 = e.target.value; save(); updateGMode(); };
-$("p2").oninput = (e) => { settings.p2 = e.target.value; save(); updateGMode(); };
+$("p1").oninput = (e) => { settings.p1 = e.target.value; save(); updateGMode(); updateLMode(); };
+$("p2").oninput = (e) => { settings.p2 = e.target.value; save(); updateGMode(); updateLMode(); };
 $("speak").onchange = (e) => { settings.speak = e.target.checked; save(); };
 
 /* ---------- Speech ---------- */
@@ -973,6 +1210,7 @@ function spokenTexts() {
   for (const t of TOPICS) for (const [, de, art] of t.items) texts.add(deSpeech({ de, art }));
   for (const l of GRAMMAR) for (const [s, a] of l.items) texts.add(filled({ s, a }));
   for (const b of document.querySelectorAll("#theory .ex")) texts.add(b.textContent);
+  for (const k of LISTENING) for (const [lines] of k.items) for (const line of lines) texts.add(line);
   return [...texts];
 }
 const recPath = (v, text) => `audio/${v.id}/${audioName(text)}.mp3`;
@@ -1032,52 +1270,72 @@ if (!tts) ss?.addEventListener?.("voiceschanged", pickVoice);
 function soundProblem(msg) {
   for (const id of ["soundNote", "cardNote"]) { $(id).textContent = msg; $(id).hidden = false; }
 }
-function say(text) {
-  if (recVoice) { hush(); return sayRecorded(text); }
+// Reads one text. `second` is the other speaker in a conversation: the other recorded voice, or the device voice
+// pitched lower. `done` is called when the text has been read (or failed), so sayLines can read the next line.
+function say(text, { second = false, done = () => {}, inLine = false } = {}) {
+  if (!inLine) talkRun++; // a new text stops a conversation that is still being read
+  const rec = second && recVoice ? REC_VOICES.find((r) => r !== recVoice) || recVoice : recVoice;
+  if (rec) { stopSound(); return sayRecorded(text, rec, { second, done }); }
   stopRecording(); // the device voices cut themselves off
-  deviceSay(text);
+  deviceSay(text, { second, done });
+}
+// Reads the lines one after another, alternating speakers in a conversation. Any other speech, or hush(), stops it.
+let talkRun = 0;
+async function sayLines(lines, dialogue) {
+  const run = ++talkRun;
+  for (const [n, line] of lines.entries()) {
+    // Some browsers never report the end of a line, so move on after a generous wait anyway.
+    await new Promise((done) => { say(line, { second: dialogue && n % 2 === 1, done, inLine: true }); setTimeout(done, 5000 + line.length * 150); });
+    if (run !== talkRun) return;
+    await new Promise((r) => setTimeout(r, 350));
+    if (run !== talkRun) return;
+  }
 }
 function stopRecording() {
   if (player) { const a = player; player = null; a.pause(); }
 }
 // Plays the recording; if it's missing or won't play, the device voice reads the text instead.
-function sayRecorded(text) {
-  const a = player = new Audio(recPath(recVoice, text));
-  const fallback = () => { if (player === a) { player = null; deviceSay(text); } };
+function sayRecorded(text, rec, opts) {
+  const a = player = new Audio(recPath(rec, text));
+  const fallback = () => { if (player === a) { player = null; deviceSay(text, opts); } };
   a.onerror = fallback;
+  a.onended = () => { if (player === a) { player = null; opts.done(); } };
   a.onplaying = () => { $("cardNote").hidden = true; $("soundNote").hidden = true; };
   a.play().catch((e) => { if (e.name !== "AbortError") fallback(); });
 }
-function deviceSay(text) {
-  if (tts) return sayNative(text);
+function deviceSay(text, { second = false, done = () => {} } = {}) {
+  if (tts) return sayNative(text, { second, done });
   if (!ss) return soundProblem("This browser can't read text aloud. Try Chrome, Edge or Safari.");
   if (!deVoice) pickVoice();
   try {
     if (ss.speaking || ss.pending) ss.cancel();
     ss.resume();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = deVoice ? deVoice.lang : "de-DE"; if (deVoice) u.voice = deVoice; u.rate = 0.9; u.volume = 1;
+    u.lang = deVoice ? deVoice.lang : "de-DE"; if (deVoice) u.voice = deVoice; u.rate = 0.9; u.volume = 1; u.pitch = second ? 0.7 : 1;
     let started = false;
     u.onstart = () => { started = true; $("cardNote").hidden = true; $("soundNote").hidden = true; };
-    u.onerror = (e) => { if (e.error !== "interrupted" && e.error !== "canceled") soundProblem(`The voice didn't play (${e.error}). Pick another German voice in the menu and press Test.`); };
+    u.onend = done;
+    u.onerror = (e) => { done(); if (e.error !== "interrupted" && e.error !== "canceled") soundProblem(`The voice didn't play (${e.error}). Pick another German voice in the menu and press Test.`); };
     say.last = u; // keep a reference so the browser doesn't drop it mid-sentence
     ss.speak(u);
     setTimeout(() => { if (!started && !ss.speaking) soundProblem(deVoices.length ? "No sound? Check the volume, or pick another German voice in the menu." : "No German voice found. On a Mac add one in System Settings → Accessibility → Spoken Content → System voice → Manage voices (German, e.g. Anna)."); }, 1800);
-  } catch (e) { soundProblem("The voice didn't play. Pick another German voice in the menu and press Test."); }
+  } catch (e) { done(); soundProblem("The voice didn't play. Pick another German voice in the menu and press Test."); }
 }
-function sayNative(text) {
+function sayNative(text, { second = false, done = () => {} } = {}) {
   const id = (say.seq = (say.seq || 0) + 1);
   if (!deVoices.length) pickVoice();
   for (const note of ["cardNote", "soundNote"]) $(note).hidden = true;
   // Each new card interrupts the last one; only the latest call reports a problem.
-  tts.speak({ text, lang: deVoice ? deVoice.lang : "de-DE", voice: deVoice?.index, rate: 0.9, volume: 1 }).catch((e) => {
+  tts.speak({ text, lang: deVoice ? deVoice.lang : "de-DE", voice: deVoice?.index, rate: 0.9, pitch: second ? 0.7 : 1, volume: 1 }).then(done, (e) => {
+    done();
     if (id !== say.seq) return;
     soundProblem(/not supported/i.test(e.message)
       ? "This phone has no German voice yet. Add one in Android Settings → Accessibility → Text-to-speech output → Install voice data → Deutsch."
       : "The voice didn't play. Pick another German voice in the menu and press Test.");
   });
 }
-function hush() {
+function hush() { talkRun++; stopSound(); }
+function stopSound() {
   stopRecording();
   if (tts) tts.stop().catch(() => {});
   else if (ss && (ss.speaking || ss.pending)) ss.cancel();
@@ -1145,8 +1403,8 @@ function startGame(deck) {
 }
 
 function show(screen) {
-  for (const s of ["setup", "play", "done", "grammar", "theory", "quiz", "qdone"]) $(s).hidden = s !== screen;
-  $("topbar").hidden = $("areas").hidden = screen !== "setup" && screen !== "grammar";
+  for (const s of ["setup", "play", "done", "grammar", "theory", "quiz", "qdone", "listen", "hear", "ldone"]) $(s).hidden = s !== screen;
+  $("topbar").hidden = $("areas").hidden = !["setup", "grammar", "listen"].includes(screen);
   setSeg("areas", screen);
   window.scrollTo(0, 0);
 }
@@ -1453,11 +1711,186 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+/* ---------- Listening ---------- */
+function renderKinds() {
+  $("kinds").innerHTML = html`${LISTENING.map((k) => html`
+    <button type="button" class="topic-chip" data-id="${k.id}" aria-pressed="${settings.lkinds.includes(k.id)}">
+      <span class="ico">${picImg(k.icon, "") || k.icon}</span><b>${k.name}</b><span class="sub" lang="en">${k.en} · ${k.items.length}</span>
+    </button>`)}`;
+  updateLAvail();
+}
+function updateLAvail() {
+  const n = LISTENING.filter((k) => settings.lkinds.includes(k.id)).reduce((a, k) => a + k.items.length, 0);
+  $("lavail").textContent = n ? `${n} texts to listen to` : "Pick at least one kind of text to start";
+  $("lstart").disabled = n === 0;
+}
+function updateLMode() {
+  setSeg("lmodeSeg", settings.lmode);
+  const [a, b] = names();
+  $("lmodeHelp").textContent = settings.lmode === "race"
+    ? `Whoever knows the answer first buzzes in (${a} with A, ${b} with L, or tap your name) and picks it. A right answer is a point; after a wrong one the other player gets a go.`
+    : "Listen as often as you like, then pick an answer. If it's wrong, listen again and try another one.";
+}
+$("kinds").addEventListener("click", (e) => {
+  const b = e.target.closest(".topic-chip"); if (!b) return;
+  const id = b.dataset.id;
+  settings.lkinds = settings.lkinds.includes(id) ? settings.lkinds.filter((x) => x !== id) : [...settings.lkinds, id];
+  b.setAttribute("aria-pressed", String(settings.lkinds.includes(id)));
+  updateLAvail(); save();
+});
+$("allKinds").onclick = () => { settings.lkinds = LISTENING.map((k) => k.id); renderKinds(); save(); };
+$("lmodeSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.lmode = b.dataset.v; updateLMode(); save(); };
+$("lcountSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; settings.lcount = Number(b.dataset.v); setSeg("lcountSeg", settings.lcount); save(); };
+
+// Round state: the texts, which one is playing, the shuffled options, wrong options tried so far, whose turn it is
+// (race only: null until someone buzzes in), whether that turn has passed to the other player, and the scores.
+let listen = null;
+const racing = () => settings.lmode === "race";
+function buildTexts() {
+  const deck = [];
+  for (const k of LISTENING) {
+    if (!settings.lkinds.includes(k.id)) continue;
+    for (const [lines, q, a, wrong, en, es] of k.items) deck.push({ lines, q, a, wrong, en, es, kind: k.name, dialogue: !!k.dialogue });
+  }
+  shuffle(deck);
+  return settings.lcount ? deck.slice(0, settings.lcount) : deck;
+}
+function startListening(deck) {
+  listen = { deck, i: 0, scores: [0, 0], right: 0, missed: [] };
+  show("hear");
+  dealText();
+}
+function dealText() {
+  const t = listen.deck[listen.i];
+  Object.assign(listen, { opts: shuffle([t.a, ...t.wrong]), tried: [], done: false, turn: null, passed: false });
+  $("lKind").textContent = t.kind;
+  $("lQuestion").textContent = t.q;
+  $("lFeedback").hidden = true;
+  $("lprog").textContent = `Text ${listen.i + 1} / ${listen.deck.length}`;
+  $("lprogbar").style.width = `${(listen.i / listen.deck.length) * 100}%`;
+  renderListen();
+  playText();
+}
+function playText() {
+  const t = listen.deck[listen.i];
+  sayLines(t.lines, t.dialogue);
+}
+function renderListen(note = "") {
+  const t = listen.deck[listen.i], race = racing(), [a, b] = names();
+  const waiting = race && listen.turn === null && !listen.done;
+  $("lOpts").classList.toggle("locked", waiting);
+  $("lOpts").innerHTML = html`${listen.opts.map((o, n) => {
+    const cls = listen.done && o === t.a ? " ok" : listen.tried.includes(o) ? " bad" : "";
+    const off = waiting || listen.done || listen.tried.includes(o);
+    return html`<button class="opt${cls}" type="button" data-n="${n}"${off ? " disabled" : ""}>${o} <span class="k">${n + 1}</span></button>`;
+  })}`;
+  const turn = listen.done ? "" : race
+    ? (listen.turn === null ? "Who knows it? Buzz in with A or L, or tap your name." : html`${note}<span class="p${listen.turn + 1}">${names()[listen.turn]}</span>, pick an answer.`)
+    : note;
+  $("lTurn").innerHTML = html`${turn}`;
+  $("lBuzz").hidden = !race || listen.done;
+  $("lBuzz").innerHTML = html`${!race || listen.done ? "" : listen.turn === null ? html`
+    <button class="ctl p1" data-act="buzz0" type="button">${a} knows it <span class="k">A</span></button>
+    <button class="ctl" data-act="nobody" type="button">Show the answer <span class="k">N</span></button>
+    <button class="ctl p2" data-act="buzz1" type="button">${b} knows it <span class="k">L</span></button>`
+    : html`<button class="ctl" data-act="nobody" type="button">Show the answer <span class="k">N</span></button>`}`;
+  const el = $("lscores");
+  if (race) {
+    el.innerHTML = html`${[a, b].map((n, p) => html`<div class="score p${p + 1}${listen.turn === p && !listen.done ? " buzzed" : ""}"><span>${n}</span><b>${listen.scores[p]}</b></div>`)}`;
+  } else {
+    el.innerHTML = html`<div class="score" style="color:var(--good)"><span>Gewusst</span><b>${listen.right}</b></div><div class="score"><span>Noch mal</span><b>${listen.missed.length}</b></div>`;
+  }
+}
+function lbuzz(p) {
+  if (!listen || listen.done || !racing() || listen.turn !== null) return;
+  listen.turn = p;
+  beep(p === 0 ? 523 : 659);
+  renderListen();
+}
+function lchoose(n) {
+  if (!listen || listen.done || !(n in listen.opts)) return;
+  if (racing() && listen.turn === null) return;
+  const t = listen.deck[listen.i], o = listen.opts[n];
+  if (listen.tried.includes(o)) return;
+  if (o === t.a) {
+    if (racing()) listen.scores[listen.turn]++;
+    else if (!listen.tried.length) listen.right++;
+    return reveal(true);
+  }
+  listen.tried.push(o);
+  if (!listen.missed.includes(t)) listen.missed.push(t);
+  beep(220);
+  if (!racing()) return renderListen("Nicht ganz. Listen again and try another answer.");
+  if (listen.passed) return reveal(false);
+  listen.passed = true; listen.turn = 1 - listen.turn;
+  renderListen("Nicht ganz. ");
+}
+function reveal(ok) {
+  const t = listen.deck[listen.i];
+  if (!ok && !listen.missed.includes(t)) listen.missed.push(t);
+  listen.done = true;
+  renderListen();
+  if (ok) beep(784);
+  $("lVerdict").textContent = !ok ? `Die Antwort: „${t.a}“` : racing() ? `Richtig! Ein Punkt für ${names()[listen.turn]}.` : listen.tried.length ? "Jetzt stimmt's!" : "Richtig!";
+  $("lVerdict").className = "verdict " + (ok ? "ok" : "bad");
+  $("lScript").innerHTML = html`${t.lines.map((l, n) => html`<p>${t.dialogue ? html`<span class="who">${n % 2 ? "B" : "A"}</span>` : ""}${l}</p>`)}`;
+  $("lEn").textContent = t.en; $("lEs").textContent = t.es;
+  $("lFeedback").hidden = false;
+}
+function nextText() {
+  if (!listen || !listen.done) return;
+  hush();
+  listen.i++;
+  if (listen.i >= listen.deck.length) return finishListening();
+  dealText();
+}
+function finishListening() {
+  show("ldone");
+  const total = listen.deck.length, [a, b] = names();
+  if (racing()) {
+    const [sa, sb] = listen.scores;
+    $("ldoneTitle").textContent = sa === sb ? "Unentschieden!" : `${sa > sb ? a : b} gewinnt!`;
+    $("lfinal").innerHTML = html`${[a, b].map((n, p) => html`<div class="score p${p + 1}"><span>${n}</span><b>${listen.scores[p]}</b></div>`)}`;
+  } else {
+    $("ldoneTitle").textContent = listen.right === total ? "Perfekt!" : "Gut gemacht!";
+    $("lfinal").innerHTML = html`<div class="score" style="color:var(--good)"><span>Right first time</span><b>${listen.right} / ${total}</b></div>`;
+  }
+  $("lmissedWrap").hidden = $("lreplayMissed").hidden = listen.missed.length === 0;
+  $("lmissed").innerHTML = html`${listen.missed.map((t) => html`<li><span><b>${t.q} ${t.a}</b><small>${t.en}</small></span></li>`)}`;
+}
+$("lOpts").addEventListener("click", (e) => { const b = e.target.closest(".opt"); if (b) lchoose(Number(b.dataset.n)); });
+$("lBuzz").addEventListener("click", (e) => {
+  const act = e.target.closest("button")?.dataset.act;
+  if (act === "buzz0") lbuzz(0);
+  else if (act === "buzz1") lbuzz(1);
+  else if (act === "nobody" && listen && !listen.done) reveal(false);
+});
+$("lPlay").onclick = playText;
+$("lNext").onclick = nextText;
+$("lstart").onclick = () => startListening(buildTexts());
+$("hearQuit").onclick = () => { hush(); show("listen"); };
+$("lagain").onclick = () => startListening(buildTexts());
+$("lreplayMissed").onclick = () => startListening(shuffle([...listen.missed]));
+$("ltoMenu").onclick = () => show("listen");
+document.addEventListener("keydown", (e) => {
+  if ($("hear").hidden || !listen) return;
+  if (e.target.matches("input, select") || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === "r") playText();
+  else if (listen.done) {
+    if (k === "enter" || k === " " || k === "arrowright") { e.preventDefault(); nextText(); }
+  } else if (/^[1-4]$/.test(k)) lchoose(Number(k) - 1);
+  else if (k === " ") { e.preventDefault(); playText(); }
+  else if (racing() && (k === "a" || k === "l")) lbuzz(k === "a" ? 0 : 1);
+  else if (racing() && k === "n") reveal(false);
+});
+
 /* ---------- Init ---------- */
 $("p1").value = settings.p1; $("p2").value = settings.p2; $("speak").checked = settings.speak;
 setSeg("countSeg", settings.count); setSeg("hintSeg", settings.hint);
 renderTopics(); updateMode();
 setSeg("gcountSeg", settings.gcount); renderLessons(); updateGMode(); setSeg("areas", "setup");
+setSeg("lcountSeg", settings.lcount); renderKinds(); updateLMode();
 </script>
 </body>
 </html>
