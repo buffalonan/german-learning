@@ -58,5 +58,22 @@ for (const width of [320, 360, 412]) {
     });
     expect(await layout()).toEqual(ok);
     await expect(page.locator("#theme")).toBeInViewport();
+
+    // Out of the tab row, the light/dark button sits beside each area's title and must not cover its text.
+    for (const area of ["setup", "grammar", "listen"]) {
+      await page.click(`#areas [data-v="${area}"]`);
+      const covered = await page.evaluate((id) => {
+        const t = document.getElementById("theme").getBoundingClientRect();
+        const walk = document.createTreeWalker(document.querySelector(`#${id} .intro`), NodeFilter.SHOW_TEXT);
+        const rects = [];
+        for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+          const range = document.createRange();
+          range.selectNodeContents(n);
+          rects.push(...range.getClientRects());
+        }
+        return rects.some((r) => r.width && r.right > t.left && r.left < t.right && r.bottom > t.top && r.top < t.bottom);
+      }, area);
+      expect(covered, area).toBe(false);
+    }
   });
 }
