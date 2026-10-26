@@ -4,7 +4,7 @@ name: Web
 on:
   push:
     branches: [main]
-    paths: ["index.html", "pictures.js", "art.js", "art/**", "scripts/**", ".github/**"]
+    paths: ["index.html", "pictures.js", "art.js", "art/**", "logo/**", "manifest.webmanifest", "scripts/**", ".github/**"]
   workflow_dispatch:
 
 permissions:

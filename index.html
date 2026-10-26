@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sag's auf Deutsch</title>
 <script>/* Apply a saved light/dark choice before the page paints. */ try { const t = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null")?.theme; if (t) document.documentElement.dataset.theme = t; } catch (e) { /* no storage */ }</script>
-<link rel="icon" href="data:,">
+<link rel="icon" type="image/png" sizes="32x32" href="logo/icon-32.png">
+<link rel="apple-touch-icon" href="logo/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f8f3e7">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -122,6 +125,8 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .plate h1 { font-size: clamp(2.5rem, 9vw, 3.6rem); color: var(--ink); }
 .plate small { font-weight: 500; font-size: 1rem; color: var(--muted); }
 .intro { display: grid; gap: 14px; margin-bottom: 26px; }
+.brand { display: flex; align-items: center; gap: 18px; }
+.logo { flex: none; width: 112px; height: 112px; border-radius: var(--r-m); border: 3px solid var(--line); box-shadow: var(--clay-sm); }
 .intro p { margin: 0; max-width: 46ch; color: var(--muted); font-size: 1.05rem; }
 
 /* Section tabs */
@@ -343,6 +348,9 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
   .areas button { padding: 9px 2px; font-size: clamp(.76rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
   .theme-btn { position: absolute; right: 0; top: calc(100% + 22px); }
   .intro .plate { padding-right: 60px; } /* keeps the title clear of that button */
+  .brand { gap: 12px; }
+  .logo { width: 76px; height: 76px; border-radius: var(--r-s); }
+  .brand h1 { font-size: clamp(1.75rem, 8.4vw, 3.6rem); }
 }
 @media (max-width: 480px) {
   .sheet { padding: 20px 16px; border-radius: 24px; }
@@ -368,7 +376,10 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
   </div>
   <section id="setup">
     <div class="intro">
-      <div class="plate"><h1>Sag's auf Deutsch</h1><small>Bildkarten · Wortspiel</small></div>
+      <div class="brand">
+        <img class="logo" src="logo/hedgehog.webp" alt="" width="112" height="112">
+        <div class="plate"><h1>Sag's auf Deutsch</h1><small>Bildkarten · Wortspiel</small></div>
+      </div>
       <p>Look at the picture and say it in German before the other one does. Flip the card to check, and hear how it sounds.</p>
     </div>
 
