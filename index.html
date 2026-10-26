@@ -333,10 +333,16 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .ltr div { grid-template-columns: 2.4em 1fr; }
 .ltr dd { font-size: .95rem; }
 
+@media (max-width: 640px) {
+  /* The section tabs take the whole width, in equal columns that never wrap (room for four), and the light/dark
+     button moves down beside the title. */
+  .topbar { position: relative; }
+  .areas { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; width: 100%; }
+  .areas button { padding: 9px 2px; font-size: clamp(.76rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
+  .theme-btn { position: absolute; right: 0; top: calc(100% + 22px); }
+}
 @media (max-width: 480px) {
   .sheet { padding: 20px 16px; border-radius: 24px; }
-  .areas { gap: 2px; }
-  .areas button { padding: 9px 11px; font-size: .94rem; }
   .scores { width: 100%; }
   .score { flex: 1; justify-content: space-between; }
 }

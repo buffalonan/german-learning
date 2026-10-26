@@ -36,3 +36,27 @@ test("the light/dark button shows on the menus but not during a round", async ({
   await page.click("#start");
   await expect(page.locator("#theme")).toBeHidden();
 });
+
+// Ferran's phone is 360px wide; the tabs wrapped onto two lines there once Hören was added.
+for (const width of [320, 360, 412]) {
+  test(`the section tabs stay on one line at ${width}px, even with a fourth tab`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await open(page);
+    const layout = () => page.evaluate(() => {
+      const tabs = [...document.querySelectorAll("#areas button")];
+      const rows = new Set(tabs.map((b) => Math.round(b.getBoundingClientRect().top)));
+      const theme = document.getElementById("theme").getBoundingClientRect();
+      const overlap = tabs.some((b) => { const r = b.getBoundingClientRect(); return r.right > theme.left && r.left < theme.right && r.bottom > theme.top && r.top < theme.bottom; });
+      return { rows: rows.size, clipped: tabs.some((b) => b.scrollWidth > b.clientWidth), overlap, sideScroll: document.documentElement.scrollWidth > document.documentElement.clientWidth };
+    });
+    const ok = { rows: 1, clipped: false, overlap: false, sideScroll: false };
+    expect(await layout()).toEqual(ok);
+    await page.evaluate(() => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = "Perfekt";
+      document.getElementById("areas").append(b);
+    });
+    expect(await layout()).toEqual(ok);
+    await expect(page.locator("#theme")).toBeInViewport();
+  });
+}
