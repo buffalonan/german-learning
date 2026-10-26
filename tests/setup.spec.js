@@ -58,6 +58,18 @@ test("the page never scrolls sideways", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("long topic names stay inside their tiles at every width", async ({ page }) => {
+  await open(page);
+  for (const width of [320, 360, 412, 600, 800, 1024, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    const outside = await page.locator("#topics .topic-chip").evaluateAll((chips) => chips.flatMap((chip) => {
+      const inner = chip.getBoundingClientRect().right - parseFloat(getComputedStyle(chip).borderRightWidth);
+      return [...chip.querySelectorAll("b, .sub")].filter((el) => el.getBoundingClientRect().right > inner + 0.5).map((el) => el.textContent);
+    }));
+    expect(outside, `at ${width}px`).toEqual([]);
+  }
+});
+
 test("player names are shown as text, never run as code", async ({ page }) => {
   await open(page);
   const evil = "<svg/onload=f()>"; // fits the 16-character name limit
