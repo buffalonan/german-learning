@@ -273,7 +273,9 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 /* Grammar */
 .lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
 .lesson { background: var(--pastel-2); border-radius: var(--r-m); padding: 16px; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: center; box-shadow: var(--clay-sm); }
-.lesson:nth-child(2n) { background: var(--pastel-4); }
+.lesson:nth-child(4n+2) { background: var(--pastel-4); }
+.lesson:nth-child(4n+3) { background: var(--pastel-3); }
+.lesson:nth-child(4n) { background: var(--pastel-1); }
 .lesson .ico { grid-row: 1 / 3; font-family: var(--emoji); font-size: 2rem; line-height: 1; }
 .lesson h3 { font-size: 1.45rem; }
 .lesson p { margin: 0; color: var(--muted); font-size: .9rem; }
@@ -474,7 +476,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 
   <section id="grammar" hidden>
     <div class="intro">
-      <div class="plate"><h1>Grammatik</h1><small>Fälle · Präpositionen</small></div>
+      <div class="plate"><h1>Grammatik</h1><small>Fälle · Präpositionen · Perfekt</small></div>
       <p>Read a short explanation, then fill the gaps in everyday sentences. Each answer shows why, and you can hear the sentence.</p>
     </div>
     <div class="sheet">
@@ -497,7 +499,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
       </div>
       <div class="start-row">
         <button class="btn-main" id="mixQuiz" type="button">Alles mischen</button>
-        <span class="avail">Both lessons in one round</span>
+        <span class="avail">All lessons in one round</span>
       </div>
     </div>
   </section>
@@ -595,6 +597,89 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
       </ul>
       <p class="tip"><b>Para hispanohablantes:</b> <i>esperar a alguien</i> is warten auf, never für. <i>Hace una semana</i> is vor einer Woche, and <i>desde hace dos años</i> is seit zwei Jahren with the present tense.</p>
       <div class="start-row"><button class="btn-main" data-quiz="preps" type="button">Jetzt üben</button></div>
+    </article>
+
+    <article class="sheet theory" data-lesson="perfekt">
+      <h2>Perfekt</h2>
+      <p class="lead">When Germans talk about the past, they mostly use the Perfekt: haben or sein in second place, and the past participle at the very end.</p>
+      <div class="boxes">
+        <div class="box"><b>haben</b><span class="q">Most verbs</span><span>Every verb with an object, and also schlafen, arbeiten, wohnen…</span><button class="ex" type="button">Ich habe Pizza gegessen.</button></div>
+        <div class="box"><b>sein</b><span class="q">Movement and change</span><span>Going from A to B or changing state, plus sein, bleiben, werden and passieren.</span><button class="ex" type="button">Ich bin nach Hause gegangen.</button></div>
+        <div class="box"><b>Satzklammer</b><span class="q">2nd place … end</span><span>haben or sein comes second, the participle goes last.</span><button class="ex" type="button">Wir haben gestern im Park Fußball gespielt.</button></div>
+      </div>
+
+      <h3>Making the participle</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Rule</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td><b>Regular</b><br>ge- + stem + -t</td><td>machen → <b>gemacht</b>, kaufen → <b>gekauft</b>, arbeiten → <b>gearbeitet</b></td></tr>
+          <tr><td><b>Irregular</b><br>ge- + stem + -en, often with a new vowel</td><td>essen → <b>gegessen</b>, trinken → <b>getrunken</b>, gehen → <b>gegangen</b></td></tr>
+          <tr><td><b>Separable</b><br>ge- goes in the middle</td><td>aufstehen → <b>aufgestanden</b>, einkaufen → <b>eingekauft</b></td></tr>
+          <tr><td><b>No ge-</b><br>be-, ver-, er-, ent-, zer- and -ieren</td><td>verstehen → <b>verstanden</b>, bekommen → <b>bekommen</b>, studieren → <b>studiert</b></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Irregular participles to know</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>with haben</th><th>with sein</th></tr></thead>
+        <tbody>
+          <tr><td>essen → hat gegessen</td><td>gehen → ist gegangen</td></tr>
+          <tr><td>trinken → hat getrunken</td><td>kommen → ist gekommen</td></tr>
+          <tr><td>schlafen → hat geschlafen</td><td>fahren → ist gefahren</td></tr>
+          <tr><td>sehen → hat gesehen</td><td>fliegen → ist geflogen</td></tr>
+          <tr><td>schreiben → hat geschrieben</td><td>laufen → ist gelaufen</td></tr>
+          <tr><td>sprechen → hat gesprochen</td><td>bleiben → ist geblieben</td></tr>
+          <tr><td>nehmen → hat genommen</td><td>werden → ist geworden</td></tr>
+          <tr><td>bringen → hat gebracht</td><td>sein → ist gewesen</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li>For sein, haben and the modal verbs, people usually say the short past (Präteritum) instead: ich war, ich hatte, ich konnte, ich musste. <button class="ex" type="button">Ich war gestern im Kino.</button></li>
+        <li>fahren with an object takes haben: <i>ich habe das Auto gefahren</i>. Without one it's movement: <button class="ex" type="button">Ich bin nach Berlin gefahren.</button></li>
+        <li>In a question the participle still goes last: <button class="ex" type="button">Hast du gut geschlafen?</button></li>
+      </ul>
+      <p class="tip"><b>Para hispanohablantes:</b> the Perfekt looks like <i>he comido</i>, but Germans use it for any past event, also where Spanish uses the indefinido: <i>ayer comí pizza</i> → gestern habe ich Pizza gegessen. And unlike Spanish, verbs of movement take sein: <i>fui a casa</i> → ich bin nach Hause gegangen.</p>
+      <div class="start-row"><button class="btn-main" data-quiz="perfekt" type="button">Jetzt üben</button></div>
+    </article>
+
+    <article class="sheet theory" data-lesson="trennbar">
+      <h2>Trennbare Verben</h2>
+      <p class="lead">Many everyday verbs start with a little word that splits off: aufstehen, anrufen, einkaufen. That prefix carries the stress: AUFstehen.</p>
+      <div class="boxes">
+        <div class="box"><b>Present</b><span class="q">Verb 2nd, prefix last</span><button class="ex" type="button">Ich stehe um sieben Uhr auf.</button><button class="ex" type="button">Rufst du mich morgen an?</button></div>
+        <div class="box"><b>With a modal</b><span class="q">Together at the end</span><span>After müssen, können, wollen, möchten…</span><button class="ex" type="button">Ich muss morgen früh aufstehen.</button></div>
+        <div class="box"><b>Perfekt</b><span class="q">ge- in the middle</span><button class="ex" type="button">Ich bin früh aufgestanden.</button><button class="ex" type="button">Ich habe dich angerufen.</button></div>
+      </div>
+
+      <h3>Everyday separable verbs</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Verb</th><th>English · Español</th><th>Perfekt</th></tr></thead>
+        <tbody>
+          <tr><td><b>auf</b>stehen</td><td>get up · levantarse</td><td>ist aufgestanden</td></tr>
+          <tr><td><b>an</b>rufen</td><td>call · llamar</td><td>hat angerufen</td></tr>
+          <tr><td><b>ein</b>kaufen</td><td>shop · hacer la compra</td><td>hat eingekauft</td></tr>
+          <tr><td><b>an</b>fangen</td><td>begin · empezar</td><td>hat angefangen</td></tr>
+          <tr><td><b>auf</b>hören</td><td>stop · dejar de</td><td>hat aufgehört</td></tr>
+          <tr><td><b>an</b>kommen</td><td>arrive · llegar</td><td>ist angekommen</td></tr>
+          <tr><td><b>ab</b>fahren</td><td>leave · salir</td><td>ist abgefahren</td></tr>
+          <tr><td><b>um</b>steigen</td><td>change trains · hacer transbordo</td><td>ist umgestiegen</td></tr>
+          <tr><td><b>mit</b>kommen</td><td>come along · venir también</td><td>ist mitgekommen</td></tr>
+          <tr><td><b>ab</b>holen</td><td>pick up · recoger</td><td>hat abgeholt</td></tr>
+          <tr><td><b>ein</b>laden</td><td>invite · invitar</td><td>hat eingeladen</td></tr>
+          <tr><td><b>auf</b>machen / <b>zu</b>machen</td><td>open / close · abrir / cerrar</td><td>hat aufgemacht / zugemacht</td></tr>
+          <tr><td><b>fern</b>sehen</td><td>watch TV · ver la tele</td><td>hat ferngesehen</td></tr>
+          <tr><td><b>um</b>ziehen</td><td>move house · mudarse</td><td>ist umgezogen</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Separable or not?</h3>
+      <ul>
+        <li>Prefixes that are little words on their own split off: ab, an, auf, aus, ein, mit, nach, vor, weg, zu, zurück, fern.</li>
+        <li>be-, ver-, er-, ent-, emp- and zer- never split, and their Perfekt has no ge-: <button class="ex" type="button">Ich habe dich nicht verstanden.</button></li>
+        <li>After weil, dass, wenn or wann the verb goes to the end and joins up again: <button class="ex" type="button">Ich weiß nicht, wann der Zug ankommt.</button></li>
+      </ul>
+      <p class="tip"><b>Para hispanohablantes:</b> Spanish packs it all into one verb (<i>me levanto</i>), German keeps the prefix for the end of the sentence. Listen for it before you decide what the verb means: ich mache das Fenster <b>auf</b> or <b>zu</b>?</p>
+      <div class="start-row"><button class="btn-main" data-quiz="trennbar" type="button">Jetzt üben</button></div>
     </article>
   </section>
 
@@ -969,7 +1054,72 @@ const GRAMMAR = [
     ["Ich denke oft ___ dich.", "an", ["auf", "mit", "für"], "I often think of you.", "Pienso a menudo en ti.", "denken an + Akkusativ."],
     ["Ich freue mich ___ das Wochenende.", "auf", ["für", "an", "mit"], "I'm looking forward to the weekend.", "Tengo ganas de que llegue el fin de semana.", "sich freuen auf + Akkusativ: looking forward to something still to come."],
     ["Hast du Angst ___ Hunden?", "vor", ["von", "für", "mit"], "Are you afraid of dogs?", "¿Te dan miedo los perros?", "Angst haben vor + Dativ. Plural Dativ adds -n: Hunden."]
+  ]},
+  { id: "perfekt", name: "Perfekt", en: "Talking about the past", icon: "🕰️", items: [
+    ["Ich ___ gestern lange geschlafen.", "habe", ["bin"], "I slept in yesterday.", "Ayer dormí hasta tarde.", "schlafen takes haben: nothing moves and nothing changes."],
+    ["Wir ___ mit dem Zug nach Hamburg gefahren.", "sind", ["haben"], "We went to Hamburg by train.", "Fuimos a Hamburgo en tren.", "fahren from A to B is movement, so it takes sein."],
+    ["Wann ___ du heute aufgestanden?", "bist", ["hast"], "When did you get up today?", "¿A qué hora te has levantado hoy?", "aufstehen is a movement (from lying to standing), so sein: ich bin aufgestanden."],
+    ["Was ___ ihr am Wochenende gemacht?", "habt", ["seid"], "What did you do at the weekend?", "¿Qué hicisteis el fin de semana?", "machen takes haben, like most verbs."],
+    ["Meine Oma ___ letztes Jahr achtzig geworden.", "ist", ["hat"], "My grandma turned eighty last year.", "Mi abuela cumplió ochenta años el año pasado.", "werden is a change of state, so sein: sie ist geworden."],
+    ["Ich ___ den ganzen Tag zu Hause geblieben.", "bin", ["habe"], "I stayed at home all day.", "Me quedé en casa todo el día.", "bleiben takes sein, even though nothing moves. Learn it together with sein, werden and passieren."],
+    ["Was ___ passiert?", "ist", ["hat"], "What happened?", "¿Qué ha pasado?", "passieren takes sein: Was ist passiert?"],
+    ["Er ___ mir eine Nachricht geschickt.", "hat", ["ist"], "He sent me a message.", "Me mandó un mensaje.", "schicken has an object (eine Nachricht), so it takes haben."],
+    ["Meri ___ gestern zum Arzt gegangen.", "ist", ["hat"], "Meri went to the doctor yesterday.", "Meri fue al médico ayer.", "gehen is movement, so sein."],
+    ["Das Baby ___ endlich eingeschlafen.", "ist", ["hat"], "The baby has finally fallen asleep.", "El bebé por fin se ha dormido.", "einschlafen is a change (awake → asleep), so sein. Plain schlafen takes haben."],
+    ["Ich ___ schon in Deutschland gewesen.", "bin", ["habe"], "I've already been to Germany.", "Ya he estado en Alemania.", "sein itself takes sein: ich bin gewesen."],
+    ["Wir ___ im Restaurant Pizza gegessen.", "haben", ["sind"], "We had pizza at the restaurant.", "Comimos pizza en el restaurante.", "essen has an object (Pizza), so it takes haben."],
+    ["Ich habe heute noch nichts ___.", "gegessen", ["geesst", "essen"], "I haven't eaten anything yet today.", "Hoy todavía no he comido nada.", "essen is irregular: gegessen."],
+    ["Hast du meine E-Mail ___?", "gelesen", ["gelest", "geliest"], "Have you read my email?", "¿Has leído mi correo?", "lesen is irregular: gelesen."],
+    ["Wir haben zusammen einen Kaffee ___.", "getrunken", ["getrinkt", "getrankt"], "We had a coffee together.", "Nos tomamos un café juntos.", "trinken – trank – getrunken: the vowel changes from i to u."],
+    ["Ich habe das Buch auf den Tisch ___.", "gelegt", ["gelegen", "legen"], "I put the book on the table.", "He puesto el libro en la mesa.", "legen (to put) is regular: gelegt. gelegen belongs to liegen (to lie)."],
+    ["Ich habe ihn auf der Party ___.", "gesehen", ["gesieht", "gesahen"], "I saw him at the party.", "Lo vi en la fiesta.", "sehen is irregular: gesehen."],
+    ["Wir haben zwei Stunden auf den Bus ___.", "gewartet", ["gewartt", "gewart"], "We waited two hours for the bus.", "Esperamos el autobús dos horas.", "Regular verbs make ge- + stem + -t. A stem ending in -t or -d adds -et: gewartet."],
+    ["Ich habe drei Jahre bei Siemens ___.", "gearbeitet", ["gearbeit", "gearbeiten"], "I worked at Siemens for three years.", "Trabajé tres años en Siemens.", "arbeiten is regular. The stem ends in -t, so it adds -et: gearbeitet."],
+    ["Gestern hat es den ganzen Tag ___.", "geregnet", ["geregnt", "geregnen"], "It rained all day yesterday.", "Ayer llovió todo el día.", "regnen adds -et too: geregnet. Weather verbs take haben."],
+    ["Was hast du ___?", "gesagt", ["gesagen", "gesegt"], "What did you say?", "¿Qué has dicho?", "sagen is regular: ge- + sag + -t. Spanish decir is irregular, sagen isn't."],
+    ["Ich habe das nicht ___.", "verstanden", ["geverstanden", "verstehen"], "I didn't understand that.", "No lo he entendido.", "Verbs that start with be-, ver-, er-, ent- or zer- get no ge-: verstanden."],
+    ["Sie hat ihr Handy ___.", "vergessen", ["gevergessen", "vergesst"], "She forgot her phone.", "Se ha olvidado el móvil.", "ver- verbs get no ge-: vergessen."],
+    ["Was hast du zum Geburtstag ___?", "bekommen", ["gebekommen", "bekommt"], "What did you get for your birthday?", "¿Qué te regalaron por tu cumpleaños?", "be- verbs get no ge-: bekommen. Careful: bekommen means to get, not to become (that's werden)."],
+    ["Wie lange hast du in Berlin ___?", "studiert", ["gestudiert", "studieren"], "How long did you study in Berlin?", "¿Cuánto tiempo estudiaste en Berlín?", "Verbs ending in -ieren get no ge-: studiert, telefoniert, passiert."],
+    ["Hast du gut ___?", "geschlafen", ["geschlaft", "geschlief"], "Did you sleep well?", "¿Has dormido bien?", "schlafen – schlief – geschlafen."],
+    ["Wir sind gestern ins Kino ___.", "gegangen", ["gegeht", "gegangt"], "We went to the cinema yesterday.", "Ayer fuimos al cine.", "gehen – ging – gegangen, with sein."],
+    ["Ich bin mit dem Fahrrad zur Arbeit ___.", "gefahren", ["gefahrt", "gefuhren"], "I cycled to work.", "Fui al trabajo en bici.", "fahren – fuhr – gefahren, with sein because it's movement."],
+    ["Wir sind um Mitternacht nach Hause ___.", "gekommen", ["gekamen", "gekommt"], "We got home at midnight.", "Llegamos a casa a medianoche.", "kommen – kam – gekommen, with sein."],
+    ["Er hat mir nicht ___.", "geholfen", ["gehelft", "gehalfen"], "He didn't help me.", "No me ayudó.", "helfen – half – geholfen."],
+    ["Wir haben lange miteinander ___.", "gesprochen", ["gesprecht", "gesprachen"], "We talked to each other for a long time.", "Hablamos mucho rato.", "sprechen – sprach – gesprochen."],
+    ["Ich habe meinen Schlüssel ___.", "gefunden", ["gefindet", "gefanden"], "I've found my key.", "He encontrado mi llave.", "finden – fand – gefunden."]
+  ]},
+  { id: "trennbar", name: "Trennbare Verben", en: "Separable verbs", icon: "⏰", items: [
+    ["Ich stehe jeden Tag um sieben Uhr ___.", "auf", ["an", "ab"], "I get up at seven every day.", "Me levanto a las siete todos los días.", "aufstehen: the verb goes second, the prefix auf goes to the very end."],
+    ["Wann ___ du morgen auf?", "stehst", ["aufstehst", "stehen"], "When are you getting up tomorrow?", "¿A qué hora te levantas mañana?", "In a main clause or a question only stehst moves to the front; auf stays at the end."],
+    ["Der Zug kommt um halb neun ___.", "an", ["ab", "mit"], "The train arrives at half past eight.", "El tren llega a las ocho y media.", "ankommen = to arrive, abfahren = to leave."],
+    ["Wann fährt der Bus ___?", "ab", ["an", "aus"], "When does the bus leave?", "¿Cuándo sale el autobús?", "abfahren = to leave, ankommen = to arrive."],
+    ["Ich rufe dich heute Abend ___.", "an", ["auf", "mit"], "I'll call you tonight.", "Te llamo esta noche.", "anrufen: ich rufe dich an."],
+    ["Kommst du heute Abend ___?", "mit", ["an", "auf"], "Are you coming along tonight?", "¿Te vienes esta noche?", "mitkommen = to come along: Kommst du mit?"],
+    ["Wir ___ am Samstag im Supermarkt ein.", "kaufen", ["einkaufen", "gekauft"], "We do the shopping at the supermarket on Saturdays.", "Hacemos la compra en el supermercado los sábados.", "einkaufen: kaufen goes second, ein goes to the end."],
+    ["Mach bitte das Fenster ___!", "zu", ["ab", "mit"], "Please close the window!", "¡Cierra la ventana, por favor!", "zumachen = to close, aufmachen = to open. In a request the prefix goes to the end too."],
+    ["Das Konzert fängt um acht Uhr ___.", "an", ["auf", "ab"], "The concert starts at eight.", "El concierto empieza a las ocho.", "anfangen = to begin: es fängt an. The opposite is aufhören."],
+    ["Ich ___ heute Abend mit Freunden aus.", "gehe", ["ausgehe", "gehen"], "I'm going out with friends tonight.", "Esta noche salgo con amigos.", "ausgehen = to go out: ich gehe aus."],
+    ["Er ___ sehr müde aus.", "sieht", ["aussieht", "seht"], "He looks very tired.", "Parece muy cansado.", "aussehen = to look (tired, nice…): er sieht müde aus. sehen changes e to ie for er, sie, es."],
+    ["Wir steigen in Frankfurt ___.", "um", ["mit", "vor"], "We change trains in Frankfurt.", "Hacemos transbordo en Fráncfort.", "umsteigen = to change trains: wir steigen um."],
+    ["Wir müssen morgen früh ___.", "aufstehen", ["stehen auf", "aufgestanden"], "We have to get up early tomorrow.", "Mañana tenemos que madrugar.", "With müssen, können, wollen… the separable verb goes to the end in one piece: aufstehen."],
+    ["Kannst du mich vom Bahnhof ___?", "abholen", ["holen ab", "abgeholt"], "Can you pick me up from the station?", "¿Puedes recogerme en la estación?", "After können the whole verb goes to the end in one piece: abholen."],
+    ["Ich möchte das Kleid ___.", "anprobieren", ["probieren an", "angeprobiert"], "I'd like to try the dress on.", "Quisiera probarme el vestido.", "After möchte the verb goes to the end in one piece: anprobieren."],
+    ["Ich weiß nicht, wann der Film ___.", "anfängt", ["fängt an", "angefangen"], "I don't know when the film starts.", "No sé cuándo empieza la película.", "After wann, weil, dass, wenn… the verb goes to the end and joins up again: anfängt."],
+    ["Ich bin müde, weil ich jeden Tag um fünf Uhr ___.", "aufstehe", ["stehe auf", "aufstehen"], "I'm tired because I get up at five every day.", "Estoy cansado/a porque me levanto a las cinco cada día.", "weil sends the verb to the end, so the prefix joins it again: aufstehe."],
+    ["Ich bin heute früh ___.", "aufgestanden", ["geaufstanden", "aufgesteht"], "I got up early today.", "Hoy me he levantado temprano.", "Separable verbs put ge- between the prefix and the verb: auf-ge-standen. aufstehen takes sein."],
+    ["Hast du deine Mutter schon ___?", "angerufen", ["geanrufen", "angeruft"], "Have you called your mother yet?", "¿Ya has llamado a tu madre?", "an-ge-rufen. rufen is irregular: gerufen."],
+    ["Der Zug ist pünktlich ___.", "angekommen", ["geankommen", "angekommt"], "The train arrived on time.", "El tren llegó puntual.", "an-ge-kommen, with sein because it's movement."],
+    ["Wir haben gestern im Supermarkt ___.", "eingekauft", ["geeinkauft", "eingekaufen"], "We went shopping at the supermarket yesterday.", "Ayer hicimos la compra en el supermercado.", "ein-ge-kauft. kaufen is regular, so it ends in -t."],
+    ["Wann hat der Film ___?", "angefangen", ["geanfangen", "angefangt"], "When did the film start?", "¿Cuándo empezó la película?", "an-ge-fangen. fangen is irregular."],
+    ["Ich habe dir ein Geschenk ___.", "mitgebracht", ["gemitbracht", "mitgebringt"], "I've brought you a present.", "Te he traído un regalo.", "mit-ge-bracht. bringen is irregular: gebracht."],
+    ["Hast du die Tür ___?", "zugemacht", ["gezumacht", "zugemachen"], "Did you close the door?", "¿Has cerrado la puerta?", "zu-ge-macht."],
+    ["Wir sind letztes Jahr nach Köln ___.", "umgezogen", ["geumzogen", "umgezieht"], "We moved to Cologne last year.", "Nos mudamos a Colonia el año pasado.", "umziehen = to move house: um-ge-zogen, with sein."],
+    ["Hast du gestern Abend ___?", "ferngesehen", ["gefernsehen", "ferngeseht"], "Did you watch TV last night?", "¿Viste la tele anoche?", "fern-ge-sehen."],
+    ["Was hat er dir ___?", "erzählt", ["geerzählt", "ergezählt"], "What did he tell you?", "¿Qué te contó?", "er- never splits off, so there's no ge-: erzählt. Only prefixes that are little words (an, auf, mit…) split."],
+    ["Ich habe dich nicht ___.", "verstanden", ["vergestanden", "geverstanden"], "I didn't understand you.", "No te he entendido.", "ver- never splits off and takes no ge-: verstanden. Compare auf-ge-standen."]
   ]}
+
 ];
 
 // Listening text: [lines read aloud, question, answer, [wrong options], english, spanish]

@@ -35,12 +35,11 @@ test("every grammar sentence is complete", async ({ page }) => {
   expect(problems).toEqual([]);
 });
 
-test("the Grammatik tab shows both lessons and goes back to the cards", async ({ page }) => {
+test("the Grammatik tab shows every lesson and goes back to the cards", async ({ page }) => {
   const errors = await openGrammar(page);
   await expect(page.locator("#setup")).toBeHidden();
-  await expect(page.locator("#lessons .lesson")).toHaveCount(2);
-  await expect(page.locator("#lessons")).toContainText("Akkusativ & Dativ");
-  await expect(page.locator("#lessons")).toContainText("Präpositionen");
+  await expect(page.locator("#lessons .lesson")).toHaveCount(4);
+  for (const name of ["Akkusativ & Dativ", "Präpositionen", "Perfekt", "Trennbare Verben"]) await expect(page.locator("#lessons")).toContainText(name);
   await page.click('#areas [data-v="setup"]');
   await expect(page.locator("#setup")).toBeVisible();
   expect(errors).toEqual([]);
@@ -62,11 +61,39 @@ test("theory shows one lesson, reads examples aloud and leads to practice", asyn
   await expect(page.locator("#qTopic")).toHaveText("Präpositionen");
 });
 
-test("the cases theory fits the screen too", async ({ page }) => {
+test("every lesson has its own theory page that fits the screen", async ({ page }) => {
   await openGrammar(page);
-  await page.click('#lessons [data-theory="cases"]');
-  await expect(page.locator('#theory [data-lesson="cases"]')).toBeVisible();
-  expect(await noSideScroll(page)).toBe(true);
+  const ids = await page.evaluate(() => GRAMMAR.map((l) => l.id));
+  await expect(page.locator("#theory article")).toHaveCount(ids.length);
+  for (const id of ids) {
+    await page.click(`#lessons [data-theory="${id}"]`);
+    await expect(page.locator(`#theory [data-lesson="${id}"]`)).toBeVisible();
+    await expect(page.locator("#theory article:visible")).toHaveCount(1);
+    expect(await noSideScroll(page)).toBe(true);
+    await page.click("#theoryBack");
+  }
+});
+
+test("the separable verbs drill reads its examples and quizzes only its own sentences", async ({ page }) => {
+  await openGrammar(page);
+  await page.click('#lessons [data-theory="trennbar"]');
+  await page.locator('#theory [data-lesson="trennbar"] .ex', { hasText: "Ich bin früh aufgestanden." }).click();
+  expect(await spoken(page)).toContain("Ich bin früh aufgestanden.");
+  await page.click('#theory [data-lesson="trennbar"] [data-quiz="trennbar"]');
+  await expect(page.locator("#qTopic")).toHaveText("Trennbare Verben");
+  const lessons = await page.evaluate(() => [...new Set(quiz.deck.map((q) => q.lesson))]);
+  expect(lessons).toEqual(["Trennbare Verben"]);
+});
+
+test("the Perfekt drill explains haben or sein after an answer", async ({ page }) => {
+  await openGrammar(page);
+  await page.click('#gmodeSeg [data-v="together"]');
+  await page.click('#lessons [data-quiz="perfekt"]');
+  await expect(page.locator("#qTopic")).toHaveText("Perfekt");
+  const q = await page.evaluate(() => quiz.deck[quiz.i]);
+  await page.keyboard.press(String((await rightOpt(page)) + 1));
+  await expect(page.locator("#qVerdict")).toHaveText("Richtig!");
+  await expect(page.locator("#qWhy")).toHaveText(q.why);
 });
 
 test("taking turns: a right answer scores, explains and reads the sentence", async ({ page }) => {
