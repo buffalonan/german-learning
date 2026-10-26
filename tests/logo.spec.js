@@ -11,6 +11,17 @@ test("the hedgehog logo shows beside the title and fits at phone width", async (
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize().width);
 });
 
+test("the logo is square and spans from the top of the flag bar to the subtitle", async ({ page }) => {
+  await open(page);
+  const plate = page.locator("#setup .brand .plate");
+  await expect(async () => {
+    const [l, p] = [await page.locator("#logo").boundingBox(), await plate.boundingBox()];
+    expect(Math.abs(l.width - l.height)).toBeLessThan(1);
+    expect(Math.abs(l.y - p.y)).toBeLessThan(1);
+    expect(Math.abs(l.y + l.height - (p.y + p.height))).toBeLessThan(2);
+  }).toPass();
+});
+
 test("the favicon, touch icon and manifest icons exist at their stated sizes", async ({ page, request }) => {
   await open(page);
   const links = await page.evaluate(() => ({

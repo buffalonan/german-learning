@@ -125,7 +125,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .plate h1 { font-size: clamp(2.5rem, 9vw, 3.6rem); color: var(--ink); }
 .plate small { font-weight: 500; font-size: 1rem; color: var(--muted); }
 .intro { display: grid; gap: 14px; margin-bottom: 26px; }
-.brand { display: flex; align-items: center; gap: 18px; }
+.brand { display: flex; align-items: flex-start; gap: 18px; }
 .logo { flex: none; width: 112px; height: 112px; border-radius: var(--r-m); border: 3px solid var(--line); box-shadow: var(--clay-sm); }
 .intro p { margin: 0; max-width: 46ch; color: var(--muted); font-size: 1.05rem; }
 
@@ -377,7 +377,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
   <section id="setup">
     <div class="intro">
       <div class="brand">
-        <img class="logo" src="logo/hedgehog.webp" alt="" width="112" height="112">
+        <img class="logo" id="logo" src="logo/hedgehog.webp" alt="" width="112" height="112">
         <div class="plate"><h1>Sag's auf Deutsch</h1><small>Bildkarten · Wortspiel</small></div>
       </div>
       <p>Look at the picture and say it in German before the other one does. Flip the card to check, and hear how it sounds.</p>
@@ -1312,6 +1312,13 @@ function applyTheme() {
 $("theme").onclick = () => { settings.theme = isDark() ? "light" : "dark"; save(); applyTheme(); };
 darkQuery?.addEventListener?.("change", applyTheme);
 applyTheme();
+
+// The logo is as tall as the title block beside it, from the top of the flag bar to the subtitle (capped on narrow phones).
+const plate = document.querySelector(".brand .plate");
+new ResizeObserver(() => {
+  const size = Math.round(Math.min(plate.offsetHeight, innerWidth * 0.32));
+  if (size) $("logo").style.width = $("logo").style.height = `${size}px`;
+}).observe(plate);
 
 /* ---------- Setup screen ---------- */
 function renderTopics() {
