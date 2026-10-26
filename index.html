@@ -146,8 +146,8 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 }
 .topic-chip .ico { grid-row: 1 / 3; font-family: var(--emoji); font-size: 1.6rem; line-height: 1; transition: filter .18s, opacity .18s; }
 .ico img, .mi img { width: 2.4rem; height: 2.4rem; display: block; }
-.topic-chip b { font-family: var(--display); font-weight: 800; font-size: 1.02rem; line-height: 1.2; }
-.topic-chip span.sub { font-size: .8rem; color: var(--muted); }
+.topic-chip b { font-family: var(--display); font-weight: 800; font-size: 1.02rem; line-height: 1.2; min-width: 0; hyphens: auto; overflow-wrap: anywhere; }
+.topic-chip span.sub { font-size: .8rem; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
 .topic-chip[aria-pressed="true"] { border-color: var(--primary); box-shadow: var(--clay-sm); background: var(--pastel-2); }
 .topic-chip[aria-pressed="true"]:nth-child(5n+1) { background: var(--pastel-1); }
 .topic-chip[aria-pressed="true"]:nth-child(5n+3) { background: var(--pastel-3); }
