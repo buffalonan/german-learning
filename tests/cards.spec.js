@@ -33,6 +33,8 @@ test.describe("card faces", () => {
   test("colour cards show a swatch and number cards show the numeral", async ({ page }) => {
     await open(page);
     await startRound(page, { topics: ["colors"] });
+    // Every colour has a painted picture now, so use a made-up colour card without one for the swatch.
+    await page.evaluate(() => startGame([{ ...buildDeck()[0], front: "#2a9d8f", de: "Probefarbe" }]));
     const swatch = page.locator("#fPic .swatch");
     await expect(swatch).toBeVisible();
     // The colour fills most of the card, so cards don't all look alike.
