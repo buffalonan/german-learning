@@ -7,6 +7,8 @@ test.describe("card faces", () => {
   test("emoji cards show a 3D picture", async ({ page }) => {
     await open(page);
     await startRound(page, { topics: ["animals"] });
+    // Every real card has a painted picture now, so use a made-up card without one for the emoji picture.
+    await page.evaluate(() => startGame([{ ...buildDeck()[0], de: "Probetier" }]));
     await expect(page.locator("#fPic img.pic3d")).toBeVisible();
     const loaded = await page.locator("#fPic img").evaluate((img) => img.complete && img.naturalWidth > 0);
     expect(loaded).toBe(true);
@@ -25,7 +27,7 @@ test.describe("card faces", () => {
     expect(tile[0]).toBeGreaterThanOrEqual(card[0]);
     expect(tile[1]).toBeLessThanOrEqual(card[1]);
     // A card without an illustration keeps its emoji picture.
-    await page.evaluate(() => startGame(buildDeck().filter((c) => c.de === "Hund")));
+    await page.evaluate(() => startGame([{ ...buildDeck().find((c) => c.de === "Hund"), de: "Probetier" }]));
     await expect(page.locator("#fPic img.pic3d")).toBeVisible();
     await expect(page.locator("#fPic img.illo")).toHaveCount(0);
   });
@@ -33,6 +35,8 @@ test.describe("card faces", () => {
   test("colour cards show a swatch and number cards show the numeral", async ({ page }) => {
     await open(page);
     await startRound(page, { topics: ["colors"] });
+    // Every colour has a painted picture now, so use a made-up colour card without one for the swatch.
+    await page.evaluate(() => startGame([{ ...buildDeck()[0], front: "#2a9d8f", de: "Probefarbe" }]));
     const swatch = page.locator("#fPic .swatch");
     await expect(swatch).toBeVisible();
     // The colour fills most of the card, so cards don't all look alike.

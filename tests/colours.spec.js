@@ -85,9 +85,11 @@ test.describe("colours", () => {
       const seen = new Set();
       const deck = await page.evaluate(() => game.deck.length);
       for (let k = 0; k < deck; k++) {
-        const card = await page.evaluate(() => game.deck[game.i]);
-        // Cards that get an illustrated picture instead of a "#hex" front are covered by the picture tests.
-        if (card.front.startsWith("#")) {
+        const card = await page.evaluate(() => ({ ...game.deck[game.i], illo: illustration(game.deck[game.i]) }));
+        // A colour with a painted picture shows that instead of its "#hex" swatch.
+        if (card.illo) {
+          await expect(page.locator("#fPic .illo"), card.de).toHaveAttribute("src", card.illo);
+        } else if (card.front.startsWith("#")) {
           const swatch = page.locator("#fPic .swatch");
           await expect(swatch).toBeVisible();
           const box = await swatch.boundingBox();

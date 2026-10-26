@@ -32,7 +32,7 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 
 - **Word bank:** the `TOPICS` array. Each topic is `{ id, name (German), en, icon, items, cue? }`. Each card is `[front, german, article, english, spanish, feminine?]`.
   - `front` is an emoji, a `#rrggbb` colour swatch, or `n:12` for a numeral.
-  - A card with a painted illustration in `art/<topic id>/<artName(german)>.webp` (listed in `art.js`) shows it instead, on a rounded tile with no pastel disc. `artName` lowercases, turns ä/ö/ü/ß into ae/oe/ue/ss and other characters into `-` ("sich setzen" → `sich-setzen`), and must match `art_name` in `scripts/add-art.py`. Illustrations are keyed by topic and word, not emoji, because some emoji are shared (🪑 is both "sich setzen" and "Stuhl").
+  - A card with a painted illustration in `art/<topic id>/<artName(german)>.webp` (listed in `art.js`) shows it instead, on a rounded tile with no pastel disc. Every card except the numbers has one now, so the emoji picture and colour swatch are only fallbacks for new cards; their tests use made-up cards. `artName` lowercases, turns ä/ö/ü/ß into ae/oe/ue/ss and other characters into `-` ("sich setzen" → `sich-setzen`), and must match `art_name` in `scripts/add-art.py`. Illustrations are keyed by topic and word, not emoji, because some emoji are shared (🪑 is both "sich setzen" and "Stuhl").
   - `article` is `der`, `die`, `das`, `pl` (shown as "die" with a Pl. mark) or `""` for none (verbs, colours, numbers, phrases).
   - `feminine` is the feminine job form, e.g. `"die Lehrerin"`.
   - `cue: true` (phrases) always shows a text cue on the front.
