@@ -18,8 +18,9 @@ Roadmap: (1) picture card game, done; (2) bigger word bank and more everyday sen
 | `pictures.js` | Generated. `window.PICS = { "🍎": "data:image/webp;base64,…" }` with 3D pictures keyed by emoji. Don't edit by hand. |
 | `art/<topic id>/<name>.webp`, `art.js` | Painted card illustrations (Ghibli-style, made by Ferran in Nano Banana from Claude's prompts), 640px WebP, about 20 KB each. `art.js` is generated: `window.ART` lists them. |
 | `scripts/add-art.py`, `scripts/build-art.js` | `python3 scripts/add-art.py <topic id> <pictures…>` crops, shrinks and saves pictures named after the German word into `art/<topic>/`, then runs `build-art.js` to rewrite `art.js`. Needs Pillow. |
+| `logo/`, `manifest.webmanifest`, `scripts/build-logo.py` | The hedgehog logo (painted by Ferran, original in the project's shared files at `illustrations/logo/`). `python3 scripts/build-logo.py <original>` makes `logo/hedgehog.webp` (with its "hallo!" bubble, beside the title on the Wortkarten screen), the favicon, touch and manifest icons (hedgehog only; the 32px favicon is just its face) and the Android launcher icons and splash screens, all on the picture's cream (`#f8f3e7`, also `ic_launcher_background`). Not in `art/`, which is only for cards. |
 | `scripts/build-pictures.js` | Regenerates `pictures.js` from the emoji used in `index.html`, using Microsoft Fluent Emoji 3D (MIT) from the npm package `@lobehub/fluent-emoji-3d`. |
-| `android/` | Capacitor's Android project. Edited by hand only in `app/build.gradle` (version and signing from env vars) and the icons/splash. `app/src/main/assets/public` is generated and ignored. |
+| `android/` | Capacitor's Android project. Edited by hand only in `app/build.gradle` (version and signing from env vars); the icons and splash come from `scripts/build-logo.py`. `app/src/main/assets/public` is generated and ignored. |
 | `capacitor.config.json` | App id `io.github.buffalonan.sagsdeutsch`, name, and `webDir: www`. |
 | `scripts/build-app-web.js` | Copies the game into `www/` for the app (adding `<script src="capacitor.js">`) or, with `--web`, into `_site/` for Pages, plus `audio/` if it exists. Both folders are generated and ignored. |
 | `scripts/list-spoken.js`, `scripts/build-audio.py` | Make the recorded voices in `audio/` (run in CI, see below). |
@@ -81,7 +82,7 @@ npm run app:sync                       # copy the game into the Android project 
 
 ## Where it runs
 
-- **Web:** <https://buffalonan.github.io/german-learning/>, deployed by `pages.yml` on each merge to `main` that changes `index.html`, `pictures.js` or the illustrations (Pages source must be "GitHub Actions" in the repo settings).
+- **Web:** <https://buffalonan.github.io/german-learning/>, deployed by `pages.yml` on each merge to `main` that changes `index.html`, `pictures.js`, the illustrations or the logo (Pages source must be "GitHub Actions" in the repo settings).
 - **Android app:** sideloaded from the latest GitHub release (no Play Store). It updates when a new APK is installed over it.
-- **Local copy for phones:** the owner serves a copy from their computer on their home Wi-Fi (`python3 -m http.server <port> --bind 0.0.0.0`). It doesn't update by itself: copy `index.html`, `pictures.js`, `art.js` and `art/` over after merging.
-- **Claude artifact:** a hosted copy for Claude's app is the same page with the `<!doctype>`, `<html>`, `<head>` and `<body>` wrapper lines removed, plus `pictures.js`, `art.js` and the `art/` pictures as supporting files.
+- **Local copy for phones:** the owner serves a copy from their computer on their home Wi-Fi (`python3 -m http.server <port> --bind 0.0.0.0`). It doesn't update by itself: copy `index.html`, `pictures.js`, `art.js`, `art/`, `logo/` and `manifest.webmanifest` over after merging.
+- **Claude artifact:** a hosted copy for Claude's app is the same page with the `<!doctype>`, `<html>`, `<head>` and `<body>` wrapper lines removed, plus `pictures.js`, `art.js`, the `art/` pictures and `logo/` as supporting files.

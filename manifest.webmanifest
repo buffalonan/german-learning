@@ -1,0 +1,12 @@
+{
+  "name": "Sag's auf Deutsch",
+  "short_name": "Sag's auf Deutsch",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f8f3e7",
+  "theme_color": "#f8f3e7",
+  "icons": [
+    { "src": "logo/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "logo/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
