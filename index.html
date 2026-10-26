@@ -1315,10 +1315,12 @@ applyTheme();
 
 // The logo is as tall as the title block beside it, from the top of the flag bar to the subtitle (capped on narrow phones).
 const plate = document.querySelector(".brand .plate");
-new ResizeObserver(() => {
+// Resizing the logo can rewrap the title, so it waits for the next frame (no "ResizeObserver loop" error) and only
+// changes when the size really does.
+new ResizeObserver(() => requestAnimationFrame(() => {
   const size = Math.round(Math.min(plate.offsetHeight, innerWidth * 0.32));
-  if (size) $("logo").style.width = $("logo").style.height = `${size}px`;
-}).observe(plate);
+  if (size && Math.abs(size - $("logo").offsetHeight) > 1) $("logo").style.width = $("logo").style.height = `${size}px`;
+})).observe(plate);
 
 /* ---------- Setup screen ---------- */
 function renderTopics() {

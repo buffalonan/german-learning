@@ -42,3 +42,22 @@ test("the favicon, touch icon and manifest icons exist at their stated sizes", a
     expect(size, src).toBe(sizes);
   }
 });
+
+for (const width of [320, 360, 412]) {
+  test(`the logo settles without resize errors at ${width}px`, async ({ page }) => {
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.addInitScript(() => addEventListener("error", (e) => console.error(`window error: ${e.message}`)));
+    page.on("console", (m) => m.type() === "error" && /ResizeObserver|window error/.test(m.text()) && errors.push(m.text()));
+    await page.setViewportSize({ width, height: 800 });
+    await open(page);
+    const size = () => page.locator("#logo").evaluate((img) => img.offsetHeight);
+    await expect.poll(size).toBeGreaterThan(80);
+    const settled = await size();
+    await page.waitForTimeout(300);
+    expect(await size()).toBe(settled);
+    expect(settled).toBeLessThanOrEqual(Math.round(width * 0.32));
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    expect(errors).toEqual([]);
+  });
+}
