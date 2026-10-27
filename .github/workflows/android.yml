@@ -114,11 +114,11 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       # The emulator download sometimes arrives broken ("Error on ZipFile unknown archive"), which failed whole runs.
-      # Installing it here with retries leaves the emulator runner nothing to download.
+      # Installing it here with retries leaves the emulator runner nothing to download. sdkmanager is not on PATH yet.
       - name: Install the emulator
         run: |
           for try in 1 2 3; do
-            if sdkmanager --install emulator --channel=0 > /dev/null; then exit 0; fi
+            if "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install emulator --channel=0 > /dev/null; then exit 0; fi
             echo "::warning::The emulator download failed (try $try of 3)."
             sleep 15
           done
