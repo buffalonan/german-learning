@@ -75,12 +75,12 @@ jobs:
           "$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner" verify --print-certs "$apk"
           mkdir -p dist && cp "$apk" dist/sags-auf-deutsch.apk
           echo "$SIGNED_WITH" > dist/signed-with.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: sags-auf-deutsch-apk
           path: dist/
           retention-days: 14
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: android-lint-report
