@@ -78,7 +78,7 @@ for (const width of [320, 360, 412]) {
   });
 }
 
-for (const width of [360, 412, 1280]) {
+for (const width of [320, 360, 412, 1280]) {
   test(`at ${width}px the tab labels are evenly spaced and the title block sits tidy`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await open(page);
