@@ -77,3 +77,29 @@ for (const width of [320, 360, 412]) {
     }
   });
 }
+
+for (const width of [320, 360, 412, 1280]) {
+  test(`at ${width}px the tab labels are evenly spaced and the title block sits tidy`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await open(page);
+    const m = await page.evaluate(() => {
+      const r = (e) => e.getBoundingClientRect();
+      const bar = r(document.getElementById("areas"));
+      const text = [...document.querySelectorAll("#areas button")].map((b) => { const g = document.createRange(); g.selectNodeContents(b); return g.getBoundingClientRect(); });
+      const between = text.slice(1).map((t, i) => t.left - text[i].right);
+      const ends = [text[0].left - bar.left, bar.right - text.at(-1).right];
+      const small = document.querySelector("#setup .plate small");
+      const lineHeight = parseFloat(getComputedStyle(small).lineHeight) || 24;
+      const h1 = document.querySelector("#setup h1"), firstLine = parseFloat(getComputedStyle(h1).lineHeight);
+      const theme = r(document.getElementById("theme"));
+      return { between, ends, subtitleLines: Math.round(r(small).height / lineHeight), themeMid: (theme.top + theme.bottom) / 2, lineMid: r(h1).top + firstLine / 2, themeInTopbar: theme.top < r(document.getElementById("topbar")).bottom };
+    });
+    expect(Math.max(...m.between) - Math.min(...m.between)).toBeLessThan(2);
+    expect(Math.abs(m.ends[0] - m.ends[1])).toBeLessThan(2);
+    expect(Math.min(...m.ends)).toBeGreaterThan(Math.max(...m.between) * 0.6);
+    expect(m.subtitleLines).toBe(1);
+    // On phones the light/dark button sits level with the title's first line.
+    if (width <= 640) expect(Math.abs(m.themeMid - m.lineMid)).toBeLessThan(3);
+    else expect(m.themeInTopbar).toBe(true);
+  });
+}

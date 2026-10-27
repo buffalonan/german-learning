@@ -133,8 +133,8 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 /* Top bar: section tabs on the left, the light/dark switch on the right. */
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
 .theme-btn { flex: none; width: 48px; height: 48px; display: grid; place-items: center; margin-left: auto; padding: 0; border-radius: 50%; background: var(--surface); border: 3px solid var(--line); color: var(--ink); font-size: 1.25rem; box-shadow: var(--clay-sm); }
-.areas { display: inline-flex; gap: 4px; padding: 5px; background: var(--surface); border: 3px solid var(--line); border-radius: 999px; box-shadow: var(--clay-sm); flex-wrap: wrap; }
-.areas button { background: transparent; border: 0; border-radius: 999px; padding: 9px 20px; min-height: 44px; font-family: var(--display); font-weight: 800; font-size: 1.02rem; color: var(--muted); }
+.areas { display: inline-flex; gap: 4px; padding: 5px 12px; background: var(--surface); border: 3px solid var(--line); border-radius: 999px; box-shadow: var(--clay-sm); flex-wrap: wrap; }
+.areas button { background: transparent; border: 0; border-radius: 999px; padding: 9px 18px; min-height: 44px; font-family: var(--display); font-weight: 800; font-size: 1.02rem; color: var(--muted); }
 .areas button[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); box-shadow: var(--press); }
 
 /* Setup sheet */
@@ -341,13 +341,14 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .ltr dd { font-size: .95rem; }
 
 @media (max-width: 640px) {
-  /* The section tabs take the whole width, in equal columns that never wrap (room for four), and the light/dark
-     button moves down beside the title. */
+  /* The section tabs take the whole width on one line (room for four). Each tab gets the same extra width on top
+     of its label, so the gaps between labels are equal. The light/dark button moves down, level with the first
+     line of the title. */
   .topbar { position: relative; }
-  .areas { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; width: 100%; }
-  .areas button { padding: 9px 2px; font-size: clamp(.76rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
-  .theme-btn { position: absolute; right: 0; top: calc(100% + 22px); }
-  .intro .plate { padding-right: 60px; } /* keeps the title clear of that button */
+  .areas { display: flex; flex-wrap: nowrap; gap: 2px; width: 100%; padding: 5px 7px; }
+  .areas button { flex: 1 1 auto; padding: 9px 4px; font-size: clamp(.76rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
+  .theme-btn { position: absolute; right: 0; top: calc(100% + 42px + clamp(1.75rem, 8.4vw, 3.6rem) * .54 - 24px); }
+  .intro .plate h1 { padding-right: 56px; } /* keeps the title clear of that button; the subtitle runs under it */
   .brand { gap: 12px; }
   .logo { width: 76px; height: 76px; border-radius: var(--r-s); }
   .brand h1 { font-size: clamp(1.75rem, 8.4vw, 3.6rem); }
