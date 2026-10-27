@@ -77,7 +77,7 @@ npm run app:sync                       # copy the game into the Android project 
 
 - Work on a branch and open a pull request into `main`. Don't push to `main` directly.
 - Every PR runs ESLint, Playwright, `npm audit --audit-level=moderate`, `npm audit signatures` and gitleaks. CodeQL and dependency review also run, since the repo is public. Security checks also run weekly. Dependabot opens weekly updates.
-- `android.yml` runs Android Lint and an emulator smoke test (`android-tests/`, Playwright driving the debug app's WebView over adb; not part of `npm test`), builds the APK on every PR (downloadable as a workflow artifact) and, on `main`, publishes it as release `app-v1.<run number>` with `sags-auf-deutsch.apk`. It signs with the `ANDROID_KEYSTORE_BASE64`/`ANDROID_KEYSTORE_PASSWORD` secrets, or a one-off key if they're missing (see README).
+- `android.yml` runs Android Lint and an emulator smoke test (`android-tests/`, Playwright driving the debug app's WebView over adb; not part of `npm test`), builds the APK on every PR (downloadable as a workflow artifact) and, on `main`, publishes it as release `app-v1.<run number>` with `sags-auf-deutsch.apk`. A run skips the release when `main` has moved on by then, since the newer run publishes its own (and tagging an older commit fails with HTTP 403 when a later merge changed a workflow). The emulator is installed in its own step with retries, because its download sometimes arrives broken. It signs with the `ANDROID_KEYSTORE_BASE64`/`ANDROID_KEYSTORE_PASSWORD` secrets, or a one-off key if they're missing (see README).
 - `.gitleaks.toml` allowlists `pictures.js`, whose base64 data looks like keys.
 
 ## Where it runs
