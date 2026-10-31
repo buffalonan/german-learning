@@ -9,7 +9,7 @@
     "app:sync": "node scripts/build-app-web.js && cap sync android"
   },
   "devDependencies": {
-    "@capacitor/cli": "8.5.3",
+    "@capacitor/cli": "8.6.0",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.64.1",
     "eslint": "10.13.0",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@capacitor-community/text-to-speech": "8.0.2",
-    "@capacitor/android": "8.5.3",
-    "@capacitor/core": "8.5.3"
+    "@capacitor/android": "8.6.0",
+    "@capacitor/core": "8.6.0"
   },
   "overrides": {
     "xcode": {
