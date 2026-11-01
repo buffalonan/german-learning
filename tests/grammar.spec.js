@@ -85,6 +85,12 @@ test("the separable verbs drill reads its examples and quizzes only its own sent
   expect(lessons).toEqual(["Trennbare Verben"]);
 });
 
+test("the Perfekt lesson has plenty of everyday sentences", async ({ page }) => {
+  await open(page);
+  const n = await page.evaluate(() => GRAMMAR.find((l) => l.id === "perfekt").items.length);
+  expect(n).toBeGreaterThanOrEqual(100);
+});
+
 test("the Perfekt drill explains haben or sein after an answer", async ({ page }) => {
   await openGrammar(page);
   await page.click('#gmodeSeg [data-v="together"]');
