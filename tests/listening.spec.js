@@ -53,8 +53,8 @@ test("every listening text is complete", async ({ page }) => {
 
 test("the Hören tab lists the kinds of text, with practice as the default", async ({ page }) => {
   const errors = await openListening(page);
-  await expect(page.locator("#kinds .topic-chip")).toHaveCount(5);
-  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(5);
+  await expect(page.locator("#kinds .topic-chip")).toHaveCount(6);
+  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(6);
   await expect(page.locator('#lmodeSeg [data-v="practice"]')).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator('#lcountSeg [data-v="10"]')).toHaveAttribute("aria-pressed", "true");
   expect(await noSideScroll(page)).toBe(true);
@@ -219,6 +219,32 @@ test("interviews are B1 true/false questions with two speakers", async ({ page }
   await expect(page.locator("#lScript .who")).toHaveText(t.lines.map((_, n) => (n % 2 ? "B" : "A")));
 });
 
+test("guided tours are B1 monologues read by one voice, a few sentences at a time", async ({ page }) => {
+  await startListening(page, { kinds: ["tours"] });
+  const t = await current(page);
+  expect(t.lines.length).toBeGreaterThanOrEqual(4);
+  await expect(page.locator("#lOpts .opt")).toHaveCount(3);
+  await expect.poll(() => spoken(page)).toEqual(t.lines);
+  const pitches = await page.evaluate(() => window.__spoken.map((s) => s.pitch));
+  expect(new Set(pitches).size).toBe(1);
+  await page.keyboard.press(String((await rightOpt(page)) + 1));
+  await expect(page.locator("#lScript p")).toHaveCount(t.lines.length);
+  await expect(page.locator("#lScript .who")).toHaveCount(0);
+});
+
+test("a kind added after interviews is switched on for players who already knew interviews", async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!sessionStorage.getItem("seeded")) {
+      localStorage.setItem("sagsDeutsch.settings", JSON.stringify({ lkinds: ["radio"], lknown: ["announce", "voicemail", "talks", "radio", "interviews"] }));
+    }
+    sessionStorage.setItem("seeded", "1");
+  });
+  await openListening(page);
+  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(2);
+  await expect(page.locator('#kinds [data-id="tours"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator('#kinds [data-id="interviews"]')).toHaveAttribute("aria-pressed", "false");
+});
+
 test("a kind of text added since the last visit is switched on", async ({ page }) => {
   // Settings saved before interviews existed: only the first visit starts from them.
   await page.addInitScript(() => {
@@ -226,8 +252,9 @@ test("a kind of text added since the last visit is switched on", async ({ page }
     sessionStorage.setItem("seeded", "1");
   });
   await openListening(page);
-  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(2);
+  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(3);
   await expect(page.locator('#kinds [data-id="interviews"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator('#kinds [data-id="tours"]')).toHaveAttribute("aria-pressed", "true");
   await page.click('#kinds [data-id="interviews"]');
   await page.reload();
   await page.click('#areas [data-v="listen"]');
