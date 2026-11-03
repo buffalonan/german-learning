@@ -85,10 +85,20 @@ test("the separable verbs drill reads its examples and quizzes only its own sent
   expect(lessons).toEqual(["Trennbare Verben"]);
 });
 
-test("the Perfekt lesson has plenty of everyday sentences", async ({ page }) => {
+test("every grammar lesson has plenty of everyday sentences", async ({ page }) => {
   await open(page);
-  const n = await page.evaluate(() => GRAMMAR.find((l) => l.id === "perfekt").items.length);
-  expect(n).toBeGreaterThanOrEqual(100);
+  const short = await page.evaluate(() => GRAMMAR.filter((l) => l.items.length < 100).map((l) => `${l.id}: ${l.items.length}`));
+  expect(short).toEqual([]);
+});
+
+test("the prepositions drill practises both wohin and wo", async ({ page }) => {
+  await open(page);
+  const n = await page.evaluate(() => {
+    const whys = GRAMMAR.find((l) => l.id === "preps").items.map((it) => it[5]);
+    return { wohin: whys.filter((w) => w.startsWith("Wohin?")).length, wo: whys.filter((w) => w.startsWith("Wo?")).length };
+  });
+  expect(n.wohin).toBeGreaterThanOrEqual(20);
+  expect(n.wo).toBeGreaterThanOrEqual(20);
 });
 
 test("the Perfekt drill explains haben or sein after an answer", async ({ page }) => {
