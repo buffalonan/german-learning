@@ -34,3 +34,28 @@ test("cards needing another go are listed at the end", async ({ page }) => {
   await expect(page.locator("#doneTitle")).toHaveText("Gut gemacht!");
   await expect(page.locator("#missed li")).toHaveCount(1);
 });
+
+test("the end-of-round list shows each missed card's painting", async ({ page }) => {
+  await open(page);
+  await startRound(page, { mode: "practice", topics: ["verbs"], count: "0" });
+  await page.evaluate(() => startGame(buildDeck().filter((c) => c.de === "aufstehen")));
+  await page.keyboard.press(" ");
+  await page.keyboard.press("1"); // again
+  await page.keyboard.press(" ");
+  await page.keyboard.press("2");
+  const thumb = page.locator("#missed li img.thumb");
+  await expect(thumb).toHaveAttribute("src", "art/verbs/aufstehen.webp");
+  expect(await thumb.evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
+});
+
+test("a missed card without a painting keeps its emoji in the list", async ({ page }) => {
+  await open(page);
+  await startRound(page, { mode: "practice", topics: ["animals"] });
+  await page.evaluate(() => startGame([{ ...buildDeck()[0], de: "Probetier" }]));
+  await page.keyboard.press(" ");
+  await page.keyboard.press("1");
+  await page.keyboard.press(" ");
+  await page.keyboard.press("2");
+  await expect(page.locator("#missed li img.thumb")).toHaveCount(0);
+  await expect(page.locator("#missed li .mi img")).toBeVisible();
+});

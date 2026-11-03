@@ -272,6 +272,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .voice-row select { font: inherit; font-weight: 700; color: var(--ink); background: var(--surface-2); border: 3px solid var(--line); border-radius: var(--r-s); padding: 8px 12px; min-height: 48px; max-width: 100%; min-width: 0; }
 .sound-note { margin: 0; font-size: .9rem; color: var(--die); }
 .missed .mi.num { font-family: var(--display); font-weight: 900; color: var(--primary); }
+.missed .mi img.thumb { width: 3rem; height: 3rem; object-fit: cover; border-radius: var(--r-s); border: 2px solid var(--line); background: #fbf8f0; }
 .missed .mi .dot { display: inline-block; width: 1.5rem; height: 1.5rem; border-radius: 50%; box-shadow: 0 0 0 2px var(--line), inset 0 -3px 0 rgba(0, 0, 0, .15); vertical-align: middle; }
 .missed small { color: var(--muted); display: block; }
 
@@ -1856,7 +1857,9 @@ function finish() {
   $("missedWrap").hidden = game.missed.length === 0;
   $("replayMissed").hidden = game.missed.length === 0;
   $("missed").innerHTML = html`${game.missed.map((c) => {
-    const ic = c.front.startsWith("#") ? html`<span class="mi"><span class="dot" style="background:${c.front}"></span></span>`
+    const art = illustration(c);
+    const ic = art ? html`<span class="mi"><img class="thumb" src="${art}" alt=""></span>`
+      : c.front.startsWith("#") ? html`<span class="mi"><span class="dot" style="background:${c.front}"></span></span>`
       : c.front.startsWith("n:") ? html`<span class="mi num">${c.front.slice(2)}</span>` : html`<span class="mi">${picImg(c.front, "") || c.front}</span>`;
     return html`<li>${ic}<span><b>${deHTML(c)}</b><small>${c.en} · ${c.es}</small></span></li>`;
   })}`;
