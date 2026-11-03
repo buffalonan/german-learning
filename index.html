@@ -365,14 +365,15 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
      of its label, so the gaps between labels are equal. The light/dark button moves down, level with the first
      line of the title. */
   .topbar { position: relative; }
-  .areas { display: flex; flex-wrap: nowrap; gap: 2px; width: 100%; padding: 5px 7px; }
-  .areas button { flex: 1 1 auto; padding: 9px 4px; font-size: clamp(.66rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
+  .areas { display: flex; flex-wrap: nowrap; gap: 2px; width: 100%; padding: 5px 5px; }
+  .areas button { flex: 1 1 auto; padding: 9px 2px; font-size: clamp(.66rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
   .theme-btn { position: absolute; right: 0; top: calc(100% + 42px + clamp(1.75rem, 8.4vw, 3.6rem) * .54 - 24px); }
   .intro .plate h1 { padding-right: 56px; } /* keeps the title clear of that button; the subtitle runs under it */
   .brand { gap: 12px; }
   .logo { width: 76px; height: 76px; border-radius: var(--r-s); }
   .brand h1 { font-size: clamp(1.75rem, 8.4vw, 3.6rem); }
 }
+@media (max-width: 340px) { .areas button { font-size: .66rem; } }
 @media (max-width: 480px) {
   .sheet { padding: 20px 16px; border-radius: 24px; }
   .scores { width: 100%; }
