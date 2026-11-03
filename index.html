@@ -151,6 +151,8 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 }
 .topic-chip .ico { grid-row: 1 / 3; font-family: var(--emoji); font-size: 1.6rem; line-height: 1; transition: filter .18s, opacity .18s; }
 .ico img, .mi img { width: 2.4rem; height: 2.4rem; display: block; }
+.ico img.tile { width: 2.75rem; height: 2.75rem; object-fit: cover; border-radius: 12px; box-shadow: 0 0 0 2px var(--line); background: #fbf8f0; }
+.lesson .ico img.tile { width: 3.25rem; height: 3.25rem; }
 .topic-chip b { font-family: var(--display); font-weight: 800; font-size: 1.02rem; line-height: 1.2; min-width: 0; hyphens: auto; overflow-wrap: anywhere; }
 .topic-chip span.sub { font-size: .8rem; color: var(--muted); min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
 .topic-chip[aria-pressed="true"] { border-color: var(--primary); box-shadow: var(--clay-sm); background: var(--pastel-2); }
@@ -1481,7 +1483,7 @@ new ResizeObserver(() => requestAnimationFrame(() => {
 function renderTopics() {
   $("topics").innerHTML = html`${TOPICS.map((t) => html`
     <button type="button" class="topic-chip" data-id="${t.id}" aria-pressed="${settings.topics.includes(t.id)}">
-      <span class="ico">${picImg(t.icon, "") || t.icon}</span><b>${t.name}</b><span class="sub">${t.en} · ${t.items.length}</span>
+      <span class="ico">${tileIcon(t)}</span><b>${t.name}</b><span class="sub">${t.en} · ${t.items.length}</span>
     </button>`)}`;
   updateAvail();
 }
@@ -1705,6 +1707,8 @@ function artName(de) {
   const map = { "ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss" };
   return de.toLowerCase().replace(/[äöüß]/g, (ch) => map[ch]).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
+// Topic, lesson and listening tiles have a small painting in art/tiles/<id>.webp; the emoji is the fallback.
+const tileIcon = (t) => (ILLUSTRATIONS.has(`tiles/${t.id}`) ? html`<img class="tile" src="art/tiles/${t.id}.webp" alt="">` : picImg(t.icon, "") || t.icon);
 const illustration = (c) => (ILLUSTRATIONS.has(`${c.topicId}/${artName(c.de)}`) ? `art/${c.topicId}/${artName(c.de)}.webp` : "");
 function frontHTML(c, cls) {
   const { front } = c, art = illustration(c);
@@ -1911,7 +1915,7 @@ $("areas").onclick = (e) => { const b = e.target.closest("button"); if (b) show(
 function renderLessons() {
   $("lessons").innerHTML = html`${GRAMMAR.map((l) => html`
     <div class="lesson">
-      <span class="ico">${picImg(l.icon, "") || l.icon}</span><h3>${l.name}</h3><p>${l.en} · ${l.items.length} sentences</p>
+      <span class="ico">${tileIcon(l)}</span><h3>${l.name}</h3><p>${l.en} · ${l.items.length} sentences</p>
       <div class="row">
         <button class="ctl" type="button" data-theory="${l.id}"><span class="i i-book" aria-hidden="true"></span> Theorie</button>
         <button class="ctl good" type="button" data-quiz="${l.id}">Üben</button>
@@ -2049,7 +2053,7 @@ document.addEventListener("keydown", (e) => {
 function renderKinds() {
   $("kinds").innerHTML = html`${LISTENING.map((k) => html`
     <button type="button" class="topic-chip" data-id="${k.id}" aria-pressed="${settings.lkinds.includes(k.id)}">
-      <span class="ico">${picImg(k.icon, "") || k.icon}</span><b>${k.name}</b><span class="sub" lang="en">${k.en} · ${k.items.length}</span>
+      <span class="ico">${tileIcon(k)}</span><b>${k.name}</b><span class="sub" lang="en">${k.en} · ${k.items.length}</span>
     </button>`)}`;
   updateLAvail();
 }

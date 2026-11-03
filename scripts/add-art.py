@@ -3,6 +3,8 @@
 Usage: python3 scripts/add-art.py <topic id> <picture>... (needs Pillow: pip install pillow)
 Each picture is named after the card's German word, e.g. sich-setzen.jpg or Glühbirne.png;
 the file name is turned into the card's art name the same way the page's artName() does.
+With the topic "tiles", pictures are the small icons on the topic, lesson and listening tiles,
+named after the tile's id (food.jpg, perfekt.jpg, announce.jpg) and saved at 256px.
 """
 import os
 import re
@@ -13,6 +15,7 @@ import unicodedata
 from PIL import Image
 
 SIZE = 640
+TILE_SIZE = 256
 
 
 def art_name(word):
@@ -34,7 +37,8 @@ def main():
         im = Image.open(src).convert("RGB")
         side = min(im.size)
         left, top = (im.width - side) // 2, (im.height - side) // 2
-        im = im.crop((left, top, left + side, top + side)).resize((SIZE, SIZE), Image.LANCZOS)
+        size = TILE_SIZE if topic == "tiles" else SIZE
+        im = im.crop((left, top, left + side, top + side)).resize((size, size), Image.LANCZOS)
         dest = os.path.join(out, art_name(os.path.splitext(os.path.basename(src))[0]) + ".webp")
         im.save(dest, "WEBP", quality=78, method=6)
         print(f"{os.path.relpath(dest, root)}: {os.path.getsize(dest) // 1024} KB")
