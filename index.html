@@ -1126,7 +1126,13 @@ const TOPICS = [
     ["📅","Woche","die","week","semana"],["📆","Monat","der","month","mes"],["🎆","Jahr","das","year","año"],
     ["⌛","Stunde","die","hour","hora"],["⏱️","Minute","die","minute","minuto"],["🕝","halb drei","","half past two (2:30)","las dos y media"],
     ["🕓","Viertel nach vier","","quarter past four (4:15)","las cuatro y cuarto"],["🕦","Viertel vor zwölf","","quarter to twelve (11:45)","las doce menos cuarto"],
-    ["🎂","Geburtstag","der","birthday","cumpleaños"],["🐌","Verspätung","die","delay","retraso"]
+    ["🎂","Geburtstag","der","birthday","cumpleaños"],["🐌","Verspätung","die","delay","retraso"],
+    ["🗓️","Januar","der","January","enero"],["🗓️","Februar","der","February","febrero"],["🗓️","März","der","March","marzo"],
+    ["🗓️","April","der","April","abril"],["🗓️","Mai","der","May","mayo"],["🗓️","Juni","der","June","junio"],
+    ["🗓️","Juli","der","July","julio"],["🗓️","August","der","August","agosto"],["🗓️","September","der","September","septiembre"],
+    ["🗓️","Oktober","der","October","octubre"],["🗓️","November","der","November","noviembre"],["🗓️","Dezember","der","December","diciembre"],
+    ["📍","heute","","today","hoy"],["⏪","gestern","","yesterday","ayer"],["⏮️","vorgestern","","the day before yesterday","anteayer"],
+    ["⏭️","übermorgen","","the day after tomorrow","pasado mañana"]
   ]},
   { id: "health", name: "Beim Arzt", en: "At the doctor's", icon: "🩺", items: [
     ["🤒","Fieber","das","fever, temperature","fiebre"],["😷","Husten","der","cough","tos"],["🤧","Erkältung","die","cold","resfriado"],
@@ -1162,6 +1168,38 @@ const TOPICS = [
     ["🎸","Gitarre","die","guitar","guitarra"],["🎲","Brettspiel","das","board game","juego de mesa"],["📕","Buch","das","book","libro"],
     ["🏔️","wandern","","to hike","hacer senderismo"],["🚴","Rad fahren","","to cycle","ir en bici"],["📸","fotografieren","","to take photos","hacer fotos"],
     ["🖌️","malen","","to paint","pintar"]
+  ]},
+  { id: "office", name: "Ämter & Post", en: "Offices, post & bank", icon: "🏛️", items: [
+    ["📄","Formular","das","form","formulario"],["📝","Antrag","der","application (form)","solicitud"],["✍️","Unterschrift","die","signature","firma"],
+    ["🪪","Personalausweis","der","ID card","documento de identidad"],["🏛️","Amt","das","public office, authority","oficina pública"],["🏠","Anmeldung","die","registration (of your address)","empadronamiento"],
+    ["📂","Unterlagen","pl","documents, papers","documentos"],["🎫","Wartenummer","die","queue ticket","número de turno"],["🚘","Führerschein","der","driving licence","carné de conducir"],
+    ["📦","Paket","das","parcel","paquete"],["✉️","Brief","der","letter","carta"],["📮","Briefkasten","der","postbox, letterbox","buzón"],
+    ["🏷️","Briefmarke","die","stamp","sello"],["🏦","Konto","das","bank account","cuenta bancaria"],["🏧","Geldautomat","der","cash machine","cajero automático"],
+    ["💸","Überweisung","die","bank transfer","transferencia"],["🧾","Rechnung","die","bill, invoice","factura"],["🛡️","Versicherung","die","insurance","seguro"],
+    ["🚓","Polizei","die","police","policía"],["🖊️","ausfüllen","","to fill in","rellenar"],["✒️","unterschreiben","","to sign","firmar"]
+  ]},
+  { id: "media", name: "Medien & Internet", en: "Media & internet", icon: "💻", items: [
+    ["🌐","Internet","das","internet","internet"],["📶","WLAN","das","Wi-Fi","wifi"],["🔐","Passwort","das","password","contraseña"],
+    ["💬","Nachricht","die","message","mensaje"],["🖥️","Bildschirm","der","screen","pantalla"],["⌨️","Tastatur","die","keyboard","teclado"],
+    ["💻","Laptop","der","laptop","portátil"],["🔌","Ladegerät","das","charger","cargador"],["🪫","Akku","der","(phone) battery","batería"],
+    ["📷","Kamera","die","camera","cámara"],["📸","Foto","das","photo","foto"],["📰","Zeitung","die","newspaper","periódico"],
+    ["📻","Radio","das","radio","radio"],["📺","Sendung","die","programme, show","programa"],["🎧","Kopfhörer","pl","headphones","auriculares"],
+    ["📲","App","die","app","aplicación"],["⬇️","herunterladen","","to download","descargar"]
+  ]},
+  { id: "school", name: "Schule & Kurs", en: "School & courses", icon: "🎒", items: [
+    ["🧑‍🏫","Kurs","der","course","curso"],["📖","Unterricht","der","lessons, teaching","clase(s)"],["📝","Prüfung","die","exam","examen"],
+    ["✅","bestehen","","to pass (an exam)","aprobar"],["📜","Zeugnis","das","certificate, school report","certificado, notas"],["📕","Wörterbuch","das","dictionary","diccionario"],
+    ["📓","Heft","das","exercise book","cuaderno"],["✏️","Bleistift","der","pencil","lápiz"],["📒","Hausaufgabe","die","homework","deberes"],
+    ["🏫","Klasse","die","class, classroom","clase, aula"],["🔔","Pause","die","break","descanso, recreo"],["🗣️","Sprache","die","language","idioma"],
+    ["🎒","Schüler","der","pupil","alumno","die Schülerin"],["🧑‍🎓","Student","der","(university) student","estudiante","die Studentin"],["🎓","Universität","die","university","universidad"],
+    ["🛠️","Ausbildung","die","vocational training","formación profesional"],["💼","Praktikum","das","internship","prácticas"],["🧮","rechnen","","to do sums","hacer cuentas"]
+  ]},
+  { id: "environment", name: "Umwelt", en: "Environment", icon: "🌍", items: [
+    ["🌍","Umwelt","die","environment","medio ambiente"],["🌡️","Klima","das","climate","clima"],["⚡","Strom","der","electricity","electricidad, luz"],
+    ["💨","Luft","die","air","aire"],["🏭","Abgase","pl","exhaust fumes","gases de escape"],["☀️","Solaranlage","die","solar panels","placas solares"],
+    ["🗑️","Mülltonne","die","bin","cubo de basura, contenedor"],["♻️","Müll trennen","","to sort the rubbish","separar la basura"],["🍌","Biomüll","der","food waste","basura orgánica"],
+    ["🗞️","Altpapier","das","waste paper","papel para reciclar"],["🍾","Pfand","das","bottle deposit","depósito del envase"],["🧴","Plastik","das","plastic","plástico"],
+    ["💡","Strom sparen","","to save electricity","ahorrar luz"],["🌱","umweltfreundlich","","environmentally friendly","ecológico"]
   ]},
   { id: "phrases", name: "Alltagssätze", en: "Everyday phrases", icon: "💬", cue: true, items: [
     ["😊","Hallo! Wie geht's?","","Hi! How are you?","¡Hola! ¿Qué tal?"],["🙏","Danke schön!","","Thank you very much!","¡Muchas gracias!"],
