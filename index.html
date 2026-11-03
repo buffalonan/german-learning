@@ -336,6 +336,26 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .script { display: grid; gap: 6px; width: 100%; max-width: 560px; text-align: left; background: var(--surface-2); border-radius: var(--r-m); padding: 12px 16px; }
 .script p { margin: 0; }
 .script .who { font-weight: 800; font-size: .8rem; color: var(--muted); margin-right: 6px; }
+/* Prüfung */
+.taskno { margin-left: auto; font-weight: 700; color: var(--muted); }
+.taskno b { font-family: var(--display); font-weight: 900; color: var(--ink); font-variant-numeric: tabular-nums; }
+.points { margin: 0 auto; padding-left: 1.2em; text-align: left; display: grid; gap: 6px; max-width: 46ch; font-weight: 700; }
+.points:empty { display: none; }
+.diary-wrap { justify-items: center; }
+.diary { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; width: 100%; max-width: 420px; text-align: left; }
+.diary li { display: grid; grid-template-columns: 4.2em 1fr; gap: 10px; padding: 8px 14px; border-radius: var(--r-s); background: var(--surface-2); }
+.diary li.busy { background: var(--pastel-1); }
+.diary .h { font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+.phrases { display: grid; gap: 4px; justify-items: start; width: 100%; max-width: 560px; margin: 0 auto; text-align: left; }
+.phrases > div { display: grid; gap: 2px; justify-items: start; }
+.solution { margin: 0; font-family: var(--display); font-weight: 900; font-size: 1.3rem; color: var(--good); }
+.codeform { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; color: var(--muted); font-size: .92rem; }
+.codeform input { font: inherit; font-weight: 800; color: var(--ink); background: var(--surface-2); border: 3px solid var(--line); border-radius: var(--r-s); padding: 8px 12px; min-height: 48px; width: 6.5em; text-align: center; }
+.rtext { margin: 0 auto; font-size: 1.08rem; line-height: 1.5; }
+.wbox { display: grid; gap: 8px; width: 100%; max-width: 560px; margin: 0 auto; text-align: left; }
+.wbox textarea { font: inherit; color: var(--ink); background: var(--surface-2); border: 3px solid var(--line); border-radius: var(--r-s); padding: 12px 14px; width: 100%; min-height: 180px; resize: vertical; box-shadow: inset 0 3px 6px -3px var(--drop); }
+.wbox textarea:focus { border-color: var(--primary); background: var(--surface); }
+#wModelBox .help { max-width: 560px; text-align: left; }
 .ltr { max-width: 560px; }
 .ltr div { grid-template-columns: 2.4em 1fr; }
 .ltr dd { font-size: .95rem; }
@@ -345,14 +365,15 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
      of its label, so the gaps between labels are equal. The light/dark button moves down, level with the first
      line of the title. */
   .topbar { position: relative; }
-  .areas { display: flex; flex-wrap: nowrap; gap: 2px; width: 100%; padding: 5px 7px; }
-  .areas button { flex: 1 1 auto; padding: 9px 4px; font-size: clamp(.76rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
+  .areas { display: flex; flex-wrap: nowrap; gap: 2px; width: 100%; padding: 5px 5px; }
+  .areas button { flex: 1 1 auto; padding: 9px 2px; font-size: clamp(.66rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
   .theme-btn { position: absolute; right: 0; top: calc(100% + 42px + clamp(1.75rem, 8.4vw, 3.6rem) * .54 - 24px); }
   .intro .plate h1 { padding-right: 56px; } /* keeps the title clear of that button; the subtitle runs under it */
   .brand { gap: 12px; }
   .logo { width: 76px; height: 76px; border-radius: var(--r-s); }
   .brand h1 { font-size: clamp(1.75rem, 8.4vw, 3.6rem); }
 }
+@media (max-width: 340px) { .areas button { font-size: .66rem; } }
 @media (max-width: 480px) {
   .sheet { padding: 20px 16px; border-radius: 24px; }
   .scores { width: 100%; }
@@ -372,6 +393,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
       <button type="button" data-v="setup">Wortkarten</button>
       <button type="button" data-v="grammar">Grammatik</button>
       <button type="button" data-v="listen">Hören</button>
+      <button type="button" data-v="exam">Prüfung</button>
     </nav>
     <button class="theme-btn" id="theme" type="button"></button>
   </div>
@@ -495,7 +517,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 
   <section id="grammar" hidden>
     <div class="intro">
-      <div class="plate"><h1>Grammatik</h1><small>Fälle · Präpositionen · Perfekt</small></div>
+      <div class="plate"><h1>Grammatik</h1><small>Fälle · Perfekt · Nebensätze · Konjunktiv</small></div>
       <p>Read a short explanation, then fill the gaps in everyday sentences. Each answer shows why, and you can hear the sentence.</p>
     </div>
     <div class="sheet">
@@ -702,6 +724,134 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
       <p class="tip"><b>Para hispanohablantes:</b> Spanish packs it all into one verb (<i>me levanto</i>), German keeps the prefix for the end of the sentence. Listen for it before you decide what the verb means: ich mache das Fenster <b>auf</b> or <b>zu</b>?</p>
       <div class="start-row"><button class="btn-main" data-quiz="trennbar" type="button">Jetzt üben</button></div>
     </article>
+    <article class="sheet theory" data-lesson="nebensatz">
+      <h2>weil, dass, wenn, obwohl</h2>
+      <p class="lead">To say why, what, when or although, German adds a second clause. After these little words the conjugated verb jumps to the very end.</p>
+      <div class="boxes">
+        <div class="box"><b>Main clause</b><span class="q">Verb 2nd</span><button class="ex" type="button">Ich habe heute keine Zeit.</button></div>
+        <div class="box"><b>After weil, dass…</b><span class="q">Verb last</span><button class="ex" type="button">Ich komme nicht, weil ich heute keine Zeit habe.</button></div>
+        <div class="box"><b>Clause first</b><span class="q">Verb, then subject</span><span>The whole clause counts as place one.</span><button class="ex" type="button">Weil ich keine Zeit habe, komme ich nicht.</button></div>
+      </div>
+
+      <h3>The words that send the verb to the end</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Word</th><th>English · Español</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><b>weil</b></td><td>because · porque</td><td>…, weil ich krank bin.</td></tr>
+          <tr><td><b>dass</b></td><td>that · que</td><td>Ich glaube, dass er recht hat.</td></tr>
+          <tr><td><b>wenn</b></td><td>if, whenever · si, cuando</td><td>Wenn es regnet, bleibe ich zu Hause.</td></tr>
+          <tr><td><b>als</b></td><td>when (once, in the past) · cuando</td><td>Als ich Kind war, …</td></tr>
+          <tr><td><b>obwohl</b></td><td>although · aunque</td><td>…, obwohl es teuer ist.</td></tr>
+          <tr><td><b>ob</b></td><td>whether · si</td><td>Ich weiß nicht, ob er kommt.</td></tr>
+          <tr><td><b>wann, wo, wie…</b></td><td>indirect questions</td><td>Weißt du, wann der Zug ankommt?</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Watch out</h3>
+      <ul>
+        <li>With a modal or the Perfekt, the conjugated verb goes after everything else: <button class="ex" type="button">Ich bin müde, weil ich schlecht geschlafen habe.</button></li>
+        <li><i>denn</i> also means because, but it doesn't move the verb: <button class="ex" type="button">Ich bin müde, denn ich habe schlecht geschlafen.</button></li>
+        <li>wenn, als or wann? Questions use <i>wann</i>; one time in the past is <i>als</i>; everything else is <i>wenn</i>.</li>
+      </ul>
+      <p class="tip"><b>Para hispanohablantes:</b> Spanish <i>si</i> is two words in German: <i>wenn</i> for a condition (si llueve) and <i>ob</i> for whether (no sé si viene). And <i>cuando</i> is three: <i>wann</i>, <i>wenn</i> and <i>als</i>.</p>
+      <div class="start-row"><button class="btn-main" data-quiz="nebensatz" type="button">Jetzt üben</button></div>
+    </article>
+
+    <article class="sheet theory" data-lesson="praeteritum">
+      <h2>Präteritum</h2>
+      <p class="lead">In speech Germans tell the past with the Perfekt, except for a handful of verbs: sein, haben, the modals and es gibt. Those almost always use the Präteritum.</p>
+      <div class="boxes">
+        <div class="box"><b>sein</b><span class="q">war</span><button class="ex" type="button">Gestern war ich müde.</button></div>
+        <div class="box"><b>haben</b><span class="q">hatte</span><button class="ex" type="button">Wir hatten keine Zeit.</button></div>
+        <div class="box"><b>Modals</b><span class="q">no umlaut + te</span><button class="ex" type="button">Ich musste lange arbeiten.</button></div>
+      </div>
+
+      <h3>The forms</h3>
+      <div class="tbl"><table>
+        <thead><tr><th></th><th>sein</th><th>haben</th><th>können</th><th>müssen</th><th>wollen</th></tr></thead>
+        <tbody>
+          <tr><td>ich</td><td>war</td><td>hatte</td><td>konnte</td><td>musste</td><td>wollte</td></tr>
+          <tr><td>du</td><td>warst</td><td>hattest</td><td>konntest</td><td>musstest</td><td>wolltest</td></tr>
+          <tr><td>er/sie/es</td><td>war</td><td>hatte</td><td>konnte</td><td>musste</td><td>wollte</td></tr>
+          <tr><td>wir/sie/Sie</td><td>waren</td><td>hatten</td><td>konnten</td><td>mussten</td><td>wollten</td></tr>
+          <tr><td>ihr</td><td>wart</td><td>hattet</td><td>konntet</td><td>musstet</td><td>wolltet</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>In stories and the news</h3>
+      <ul>
+        <li>ich and er/sie/es have the same form: <i>ich war, er war</i>.</li>
+        <li>es gibt → <button class="ex" type="button">Früher gab es hier ein Kino.</button></li>
+        <li>Regular verbs add -te: <i>machen → machte, wohnen → wohnte</i>. Irregular ones change the vowel: <i>gehen → ging, kommen → kam, fahren → fuhr, treffen → traf</i>. You'll mostly hear these in written texts, stories and on the radio. <button class="ex" type="button">Plötzlich klingelte das Telefon.</button></li>
+      </ul>
+      <p class="tip"><b>Para hispanohablantes:</b> <i>war</i> covers both <i>era/estaba</i> and <i>fue/estuvo</i>, and <i>hatte</i> both <i>tenía</i> and <i>tuve</i>. No need to choose between imperfecto and indefinido.</p>
+      <div class="start-row"><button class="btn-main" data-quiz="praeteritum" type="button">Jetzt üben</button></div>
+    </article>
+
+    <article class="sheet theory" data-lesson="konjunktiv">
+      <h2>Höflich: hätte, könnte, würde</h2>
+      <p class="lead">The Konjunktiv II makes requests polite, gives advice and talks about wishes and things that aren't true. You only need a few forms.</p>
+      <div class="boxes">
+        <div class="box"><b>Asking</b><span class="q">Könnten Sie…?</span><button class="ex" type="button">Könnten Sie mir bitte helfen?</button><button class="ex" type="button">Ich hätte gern ein Wasser.</button></div>
+        <div class="box"><b>Advice</b><span class="q">An deiner Stelle…</span><button class="ex" type="button">An deiner Stelle würde ich zum Arzt gehen.</button><button class="ex" type="button">Du solltest mehr schlafen.</button></div>
+        <div class="box"><b>Unreal</b><span class="q">Wenn ich… wäre</span><button class="ex" type="button">Wenn ich mehr Zeit hätte, würde ich reisen.</button></div>
+      </div>
+
+      <h3>The forms</h3>
+      <div class="tbl"><table>
+        <thead><tr><th></th><th>sein</th><th>haben</th><th>können</th><th>werden</th><th>sollen</th></tr></thead>
+        <tbody>
+          <tr><td>ich / er / sie</td><td>wäre</td><td>hätte</td><td>könnte</td><td>würde</td><td>sollte</td></tr>
+          <tr><td>du</td><td>wärst</td><td>hättest</td><td>könntest</td><td>würdest</td><td>solltest</td></tr>
+          <tr><td>wir / sie / Sie</td><td>wären</td><td>hätten</td><td>könnten</td><td>würden</td><td>sollten</td></tr>
+          <tr><td>ihr</td><td>wärt</td><td>hättet</td><td>könntet</td><td>würdet</td><td>solltet</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Making plans</h3>
+      <ul>
+        <li>Suggest a time: <button class="ex" type="button">Wie wäre es mit Samstag um drei?</button></li>
+        <li>Invite: <button class="ex" type="button">Hättest du Lust, mitzukommen?</button></li>
+        <li>Check it suits: <button class="ex" type="button">Würde es Ihnen am Dienstag passen?</button></li>
+        <li>Every other verb uses <i>würde</i> + infinitive at the end: <i>ich würde gern kommen</i>.</li>
+      </ul>
+      <p class="tip"><b>Para hispanohablantes:</b> it's the condicional and the imperfecto de subjuntivo in one: <i>podría</i> = könnte, <i>si tuviera</i> = wenn ich hätte. The umlaut matters: <i>konnte</i> is just the past, <i>könnte</i> is polite.</p>
+      <div class="start-row"><button class="btn-main" data-quiz="konjunktiv" type="button">Jetzt üben</button></div>
+    </article>
+
+    <article class="sheet theory" data-lesson="komparativ">
+      <h2>Komparativ &amp; Superlativ</h2>
+      <p class="lead">To compare, add -er and use als. For the most, use am …sten, or der/die/das …ste before a noun.</p>
+      <div class="boxes">
+        <div class="box"><b>Same</b><span class="q">so … wie</span><button class="ex" type="button">Ich bin so groß wie du.</button></div>
+        <div class="box"><b>More</b><span class="q">…er als</span><button class="ex" type="button">Der Zug ist schneller als der Bus.</button></div>
+        <div class="box"><b>Most</b><span class="q">am …sten</span><button class="ex" type="button">Das Flugzeug ist am schnellsten.</button></div>
+      </div>
+
+      <h3>Ones to learn by heart</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Adjective</th><th>Komparativ</th><th>Superlativ</th></tr></thead>
+        <tbody>
+          <tr><td>gut</td><td>besser</td><td>am besten</td></tr>
+          <tr><td>viel</td><td>mehr</td><td>am meisten</td></tr>
+          <tr><td>gern</td><td>lieber</td><td>am liebsten</td></tr>
+          <tr><td>hoch</td><td>höher</td><td>am höchsten</td></tr>
+          <tr><td>groß</td><td>größer</td><td>am größten</td></tr>
+          <tr><td>alt · jung</td><td>älter · jünger</td><td>am ältesten · am jüngsten</td></tr>
+          <tr><td>warm · kalt</td><td>wärmer · kälter</td><td>am wärmsten · am kältesten</td></tr>
+          <tr><td>teuer</td><td>teurer</td><td>am teuersten</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Useful patterns</h3>
+      <ul>
+        <li>What you like best: <button class="ex" type="button">Ich trinke lieber Tee als Kaffee.</button></li>
+        <li>Before a noun the superlative takes an ending: <button class="ex" type="button">Das ist das beste Restaurant in der Stadt.</button></li>
+        <li>je … desto: <button class="ex" type="button">Je mehr ich übe, desto besser spreche ich.</button></li>
+      </ul>
+      <p class="tip"><b>Para hispanohablantes:</b> no <i>más</i> in front: <i>más rápido</i> = schneller, <i>el más rápido</i> = am schnellsten. And <i>que</i> becomes <i>als</i>, never <i>wie</i>: schneller als.</p>
+      <div class="start-row"><button class="btn-main" data-quiz="komparativ" type="button">Jetzt üben</button></div>
+    </article>
   </section>
 
   <section id="listen" hidden>
@@ -778,6 +928,107 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
         <button class="btn-main" id="lagain" type="button">Noch mal</button>
         <button class="ctl" id="lreplayMissed" type="button">Replay the missed texts</button>
         <button class="ctl" id="ltoMenu" type="button">Hören</button>
+      </div>
+    </div>
+  </section>
+  <section id="exam" hidden>
+    <div class="intro">
+      <div class="plate"><h1>Prüfung</h1><small>Sprechen · Lesen · Schreiben</small></div>
+      <p>The other parts of the Goethe A2 and B1 exam: talk a task through together, read short texts and answer, or write an email and compare it with a model answer.</p>
+    </div>
+    <div class="sheet"><div class="lessons" id="tasks"></div></div>
+  </section>
+
+  <section id="talk" hidden>
+    <div class="bar">
+      <button class="ghost" id="talkBack" type="button"><span class="i i-back" aria-hidden="true"></span> Prüfung</button>
+      <span class="taskno">Aufgabe <b id="taskNo"></b></span>
+    </div>
+    <div class="qcard">
+      <div class="ctopic"><span id="tKind"></span></div>
+      <p class="lq" id="tTask"></p>
+      <dl class="tr ltr">
+        <div><dt>EN</dt><dd id="tEn"></dd></div>
+        <div><dt>ES</dt><dd id="tEs"></dd></div>
+      </dl>
+      <ul class="points" id="tPoints"></ul>
+      <div class="field diary-wrap" id="tDiaryWrap">
+        <span class="label">Whose diary?</span>
+        <div class="seg" id="whoSeg"></div>
+        <p class="help" id="tWhoHelp">Look only at your own diary and find a free hour by talking. On two phones, open the same task number and each pick your own name.</p>
+        <ul class="diary" id="tDiary"></ul>
+      </div>
+      <div class="phrases">
+        <span class="label">Useful phrases</span>
+        <div id="tPhrases"></div>
+      </div>
+      <p class="solution" id="tSolution" aria-live="polite" hidden></p>
+      <div class="controls">
+        <button class="ctl" id="tSolve" type="button"><span class="i i-check" aria-hidden="true"></span> Lösung zeigen</button>
+        <button class="ctl big" id="tNew" type="button">Neue Aufgabe</button>
+      </div>
+      <form class="codeform" id="tCodeForm">
+        <label for="tCode">Your partner's task number</label>
+        <input id="tCode" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off">
+        <button class="ctl" type="submit">Öffnen</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="read" hidden>
+    <div class="bar">
+      <button class="ghost" id="readBack" type="button"><span class="i i-back" aria-hidden="true"></span> Prüfung</button>
+      <div class="progress"><span id="rprog">1 / 8</span><div class="track"><i id="rprogbar"></i></div></div>
+      <div class="scores" id="rscores"></div>
+    </div>
+    <div class="qcard">
+      <div class="ctopic"><span id="rKind"></span></div>
+      <div class="script rtext" id="rText" lang="de"></div>
+      <p class="lq" id="rQuestion"></p>
+      <p class="turn" id="rTurn" aria-live="polite"></p>
+      <div class="opts lopts" id="rOpts"></div>
+      <div class="feedback" id="rFeedback" aria-live="polite" hidden>
+        <p class="verdict" id="rVerdict"></p>
+        <dl class="tr ltr">
+          <div><dt>EN</dt><dd id="rEn"></dd></div>
+          <div><dt>ES</dt><dd id="rEs"></dd></div>
+        </dl>
+        <div class="controls"><button class="ctl big" id="rNext" type="button">Weiter <span class="k">Enter</span></button></div>
+      </div>
+      <div class="feedback" id="rDone" hidden>
+        <p class="verdict ok" id="rFinal"></p>
+        <div class="controls">
+          <button class="ctl big" id="rAgain" type="button">Noch mal</button>
+          <button class="ctl" id="rMenu" type="button">Prüfung</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="write" hidden>
+    <div class="bar">
+      <button class="ghost" id="writeBack" type="button"><span class="i i-back" aria-hidden="true"></span> Prüfung</button>
+    </div>
+    <div class="qcard">
+      <div class="ctopic"><span id="wKind"></span></div>
+      <p class="lq" id="wTask"></p>
+      <dl class="tr ltr">
+        <div><dt>EN</dt><dd id="wEn"></dd></div>
+        <div><dt>ES</dt><dd id="wEs"></dd></div>
+      </dl>
+      <ul class="points" id="wPoints"></ul>
+      <label class="wbox" for="wText"><span class="label">Deine E-Mail</span>
+        <textarea id="wText" lang="de" spellcheck="true" rows="8"></textarea>
+      </label>
+      <p class="help" id="wCount" aria-live="polite"></p>
+      <div class="controls">
+        <button class="ctl" id="wModel" type="button"><span class="i i-book" aria-hidden="true"></span> Musterlösung</button>
+        <button class="ctl big" id="wNew" type="button">Neue Aufgabe</button>
+      </div>
+      <div class="feedback" id="wModelBox" hidden>
+        <div class="script" id="wModelText" lang="de"></div>
+        <p class="help" id="wModelEn" lang="en"></p>
+        <p class="help">Check your own email: did you answer all three points, start with a greeting (Liebe… / Sehr geehrte…) and end with one (Viele Grüße / Mit freundlichen Grüßen)?</p>
       </div>
     </div>
   </section>
@@ -998,7 +1249,13 @@ const TOPICS = [
     ["📅","Woche","die","week","semana"],["📆","Monat","der","month","mes"],["🎆","Jahr","das","year","año"],
     ["⌛","Stunde","die","hour","hora"],["⏱️","Minute","die","minute","minuto"],["🕝","halb drei","","half past two (2:30)","las dos y media"],
     ["🕓","Viertel nach vier","","quarter past four (4:15)","las cuatro y cuarto"],["🕦","Viertel vor zwölf","","quarter to twelve (11:45)","las doce menos cuarto"],
-    ["🎂","Geburtstag","der","birthday","cumpleaños"],["🐌","Verspätung","die","delay","retraso"]
+    ["🎂","Geburtstag","der","birthday","cumpleaños"],["🐌","Verspätung","die","delay","retraso"],
+    ["🗓️","Januar","der","January","enero"],["🗓️","Februar","der","February","febrero"],["🗓️","März","der","March","marzo"],
+    ["🗓️","April","der","April","abril"],["🗓️","Mai","der","May","mayo"],["🗓️","Juni","der","June","junio"],
+    ["🗓️","Juli","der","July","julio"],["🗓️","August","der","August","agosto"],["🗓️","September","der","September","septiembre"],
+    ["🗓️","Oktober","der","October","octubre"],["🗓️","November","der","November","noviembre"],["🗓️","Dezember","der","December","diciembre"],
+    ["📍","heute","","today","hoy"],["⏪","gestern","","yesterday","ayer"],["⏮️","vorgestern","","the day before yesterday","anteayer"],
+    ["⏭️","übermorgen","","the day after tomorrow","pasado mañana"]
   ]},
   { id: "health", name: "Beim Arzt", en: "At the doctor's", icon: "🩺", items: [
     ["🤒","Fieber","das","fever, temperature","fiebre"],["😷","Husten","der","cough","tos"],["🤧","Erkältung","die","cold","resfriado"],
@@ -1034,6 +1291,38 @@ const TOPICS = [
     ["🎸","Gitarre","die","guitar","guitarra"],["🎲","Brettspiel","das","board game","juego de mesa"],["📕","Buch","das","book","libro"],
     ["🏔️","wandern","","to hike","hacer senderismo"],["🚴","Rad fahren","","to cycle","ir en bici"],["📸","fotografieren","","to take photos","hacer fotos"],
     ["🖌️","malen","","to paint","pintar"]
+  ]},
+  { id: "office", name: "Ämter & Post", en: "Offices, post & bank", icon: "🏛️", items: [
+    ["📄","Formular","das","form","formulario"],["📝","Antrag","der","application (form)","solicitud"],["✍️","Unterschrift","die","signature","firma"],
+    ["🪪","Personalausweis","der","ID card","documento de identidad"],["🏛️","Amt","das","public office, authority","oficina pública"],["🏠","Anmeldung","die","registration (of your address)","empadronamiento"],
+    ["📂","Unterlagen","pl","documents, papers","documentos"],["🎫","Wartenummer","die","queue ticket","número de turno"],["🚘","Führerschein","der","driving licence","carné de conducir"],
+    ["📦","Paket","das","parcel","paquete"],["✉️","Brief","der","letter","carta"],["📮","Briefkasten","der","postbox, letterbox","buzón"],
+    ["🏷️","Briefmarke","die","stamp","sello"],["🏦","Konto","das","bank account","cuenta bancaria"],["🏧","Geldautomat","der","cash machine","cajero automático"],
+    ["💸","Überweisung","die","bank transfer","transferencia"],["🧾","Rechnung","die","bill, invoice","factura"],["🛡️","Versicherung","die","insurance","seguro"],
+    ["🚓","Polizei","die","police","policía"],["🖊️","ausfüllen","","to fill in","rellenar"],["✒️","unterschreiben","","to sign","firmar"]
+  ]},
+  { id: "media", name: "Medien & Internet", en: "Media & internet", icon: "💻", items: [
+    ["🌐","Internet","das","internet","internet"],["📶","WLAN","das","Wi-Fi","wifi"],["🔐","Passwort","das","password","contraseña"],
+    ["💬","Nachricht","die","message","mensaje"],["🖥️","Bildschirm","der","screen","pantalla"],["⌨️","Tastatur","die","keyboard","teclado"],
+    ["💻","Laptop","der","laptop","portátil"],["🔌","Ladegerät","das","charger","cargador"],["🪫","Akku","der","(phone) battery","batería"],
+    ["📷","Kamera","die","camera","cámara"],["📸","Foto","das","photo","foto"],["📰","Zeitung","die","newspaper","periódico"],
+    ["📻","Radio","das","radio","radio"],["📺","Sendung","die","programme, show","programa"],["🎧","Kopfhörer","pl","headphones","auriculares"],
+    ["📲","App","die","app","aplicación"],["⬇️","herunterladen","","to download","descargar"]
+  ]},
+  { id: "school", name: "Schule & Kurs", en: "School & courses", icon: "🎒", items: [
+    ["🧑‍🏫","Kurs","der","course","curso"],["📖","Unterricht","der","lessons, teaching","clase(s)"],["📝","Prüfung","die","exam","examen"],
+    ["✅","bestehen","","to pass (an exam)","aprobar"],["📜","Zeugnis","das","certificate, school report","certificado, notas"],["📕","Wörterbuch","das","dictionary","diccionario"],
+    ["📓","Heft","das","exercise book","cuaderno"],["✏️","Bleistift","der","pencil","lápiz"],["📒","Hausaufgabe","die","homework","deberes"],
+    ["🏫","Klasse","die","class, classroom","clase, aula"],["🔔","Pause","die","break","descanso, recreo"],["🗣️","Sprache","die","language","idioma"],
+    ["🎒","Schüler","der","pupil","alumno","die Schülerin"],["🧑‍🎓","Student","der","(university) student","estudiante","die Studentin"],["🎓","Universität","die","university","universidad"],
+    ["🛠️","Ausbildung","die","vocational training","formación profesional"],["💼","Praktikum","das","internship","prácticas"],["🧮","rechnen","","to do sums","hacer cuentas"]
+  ]},
+  { id: "environment", name: "Umwelt", en: "Environment", icon: "🌍", items: [
+    ["🌍","Umwelt","die","environment","medio ambiente"],["🌡️","Klima","das","climate","clima"],["⚡","Strom","der","electricity","electricidad, luz"],
+    ["💨","Luft","die","air","aire"],["🏭","Abgase","pl","exhaust fumes","gases de escape"],["☀️","Solaranlage","die","solar panels","placas solares"],
+    ["🗑️","Mülltonne","die","bin","cubo de basura, contenedor"],["♻️","Müll trennen","","to sort the rubbish","separar la basura"],["🍌","Biomüll","der","food waste","basura orgánica"],
+    ["🗞️","Altpapier","das","waste paper","papel para reciclar"],["🍾","Pfand","das","bottle deposit","depósito del envase"],["🧴","Plastik","das","plastic","plástico"],
+    ["💡","Strom sparen","","to save electricity","ahorrar luz"],["🌱","umweltfreundlich","","environmentally friendly","ecológico"]
   ]},
   { id: "phrases", name: "Alltagssätze", en: "Everyday phrases", icon: "💬", cue: true, items: [
     ["😊","Hallo! Wie geht's?","","Hi! How are you?","¡Hola! ¿Qué tal?"],["🙏","Danke schön!","","Thank you very much!","¡Muchas gracias!"],
@@ -1291,7 +1580,108 @@ const GRAMMAR = [
     ["Was hat er dir ___?", "erzählt", ["geerzählt", "ergezählt"], "What did he tell you?", "¿Qué te contó?", "er- never splits off, so there's no ge-: erzählt. Only prefixes that are little words (an, auf, mit…) split."],
     ["Ich habe dich nicht ___.", "verstanden", ["vergestanden", "geverstanden"], "I didn't understand you.", "No te he entendido.", "ver- never splits off and takes no ge-: verstanden. Compare auf-ge-standen."]
   ]}
-
+,
+  { id: "nebensatz", name: "weil, dass, wenn, obwohl", en: "Linking sentences", icon: "💬", items: [
+    ["Ich bleibe heute zu Hause, ___ ich krank bin.", "weil", ["obwohl", "dass"], "I'm staying at home today because I'm ill.", "Hoy me quedo en casa porque estoy enfermo.", "weil gives the reason. The verb (bin) goes to the end."],
+    ["Ich gehe zur Arbeit, ___ ich krank bin.", "obwohl", ["weil", "wenn"], "I'm going to work although I'm ill.", "Voy a trabajar aunque estoy enfermo.", "obwohl = although: the opposite of what you'd expect."],
+    ["Ich glaube, ___ der Zug Verspätung hat.", "dass", ["weil", "ob"], "I think the train is late.", "Creo que el tren lleva retraso.", "After glauben, denken, wissen, sagen… the content comes with dass."],
+    ["___ du Zeit hast, ruf mich bitte an.", "Wenn", ["Dass", "Ob"], "If you have time, please call me.", "Si tienes tiempo, llámame, por favor.", "wenn = if (a condition), or whenever."],
+    ["Ich weiß nicht, ___ er heute kommt.", "ob", ["wenn", "weil"], "I don't know whether he's coming today.", "No sé si viene hoy.", "A yes/no question inside a sentence uses ob (whether). Spanish uses si for both ob and wenn."],
+    ["Ich glaube, dass ___.", "er heute keine Zeit hat", ["er hat heute keine Zeit", "hat er heute keine Zeit"], "I think he has no time today.", "Creo que hoy no tiene tiempo.", "After dass the conjugated verb goes to the very end."],
+    ["Ich lerne Deutsch, weil ___.", "ich in Wien arbeiten möchte", ["ich möchte in Wien arbeiten", "möchte ich in Wien arbeiten"], "I'm learning German because I'd like to work in Vienna.", "Aprendo alemán porque quiero trabajar en Viena.", "After weil the conjugated verb (möchte) goes last, after the infinitive."],
+    ["Ruf mich an, wenn ___.", "du in Berlin ankommst", ["du kommst in Berlin an", "du ankommst in Berlin"], "Call me when you arrive in Berlin.", "Llámame cuando llegues a Berlín.", "In a wenn clause a separable verb joins up again at the end: ankommst."],
+    ["___ ich ein Kind war, habe ich in Sevilla gewohnt.", "Als", ["Wenn", "Wann"], "When I was a child, I lived in Seville.", "Cuando era niño, vivía en Sevilla.", "als = when, for one time or period in the past."],
+    ["___ ich nach Hause komme, koche ich zuerst einen Tee.", "Wenn", ["Als", "Wann"], "When I get home, I make a cup of tea first.", "Cuando llego a casa, primero me hago un té.", "wenn = when, for the present, the future or every time it happens."],
+    ["___ fährt der nächste Bus?", "Wann", ["Wenn", "Als"], "When does the next bus leave?", "¿Cuándo sale el próximo autobús?", "wann is the question word: Wann? = ¿Cuándo?"],
+    ["Weil es regnet, ___ zu Hause.", "bleiben wir", ["wir bleiben"], "Because it's raining, we're staying at home.", "Como llueve, nos quedamos en casa.", "The weil clause fills the first place, so the main verb comes straight after the comma."],
+    ["Ich esse kein Fleisch, ___ ich Vegetarierin bin.", "weil", ["obwohl", "ob"], "I don't eat meat because I'm a vegetarian.", "No como carne porque soy vegetariana.", "weil gives the reason; the verb goes to the end."],
+    ["Sie kauft das Kleid, ___ es sehr teuer ist.", "obwohl", ["weil", "dass"], "She's buying the dress although it's very expensive.", "Se compra el vestido aunque es muy caro.", "obwohl: she buys it in spite of the price."],
+    ["Es ist wichtig, ___ du jeden Tag ein bisschen übst.", "dass", ["ob", "weil"], "It's important that you practise a little every day.", "Es importante que practiques un poco cada día.", "Es ist wichtig / schön / gut, dass…"],
+    ["Kannst du mir sagen, ___ das Museum aufmacht?", "wann", ["wenn", "als"], "Can you tell me when the museum opens?", "¿Me puedes decir cuándo abre el museo?", "An indirect question keeps its question word (wann, wo, wie…) and puts the verb last."],
+    ["Ich gehe heute früh ins Bett, ___ ich morgen um fünf aufstehen muss.", "weil", ["obwohl", "ob"], "I'm going to bed early tonight because I have to get up at five tomorrow.", "Hoy me acuesto pronto porque mañana tengo que levantarme a las cinco.", "weil + verb at the end: …aufstehen muss."],
+    ["Ich gehe heute früh ins Bett, ___ ich muss morgen um fünf aufstehen.", "denn", ["weil", "dass"], "I'm going to bed early tonight, for I have to get up at five tomorrow.", "Hoy me acuesto pronto, pues mañana tengo que levantarme a las cinco.", "denn also gives a reason, but the verb stays in second place: denn ich muss…"],
+    ["Sie sagt, dass sie heute nicht ___.", "kommen kann", ["kann kommen", "kommt können"], "She says she can't come today.", "Dice que hoy no puede venir.", "With a modal verb the modal goes last, after the infinitive: kommen kann."],
+    ["Obwohl ich viel gelernt habe, ___ die Prüfung nicht bestanden.", "habe ich", ["ich habe"], "Although I studied a lot, I didn't pass the exam.", "Aunque estudié mucho, no aprobé el examen.", "The obwohl clause is in first place, so the verb (habe) comes next, then the subject."],
+    ["Ich freue mich, ___ du da bist.", "dass", ["ob", "obwohl"], "I'm glad you're here.", "Me alegro de que estés aquí.", "sich freuen, dass… = to be glad that…"],
+    ["Wir machen ein Picknick, ___ das Wetter schön ist.", "wenn", ["obwohl", "ob"], "We'll have a picnic if the weather is nice.", "Haremos un pícnic si hace buen tiempo.", "wenn = if: the picnic depends on the weather."],
+    ["Er fragt, ___ wir morgen mitkommen.", "ob", ["dass", "wenn"], "He's asking whether we're coming along tomorrow.", "Pregunta si mañana venimos.", "fragen, ob… = to ask whether…"],
+    ["Ich weiß nicht, ob ___.", "der Laden heute geöffnet ist", ["der Laden ist heute geöffnet", "ist der Laden heute geöffnet"], "I don't know whether the shop is open today.", "No sé si la tienda abre hoy.", "ob sends the verb to the end, like weil and dass."]
+  ]},
+  { id: "praeteritum", name: "Präteritum", en: "Past: war, hatte, konnte", icon: "⌛", items: [
+    ["Gestern ___ ich krank.", "war", ["bin", "wäre"], "Yesterday I was ill.", "Ayer estuve enfermo.", "sein in the past: ich war, du warst, er war, wir waren, ihr wart, sie waren."],
+    ["Letzte Woche ___ wir keine Zeit.", "hatten", ["hatte", "haben"], "Last week we had no time.", "La semana pasada no tuvimos tiempo.", "haben in the past: ich hatte, wir hatten. With sein and haben Germans prefer this to the Perfekt."],
+    ["Als Kind ___ ich schon gut schwimmen.", "konnte", ["kann", "könnte"], "As a child I could already swim well.", "De niño ya sabía nadar bien.", "Modal verbs drop the umlaut in the past: können → konnte."],
+    ["Gestern ___ ich lange arbeiten.", "musste", ["muss", "müsste"], "Yesterday I had to work late.", "Ayer tuve que trabajar hasta tarde.", "müssen → musste (no umlaut). müsste with the umlaut means 'should'."],
+    ["Wo ___ du am Wochenende?", "warst", ["war", "wart"], "Where were you at the weekend?", "¿Dónde estuviste el fin de semana?", "du warst, ihr wart."],
+    ["Im Urlaub ___ das Wetter fantastisch.", "war", ["waren", "hatte"], "The weather on holiday was fantastic.", "En vacaciones hizo un tiempo fantástico.", "das Wetter is singular: es war."],
+    ["Früher ___ es hier einen kleinen Laden.", "gab", ["gibt", "hatte"], "There used to be a small shop here.", "Antes aquí había una tiendita.", "es gibt (there is) → es gab (there was)."],
+    ["___ ihr gestern auch auf der Party?", "Wart", ["Waren", "Warst"], "Were you at the party yesterday too?", "¿Estuvisteis también ayer en la fiesta?", "ihr wart (no e before the t)."],
+    ["Früher ___ meine Großeltern einen großen Garten.", "hatten", ["hatte", "hattet"], "My grandparents used to have a big garden.", "Antes mis abuelos tenían un jardín grande.", "sie (plural) hatten."],
+    ["Den Film fand ich nicht gut, er ___ sehr langweilig.", "war", ["ist", "hatte"], "I didn't like the film, it was very boring.", "La película no me gustó, era muy aburrida.", "fand is past, so the second half is past too: er war."],
+    ["Ich ___ dich gestern anrufen, aber mein Akku war leer.", "wollte", ["will", "wolle"], "I wanted to call you yesterday, but my battery was flat.", "Ayer quería llamarte, pero me quedé sin batería.", "wollen → wollte."],
+    ["Letzten Montag ___ wir wegen des Streiks nicht mit dem Zug fahren.", "konnten", ["können", "konnte"], "Last Monday we couldn't go by train because of the strike.", "El lunes pasado no pudimos ir en tren por la huelga.", "wir konnten: plural ending -en."],
+    ["Als Kind ___ ich nie lange fernsehen.", "durfte", ["darf", "dürfte"], "As a child I was never allowed to watch TV for long.", "De niño nunca me dejaban ver mucho la tele.", "dürfen → durfte (no umlaut)."],
+    ["___ du gestern Zeit?", "Hattest", ["Hatte", "Hast"], "Did you have time yesterday?", "¿Tuviste tiempo ayer?", "du hattest."],
+    ["Er ___ letztes Jahr zwei Monate in Spanien.", "war", ["ist", "wäre"], "Last year he was in Spain for two months.", "El año pasado estuvo dos meses en España.", "letztes Jahr points to the past: er war."],
+    ["Gestern ___ ich keine Lust zu kochen.", "hatte", ["habe", "hätte"], "Yesterday I didn't feel like cooking.", "Ayer no tenía ganas de cocinar.", "Lust haben → ich hatte keine Lust."],
+    ["Wie ___ eure Reise nach Wien?", "war", ["waren", "hatte"], "How was your trip to Vienna?", "¿Qué tal vuestro viaje a Viena?", "die Reise is singular: sie war."],
+    ["Sie ___ gestern zum Arzt gehen, weil sie Fieber hatte.", "musste", ["muss", "musst"], "She had to go to the doctor yesterday because she had a fever.", "Ayer tuvo que ir al médico porque tenía fiebre.", "er/sie musste: like ich, no -e ending is added."],
+    ["Früher ___ ich jeden Tag mit dem Bus zur Arbeit.", "fuhr", ["fahre", "fuhren"], "I used to go to work by bus every day.", "Antes iba al trabajo en autobús todos los días.", "Irregular verbs change their vowel: fahren → fuhr, gehen → ging, kommen → kam."],
+    ["Gestern ___ ich zufällig meinen alten Lehrer im Supermarkt.", "traf", ["treffe", "trafen"], "Yesterday I happened to meet my old teacher at the supermarket.", "Ayer me encontré por casualidad con mi antiguo profesor en el súper.", "treffen → traf. You'll hear this past in stories and the news."],
+    ["Plötzlich ___ das Telefon.", "klingelte", ["klingelt", "klingelten"], "Suddenly the phone rang.", "De repente sonó el teléfono.", "Regular verbs add -te: klingeln → klingelte, machen → machte."],
+    ["Von 2015 bis 2018 ___ wir in Hamburg.", "wohnten", ["wohnen", "wohnte"], "From 2015 to 2018 we lived in Hamburg.", "De 2015 a 2018 vivimos en Hamburgo.", "wohnen → wir wohnten."],
+    ["Es ___ einmal eine Prinzessin.", "war", ["ist", "hatte"], "Once upon a time there was a princess.", "Érase una vez una princesa.", "Fairy tales start with Es war einmal…"],
+    ["Bis gestern ___ ich nicht, dass du Spanisch sprichst.", "wusste", ["weiß", "wisste"], "Until yesterday I didn't know you speak Spanish.", "Hasta ayer no sabía que hablabas español.", "wissen → wusste."]
+  ]},
+  { id: "konjunktiv", name: "Höflich: hätte, könnte, würde", en: "Polite requests & wishes", icon: "🙏", items: [
+    ["Ich ___ gern einen Kaffee.", "hätte", ["hatte", "wäre"], "I'd like a coffee.", "Querría un café.", "Ich hätte gern… is the polite way to order or ask for something."],
+    ["___ Sie mir bitte helfen?", "Könnten", ["Konnten", "Hätten"], "Could you help me, please?", "¿Podría ayudarme, por favor?", "Könnten Sie…? is a polite request. Konnten (no umlaut) is just the past."],
+    ["___ Sie bitte das Fenster schließen?", "Würden", ["Wurden", "Wären"], "Would you close the window, please?", "¿Podría cerrar la ventana, por favor?", "Würden Sie bitte… + infinitive at the end."],
+    ["An deiner Stelle ___ ich zum Arzt gehen.", "würde", ["wurde", "hätte"], "If I were you I'd go to the doctor.", "Yo que tú iría al médico.", "Advice: An deiner Stelle würde ich…"],
+    ["Wenn ich mehr Zeit ___, würde ich mehr Sport machen.", "hätte", ["habe", "hatte"], "If I had more time, I'd do more sport.", "Si tuviera más tiempo, haría más deporte.", "An unreal condition: wenn + hätte/wäre, then würde."],
+    ["Wenn ich reich ___, würde ich um die Welt reisen.", "wäre", ["bin", "war"], "If I were rich, I'd travel around the world.", "Si fuera rico, viajaría por el mundo.", "sein → wäre (si fuera)."],
+    ["Du ___ mehr Wasser trinken.", "solltest", ["solltet", "sollte"], "You should drink more water.", "Deberías beber más agua.", "Friendly advice: du solltest, Sie sollten."],
+    ["Es ___ schön, wenn du mitkommst.", "wäre", ["war", "würde"], "It would be nice if you came along.", "Estaría bien que vinieras.", "Es wäre schön / toll / besser, wenn…"],
+    ["Ich ___ lieber ins Kino gehen.", "würde", ["wurde", "wäre"], "I'd rather go to the cinema.", "Preferiría ir al cine.", "würde + lieber = would rather."],
+    ["___ ich bitte die Rechnung haben?", "Könnte", ["Konnte", "Würde"], "Could I have the bill, please?", "¿Me podría traer la cuenta, por favor?", "Könnte ich…? = Could I…?"],
+    ["Wie ___ es mit Samstag um drei?", "wäre", ["war", "hätte"], "How about Saturday at three?", "¿Qué tal el sábado a las tres?", "Wie wäre es mit…? suggests a time or an idea. Very useful for making plans."],
+    ["Wir ___ gern einen Tisch für vier Personen.", "hätten", ["hatten", "wären"], "We'd like a table for four.", "Querríamos una mesa para cuatro.", "wir hätten gern…"],
+    ["Ich ___ vorschlagen, dass wir zusammen kochen.", "würde", ["wurde", "hätte"], "I'd suggest that we cook together.", "Propondría que cocinemos juntos.", "Ich würde vorschlagen… softens a suggestion."],
+    ["Wenn ich du ___, würde ich das Angebot annehmen.", "wäre", ["bin", "war"], "If I were you, I'd accept the offer.", "Si yo fuera tú, aceptaría la oferta.", "Wenn ich du wäre… = An deiner Stelle…"],
+    ["___ du mir dein Fahrrad leihen?", "Könntest", ["Konntest", "Würdest"], "Could you lend me your bike?", "¿Me podrías prestar tu bici?", "du könntest. Würdest du would need an infinitive at the end: Würdest du mir … leihen? also works, but Könntest asks if it's possible."],
+    ["___ du Lust, heute Abend ins Kino zu gehen?", "Hättest", ["Hattest", "Wärst"], "Would you like to go to the cinema tonight?", "¿Te apetecería ir al cine esta noche?", "Hättest du Lust…? is a gentle invitation."],
+    ["Ich ___ gern mehr Zeit für meine Familie.", "hätte", ["hatte", "wäre"], "I'd like to have more time for my family.", "Me gustaría tener más tiempo para mi familia.", "A wish: ich hätte gern…"],
+    ["Das ___ ich nicht machen, das ist zu gefährlich.", "würde", ["wurde", "wäre"], "I wouldn't do that, it's too dangerous.", "Yo no haría eso, es demasiado peligroso.", "würde + infinitive (machen) at the end."],
+    ["Sie ___ besser ein Taxi nehmen, der letzte Bus ist schon weg.", "sollten", ["sollte", "würden"], "You'd better take a taxi, the last bus has already gone.", "Mejor coja un taxi, el último autobús ya se ha ido.", "Polite advice to Sie: Sie sollten…"],
+    ["Wenn ich nur mehr Geld ___!", "hätte", ["habe", "hatte"], "If only I had more money!", "¡Ojalá tuviera más dinero!", "A wish that isn't true now: Wenn ich nur… hätte!"],
+    ["___ es Ihnen am Dienstag passen?", "Würde", ["Wurde", "Wäre"], "Would Tuesday suit you?", "¿Le vendría bien el martes?", "Würde es Ihnen passen? = Would it suit you?"],
+    ["Mit dem Auto ___ wir viel schneller dort.", "wären", ["waren", "würden"], "By car we'd be there much faster.", "En coche llegaríamos mucho antes.", "sein → wir wären."]
+  ]},
+  { id: "komparativ", name: "Komparativ & Superlativ", en: "Comparing things", icon: "📏", items: [
+    ["Der Zug ist ___ als der Bus.", "schneller", ["schnell", "am schnellsten"], "The train is faster than the bus.", "El tren es más rápido que el autobús.", "Comparative = adjective + -er, then als."],
+    ["Berlin ist ___ als München.", "größer", ["großer", "am größten"], "Berlin is bigger than Munich.", "Berlín es más grande que Múnich.", "Short adjectives often add an umlaut: groß → größer."],
+    ["Mein Bruder ist zwei Jahre ___ als ich.", "älter", ["alter", "am ältesten"], "My brother is two years older than me.", "Mi hermano es dos años mayor que yo.", "alt → älter → am ältesten."],
+    ["Im Sommer ist es hier viel ___ als im Winter.", "wärmer", ["warmer", "am wärmsten"], "In summer it's much warmer here than in winter.", "En verano aquí hace mucho más calor que en invierno.", "warm → wärmer."],
+    ["Ich trinke ___ Tee als Kaffee.", "lieber", ["gerner", "mehr gern"], "I prefer tea to coffee.", "Prefiero el té al café.", "gern → lieber → am liebsten."],
+    ["Das ist das ___ Restaurant in der Stadt.", "beste", ["besser", "gutste"], "That's the best restaurant in town.", "Es el mejor restaurante de la ciudad.", "gut → besser → am besten / der, die, das beste."],
+    ["Im Winter sind die Tage ___.", "am kürzesten", ["am kurzesten", "die kürzesten"], "In winter the days are shortest.", "En invierno los días son los más cortos.", "After sein the superlative is am …sten."],
+    ["Dieses Handy ist genauso teuer ___ das andere.", "wie", ["als", "wenn"], "This mobile is just as expensive as the other one.", "Este móvil es tan caro como el otro.", "Equal: so / genauso … wie. Different: …er als."],
+    ["Mein Handy ist teurer ___ deins.", "als", ["wie", "dann"], "My mobile is more expensive than yours.", "Mi móvil es más caro que el tuyo.", "Comparative + als (que)."],
+    ["Am Wochenende schlafe ich am ___.", "längsten", ["langsten", "länger"], "At the weekend I sleep longest.", "El fin de semana es cuando más duermo.", "lang → länger → am längsten."],
+    ["Welches Kleid gefällt dir ___?", "besser", ["guter", "am gutesten"], "Which dress do you like better?", "¿Qué vestido te gusta más?", "gut is irregular: besser, am besten."],
+    ["Heute ist es nicht so kalt ___ gestern.", "wie", ["als", "so"], "Today it isn't as cold as yesterday.", "Hoy no hace tanto frío como ayer.", "nicht so … wie = not as … as."],
+    ["Ich esse am ___ Pizza.", "liebsten", ["gernsten", "lieber"], "I like eating pizza best.", "Lo que más me gusta comer es pizza.", "gern → lieber → am liebsten."],
+    ["Er verdient ___ Geld als ich.", "mehr", ["viel", "meister"], "He earns more money than me.", "Gana más dinero que yo.", "viel → mehr → am meisten."],
+    ["Die Zugspitze ist der ___ Berg in Deutschland.", "höchste", ["hochste", "höher"], "The Zugspitze is the highest mountain in Germany.", "El Zugspitze es la montaña más alta de Alemania.", "hoch → höher → der höchste."],
+    ["Kannst du bitte ___ sprechen?", "langsamer", ["langsamster", "am langsamsten"], "Can you speak more slowly, please?", "¿Puedes hablar más despacio, por favor?", "Comparatives work for how you do things too: langsamer, lauter, deutlicher."],
+    ["Der Kaffee hier ist ___ als im Bahnhofscafé.", "besser", ["guter", "am besten"], "The coffee here is better than in the station café.", "El café de aquí es mejor que el de la cafetería de la estación.", "gut → besser."],
+    ["Das blaue Hemd ist ___ als das weiße.", "billiger", ["billig", "am billigsten"], "The blue shirt is cheaper than the white one.", "La camisa azul es más barata que la blanca.", "billig → billiger."],
+    ["Meine Schwester ist die ___ in unserer Familie.", "jüngste", ["jungste", "jünger"], "My sister is the youngest in our family.", "Mi hermana es la más pequeña de la familia.", "jung → jünger → die jüngste."],
+    ["Je mehr ich übe, ___ besser spreche ich.", "desto", ["als", "wie"], "The more I practise, the better I speak.", "Cuanto más practico, mejor hablo.", "je … desto … = cuanto más …, más …"],
+    ["Ich wohne jetzt ___ von der Arbeit weg als früher.", "weiter", ["weit", "am weitesten"], "I live further from work now than before.", "Ahora vivo más lejos del trabajo que antes.", "weit → weiter."],
+    ["Der Test war ___ als ich dachte.", "leichter", ["leicht", "am leichtesten"], "The test was easier than I thought.", "El examen fue más fácil de lo que pensaba.", "leicht → leichter … als."],
+    ["Wer kocht in eurer Familie am ___?", "besten", ["gutesten", "bester"], "Who cooks best in your family?", "¿Quién cocina mejor en vuestra familia?", "am besten = best."]
+  ]}
 ];
 
 // Listening text: [lines read aloud, question, answer, [wrong options], english, spanish]
@@ -1330,7 +1720,27 @@ const LISTENING = [
     [["Wegen Bauarbeiten fahren am Wochenende zwischen Ostbahnhof und Flughafen keine Züge. Bitte benutzen Sie die Busse vor dem Bahnhof."],
       "Wie kommt man am Wochenende zum Flughafen?", "mit dem Bus", ["mit dem Zug", "mit dem Taxi"],
       "Because of building work there are no trains between the east station and the airport at the weekend. Please use the buses in front of the station.",
-      "Por obras, el fin de semana no circulan trenes entre la estación del este y el aeropuerto. Por favor, utilicen los autobuses que hay delante de la estación."]
+      "Por obras, el fin de semana no circulan trenes entre la estación del este y el aeropuerto. Por favor, utilicen los autobuses que hay delante de la estación."],
+    [["Sehr geehrte Fahrgäste, wegen einer Störung endet diese Straßenbahn heute schon am Rathaus. Bitte steigen Sie dort in die Linie fünf um."],
+      "Was müssen die Fahrgäste am Rathaus tun?", "in die Linie 5 umsteigen", ["zu Fuß weitergehen", "in der Straßenbahn bleiben"],
+      "Dear passengers, because of a fault this tram ends at the town hall today. Please change there to line 5.",
+      "Estimados viajeros, por una avería este tranvía termina hoy en el ayuntamiento. Por favor, hagan transbordo allí a la línea 5."],
+    [["Die Besitzerin eines roten Fahrrads wird gebeten, zum Haupteingang zu kommen. Ihr Fahrrad steht vor der Ausfahrt der Feuerwehr."],
+      "Warum soll die Frau zum Haupteingang kommen?", "Ihr Fahrrad steht falsch.", ["Sie hat etwas verloren.", "Ihr Fahrrad ist kaputt."],
+      "Would the owner of a red bicycle please come to the main entrance. Her bike is in front of the fire brigade exit.",
+      "Se ruega a la propietaria de una bicicleta roja que acuda a la entrada principal. Su bicicleta está delante de la salida de los bomberos."],
+    [["Liebe Badegäste, das Schwimmbad schließt heute wegen einer Veranstaltung schon um siebzehn Uhr. Die Sauna bleibt bis zweiundzwanzig Uhr geöffnet."],
+      "Was ist heute bis 22 Uhr geöffnet?", "die Sauna", ["das Schwimmbad", "das Café"],
+      "Dear swimmers, because of an event the pool closes at 5 pm today. The sauna stays open until 10 pm.",
+      "Estimados bañistas, por un evento la piscina cierra hoy ya a las cinco. La sauna sigue abierta hasta las diez de la noche."],
+    [["Information für die Passagiere aus London: Ihr Gepäck kommt heute nicht an Band drei, sondern an Band sechs an."],
+      "Wo bekommen die Passagiere aus London ihre Koffer?", "an Band 6", ["an Band 3", "an Band 16"],
+      "Information for passengers from London: today your luggage arrives at belt 6, not belt 3.",
+      "Información para los pasajeros procedentes de Londres: hoy su equipaje no sale por la cinta 3, sino por la cinta 6."],
+    [["Besuchen Sie unsere Spielwarenabteilung im dritten Stock. Diese Woche gibt es dort alle Brettspiele zum halben Preis."],
+      "Was ist diese Woche billiger?", "Brettspiele", ["Bücher", "Kinderkleidung"],
+      "Visit our toy department on the third floor. This week all board games there are half price.",
+      "Visiten nuestra sección de juguetes en la tercera planta. Esta semana todos los juegos de mesa están a mitad de precio."]
   ]},
   { id: "voicemail", name: "Anrufbeantworter", en: "Voicemails", icon: "📱", items: [
     [["Hallo Anna, hier ist Julia. Wir wollten doch heute Abend ins Kino gehen. Leider muss ich länger arbeiten. Können wir den Film morgen sehen? Ruf mich bitte zurück!"],
@@ -1364,7 +1774,27 @@ const LISTENING = [
     [["Hey, hier ist Lukas. Ich ziehe am Samstag um und brauche Hilfe. Kannst du um neun Uhr zu meiner alten Wohnung kommen? Für Pizza und Getränke ist gesorgt!"],
       "Warum ruft Lukas an?", "Er braucht Hilfe beim Umzug.", ["Er lädt zum Pizzaessen ein.", "Er sucht eine neue Wohnung."],
       "Hey, it's Lukas. I'm moving house on Saturday and I need help. Can you come to my old flat at 9? Pizza and drinks are on me!",
-      "Hola, soy Lukas. El sábado me mudo y necesito ayuda. ¿Puedes venir a mi piso antiguo a las nueve? ¡Pizza y bebida corren de mi cuenta!"]
+      "Hola, soy Lukas. El sábado me mudo y necesito ayuda. ¿Puedes venir a mi piso antiguo a las nueve? ¡Pizza y bebida corren de mi cuenta!"],
+    [["Guten Tag, hier ist die Sprachschule Lingua. Ihr Deutschkurs beginnt nicht am Montag, sondern erst am Mittwoch. Der Unterricht ist wie geplant von achtzehn bis zwanzig Uhr in Raum zwölf."],
+      "Was hat sich geändert?", "der erste Kurstag", ["die Uhrzeit", "der Raum"],
+      "Hello, this is the Lingua language school. Your German course doesn't start on Monday but on Wednesday. Lessons are from 6 to 8 pm in room 12, as planned.",
+      "Buenos días, le llamamos de la escuela de idiomas Lingua. Su curso de alemán no empieza el lunes, sino el miércoles. Las clases son, como estaba previsto, de seis a ocho de la tarde en el aula 12."],
+    [["Guten Tag, hier ist das Bürgeramt. Ihr neuer Personalausweis ist fertig. Bitte bringen Sie zum Abholen Ihren alten Ausweis mit. Wir haben montags bis freitags von acht bis zwölf Uhr geöffnet."],
+      "Was muss man zum Abholen mitbringen?", "den alten Ausweis", ["ein Passfoto", "ein Formular"],
+      "Hello, this is the citizens' office. Your new ID card is ready. Please bring your old ID when you collect it. We're open Monday to Friday from 8 to 12.",
+      "Buenos días, le llamamos de la oficina del ciudadano. Su nuevo DNI ya está listo. Para recogerlo, traiga por favor el antiguo. Abrimos de lunes a viernes de ocho a doce."],
+    [["Hallo, hier ist Sandra. Ich stehe vor dem Restaurant, aber es ist heute geschlossen! Ich warte im Café gegenüber auf dich. Bis gleich!"],
+      "Wo wartet Sandra?", "im Café gegenüber", ["im Restaurant", "an der Haltestelle"],
+      "Hi, it's Sandra. I'm outside the restaurant, but it's closed today! I'll wait for you in the café opposite. See you soon!",
+      "Hola, soy Sandra. Estoy delante del restaurante, ¡pero hoy está cerrado! Te espero en la cafetería de enfrente. ¡Hasta ahora!"],
+    [["Guten Tag, Herr Özdemir, hier spricht Frau Hoffmann, Ihre Vermieterin. Am Dienstag gegen zehn Uhr kommt der Techniker und repariert die Heizung. Wenn Sie nicht zu Hause sind, kann ich ihm die Tür öffnen."],
+      "Warum kommt am Dienstag ein Techniker?", "Die Heizung ist kaputt.", ["Die Waschmaschine ist kaputt.", "Er bringt einen neuen Schlüssel."],
+      "Hello Mr Özdemir, this is Ms Hoffmann, your landlady. On Tuesday at about 10 the technician is coming to repair the heating. If you're not at home, I can let him in.",
+      "Buenos días, señor Özdemir, le habla la señora Hoffmann, su casera. El martes hacia las diez viene el técnico a reparar la calefacción. Si usted no está en casa, puedo abrirle yo la puerta."],
+    [["Hallo, hier ist Ihr Paketdienst. Wir konnten Ihr Paket heute leider nicht zustellen. Sie können es ab morgen in der Postfiliale in der Bahnhofstraße abholen. Bitte bringen Sie Ihren Ausweis mit."],
+      "Wo ist das Paket ab morgen?", "in der Post in der Bahnhofstraße", ["beim Nachbarn", "vor der Haustür"],
+      "Hello, this is your parcel service. Unfortunately we couldn't deliver your parcel today. You can collect it from tomorrow at the post office on Bahnhofstraße. Please bring your ID.",
+      "Hola, le llamamos de su servicio de paquetería. Lamentablemente hoy no hemos podido entregarle su paquete. Puede recogerlo a partir de mañana en la oficina de correos de la Bahnhofstraße. Traiga su documento de identidad, por favor."]
   ]},
   { id: "talks", name: "Gespräche", en: "Conversations", icon: "🗣️", dialogue: true, items: [
     [["Guten Morgen! Was darf es sein?", "Ich hätte gern vier Brötchen und ein Vollkornbrot.", "Das Vollkornbrot ist leider aus. Möchten Sie ein Roggenbrot?", "Ja, gut, dann nehme ich das."],
@@ -1406,7 +1836,35 @@ const LISTENING = [
     [["Kannst du mir kurz helfen? Der Drucker funktioniert nicht.", "Hast du schon Papier nachgelegt?", "Ja, aber er druckt trotzdem nicht.", "Dann ruf am besten die IT an."],
       "Was ist das Problem?", "Der Drucker druckt nicht.", ["Es gibt kein Papier mehr.", "Der Computer ist kaputt."],
       "– Can you help me for a moment? The printer isn't working. – Have you put more paper in? – Yes, but it still won't print. – Then you'd better call IT.",
-      "– ¿Me ayudas un momento? La impresora no funciona. – ¿Ya has puesto más papel? – Sí, pero sigue sin imprimir. – Entonces mejor llama a los informáticos."]
+      "– ¿Me ayudas un momento? La impresora no funciona. – ¿Ya has puesto más papel? – Sí, pero sigue sin imprimir. – Entonces mejor llama a los informáticos."],
+    [["Guten Tag, ich möchte mich anmelden. Ich bin letzte Woche umgezogen.", "Haben Sie die Bestätigung von Ihrem Vermieter dabei?", "Oh nein, die habe ich zu Hause vergessen.", "Dann müssen Sie leider noch einmal wiederkommen."],
+      "Was hat die Person vergessen?", "ein Papier vom Vermieter", ["ihren Ausweis", "ihren Mietvertrag"],
+      "– Hello, I'd like to register my address. I moved last week. – Have you got the confirmation from your landlord with you? – Oh no, I left it at home. – Then I'm afraid you'll have to come back again.",
+      "– Buenos días, quiero empadronarme. Me mudé la semana pasada. – ¿Trae el certificado de su casero? – Ay, no, me lo he olvidado en casa. – Entonces, lo siento, tendrá que volver otro día."],
+    [["Ich habe starken Husten. Haben Sie etwas dagegen?", "Hier ist ein Hustensaft. Nehmen Sie dreimal am Tag einen Löffel, immer nach dem Essen.", "Brauche ich dafür ein Rezept?", "Nein, den bekommen Sie ohne Rezept."],
+      "Wann soll man den Saft nehmen?", "nach dem Essen", ["vor dem Essen", "nur abends"],
+      "– I've got a bad cough. Have you got anything for it? – Here's a cough syrup. Take a spoonful three times a day, always after meals. – Do I need a prescription for it? – No, you can get it without one.",
+      "– Tengo mucha tos. ¿Tiene algo para eso? – Aquí tiene un jarabe. Tome una cucharada tres veces al día, siempre después de comer. – ¿Necesito receta? – No, se vende sin receta."],
+    [["Entschuldigung, ist das der Zug nach Frankfurt?", "Nein, dieser Zug fährt nach Stuttgart. Für Frankfurt müssen Sie in Mannheim umsteigen.", "Und wie viel Zeit habe ich dort?", "Nur sieben Minuten, aber der Anschluss fährt vom gleichen Bahnsteig."],
+      "Was muss der Fahrgast tun?", "in Mannheim umsteigen", ["in Stuttgart umsteigen", "in diesem Zug bleiben"],
+      "– Excuse me, is this the train to Frankfurt? – No, this train goes to Stuttgart. For Frankfurt you have to change in Mannheim. – And how much time do I have there? – Only seven minutes, but the connection leaves from the same platform.",
+      "– Perdone, ¿es este el tren a Fráncfort? – No, este tren va a Stuttgart. Para Fráncfort tiene que hacer transbordo en Mannheim. – ¿Y cuánto tiempo tengo allí? – Solo siete minutos, pero el enlace sale del mismo andén."],
+    [["Frau Meier geht nächsten Monat in Rente. Sollen wir eine kleine Feier organisieren?", "Gute Idee! Ich kann einen Kuchen backen.", "Super. Und ich sammle Geld für ein Geschenk. Vielleicht einen Gutschein für ein Restaurant?", "Ja, sie isst sehr gern italienisch."],
+      "Was wollen die Kollegen schenken?", "einen Restaurantgutschein", ["einen Kuchen", "ein Kochbuch"],
+      "– Ms Meier retires next month. Shall we organise a little party? – Good idea! I can bake a cake. – Great. And I'll collect money for a present. Maybe a restaurant voucher? – Yes, she loves Italian food.",
+      "– La señora Meier se jubila el mes que viene. ¿Organizamos una pequeña fiesta? – ¡Buena idea! Yo puedo hacer un pastel. – Genial. Y yo recojo dinero para un regalo. ¿Quizá un vale para un restaurante? – Sí, le encanta la comida italiana."],
+    [["Die Wohnung ist sehr schön. Wie hoch ist die Miete?", "Achthundert Euro warm, also mit Heizung. Dazu kommen drei Monatsmieten Kaution.", "Darf man hier Haustiere haben? Wir haben eine Katze.", "Eine Katze ist kein Problem, nur Hunde sind nicht erlaubt."],
+      "Welche Tiere sind in der Wohnung nicht erlaubt?", "Hunde", ["Katzen", "alle Tiere"],
+      "– The flat is very nice. How much is the rent? – 800 euros including heating. On top of that there's a deposit of three months' rent. – Are pets allowed here? We have a cat. – A cat is no problem, only dogs aren't allowed.",
+      "– El piso es muy bonito. ¿Cuánto es el alquiler? – Ochocientos euros con calefacción incluida. Además hay una fianza de tres mensualidades. – ¿Se pueden tener mascotas? Tenemos un gato. – Un gato no es problema, solo no se permiten perros."],
+    [["Hallo, ich interessiere mich für den Deutschkurs B eins. Wann findet er statt?", "Dienstags und donnerstags von neun bis zwölf Uhr. Es gibt auch einen Abendkurs am Mittwoch.", "Vormittags arbeite ich leider. Wie lange dauert der Abendkurs?", "Zwölf Wochen. Er kostet dreihundertzwanzig Euro."],
+      "Welcher Kurs passt für die Person?", "der Abendkurs am Mittwoch", ["der Kurs am Dienstag und Donnerstag", "keiner"],
+      "– Hello, I'm interested in the B1 German course. When is it? – Tuesdays and Thursdays from 9 to 12. There's also an evening course on Wednesdays. – Unfortunately I work in the mornings. How long is the evening course? – Twelve weeks. It costs 320 euros.",
+      "– Hola, me interesa el curso de alemán B1. ¿Cuándo es? – Martes y jueves de nueve a doce. También hay un curso de tarde los miércoles. – Por las mañanas trabajo. ¿Cuánto dura el curso de tarde? – Doce semanas. Cuesta 320 euros."],
+    [["Waren Sie schon einmal bei uns?", "Nein, ich bin zum ersten Mal hier.", "Dann brauche ich bitte Ihre Versichertenkarte. Und füllen Sie bitte dieses Formular aus.", "Natürlich. Soll ich danach im Wartezimmer warten?", "Ja, bitte. Es dauert ungefähr zwanzig Minuten."],
+      "Was soll der Patient ausfüllen?", "ein Formular", ["ein Rezept", "eine Überweisung"],
+      "– Have you been here before? – No, it's my first time. – Then I need your health insurance card, please. And please fill in this form. – Of course. Shall I wait in the waiting room afterwards? – Yes, please. It'll be about twenty minutes.",
+      "– ¿Ha estado antes aquí? – No, es la primera vez. – Entonces necesito su tarjeta sanitaria. Y rellene este formulario, por favor. – Claro. ¿Luego espero en la sala de espera? – Sí, por favor. Serán unos veinte minutos."]
   ]},
   { id: "radio", name: "Radio", en: "Weather & traffic", icon: "🌤️", items: [
     [["Und jetzt das Wetter für morgen: Am Vormittag ist es noch sonnig, aber ab dem Nachmittag gibt es im ganzen Land Regen und Gewitter. Die Temperaturen liegen zwischen achtzehn und zweiundzwanzig Grad."],
@@ -1432,8 +1890,228 @@ const LISTENING = [
     [["Es wird heiß! Morgen erwarten wir bis zu fünfunddreißig Grad. Trinken Sie viel Wasser und bleiben Sie mittags am besten im Schatten."],
       "Was soll man morgen tun?", "viel trinken", ["in die Sonne gehen", "warme Kleidung tragen"],
       "It's going to be hot! Tomorrow we expect up to 35 degrees. Drink plenty of water and stay in the shade at midday if you can.",
-      "¡Llega el calor! Mañana esperamos hasta 35 grados. Beban mucha agua y, a mediodía, mejor quédense a la sombra."]
+      "¡Llega el calor! Mañana esperamos hasta 35 grados. Beban mucha agua y, a mediodía, mejor quédense a la sombra."],
+    [["Und nun zum Verkehr: Die Kölner Straße ist ab Montag wegen Bauarbeiten drei Wochen lang gesperrt. Bitte nehmen Sie die Umleitung über den Ring."],
+      "Wie lange ist die Straße gesperrt?", "drei Wochen", ["drei Tage", "bis Montag"],
+      "And now the traffic: from Monday, Kölner Straße is closed for three weeks because of building work. Please take the diversion via the ring road.",
+      "Y ahora el tráfico: a partir del lunes la Kölner Straße estará cortada tres semanas por obras. Por favor, tomen el desvío por la ronda."],
+    [["Das Wetter für heute: Am Morgen gibt es in vielen Regionen dichten Nebel. Fahren Sie bitte langsam. Am Nachmittag wird es freundlich, bei Temperaturen um zwölf Grad."],
+      "Wie ist das Wetter am Morgen?", "neblig", ["sonnig", "stürmisch"],
+      "Today's weather: in the morning there's thick fog in many regions. Please drive slowly. In the afternoon it'll be fine, with temperatures around 12 degrees.",
+      "El tiempo para hoy: por la mañana habrá niebla densa en muchas regiones. Conduzcan despacio, por favor. Por la tarde mejorará, con temperaturas en torno a los 12 grados."],
+    [["Unser Veranstaltungstipp: Am Samstag ist in der Stadtbibliothek Lesenacht für Kinder. Los geht's um neunzehn Uhr. Bitte melden Sie Ihre Kinder vorher an, denn die Plätze sind begrenzt."],
+      "Was müssen die Eltern vorher tun?", "die Kinder anmelden", ["Bücher mitbringen", "Eintritt bezahlen"],
+      "Our event tip: on Saturday there's a children's reading night at the city library. It starts at 7 pm. Please register your children in advance, as places are limited.",
+      "Nuestra recomendación: el sábado hay noche de lectura para niños en la biblioteca municipal. Empieza a las siete. Inscriban antes a sus hijos, porque las plazas son limitadas."],
+    [["Rufen Sie jetzt an und gewinnen Sie zwei Karten für das Konzert am Freitag! Die Telefonnummer finden Sie auf unserer Internetseite. Viel Glück!"],
+      "Wo steht die Telefonnummer?", "auf der Internetseite", ["in der Zeitung", "auf der Konzertkarte"],
+      "Call now and win two tickets for Friday's concert! You'll find the phone number on our website. Good luck!",
+      "¡Llame ahora y gane dos entradas para el concierto del viernes! Encontrará el número de teléfono en nuestra página web. ¡Buena suerte!"],
+    [["Achtung, Autofahrer auf der A drei zwischen Würzburg und Nürnberg: Auf der Fahrbahn liegen Gegenstände. Bitte fahren Sie langsam und überholen Sie nicht."],
+      "Was sollen die Autofahrer tun?", "langsam fahren", ["die Autobahn verlassen", "anhalten"],
+      "Attention, drivers on the A3 between Würzburg and Nuremberg: there are objects on the road. Please drive slowly and don't overtake.",
+      "Atención, conductores de la A3 entre Wurzburgo y Núremberg: hay objetos en la calzada. Conduzcan despacio y no adelanten."]
+  ]},
+  { id: "interviews", name: "Interviews", en: "Interviews (B1)", icon: "🎤", dialogue: true, items: [
+    [["Heute ist Frau Keller bei uns. Sie hat vor zwei Jahren ein kleines Café eröffnet. Frau Keller, wie kam es dazu?", "Ich war lange Bankkauffrau, aber die Arbeit hat mir keinen Spaß mehr gemacht. Und ich habe schon immer gern gebacken.", "War der Anfang schwer?", "Ja, sehr. Im ersten Jahr habe ich fast jeden Tag zwölf Stunden gearbeitet. Aber jetzt habe ich zwei Mitarbeiterinnen."],
+      "Frau Keller hat früher in einer Bank gearbeitet.", "Richtig", ["Falsch"],
+      "– Today Ms Keller is with us. Two years ago she opened a little café. Ms Keller, how did that come about? – I was a bank clerk for a long time, but I no longer enjoyed the work. And I've always loved baking. – Was the start hard? – Yes, very. In the first year I worked twelve hours almost every day. But now I have two employees.",
+      "– Hoy nos acompaña la señora Keller. Hace dos años abrió una pequeña cafetería. Señora Keller, ¿cómo surgió? – Trabajé mucho tiempo en un banco, pero ya no me gustaba. Y siempre me ha encantado hornear. – ¿Fue difícil el principio? – Sí, mucho. El primer año trabajé doce horas casi todos los días. Pero ahora tengo dos empleadas."],
+    [["Herr Brandt, Sie fahren jeden Tag mit dem Fahrrad zur Arbeit. Auch im Winter?", "Ja, auch im Winter. Nur wenn es sehr glatt ist, nehme ich den Bus.", "Wie weit ist Ihr Weg?", "Ungefähr acht Kilometer. Mit dem Rad brauche ich eine halbe Stunde. Mit dem Auto stehe ich oft im Stau und brauche länger."],
+      "Herr Brandt fährt im Winter immer mit dem Bus.", "Falsch", ["Richtig"],
+      "– Mr Brandt, you cycle to work every day. In winter too? – Yes, in winter too. Only when it's very icy do I take the bus. – How far is it? – About eight kilometres. By bike it takes me half an hour. By car I'm often stuck in traffic and it takes longer.",
+      "– Señor Brandt, usted va al trabajo en bici todos los días. ¿También en invierno? – Sí, también en invierno. Solo cojo el autobús cuando hay mucho hielo. – ¿Qué distancia es? – Unos ocho kilómetros. En bici tardo media hora. En coche a menudo hay atasco y tardo más."],
+    [["In unserer Sendung geht es heute um Nachbarn. Frau Yilmaz, kennen Sie Ihre Nachbarn gut?", "Ja, in unserem Haus machen wir jeden Sommer ein Hoffest. Da bringt jeder etwas zu essen mit.", "Und gibt es auch manchmal Streit?", "Selten. Einmal war ein Nachbar nachts zu laut. Wir haben in Ruhe miteinander gesprochen, und dann war alles gut."],
+      "Im Haus von Frau Yilmaz gibt es oft Streit.", "Falsch", ["Richtig"],
+      "– Today's programme is about neighbours. Ms Yilmaz, do you know your neighbours well? – Yes, in our building we have a courtyard party every summer. Everyone brings something to eat. – And are there arguments sometimes? – Rarely. Once a neighbour was too loud at night. We talked it over calmly, and then everything was fine.",
+      "– Hoy el programa trata de los vecinos. Señora Yilmaz, ¿conoce bien a sus vecinos? – Sí, en nuestro edificio hacemos cada verano una fiesta en el patio. Cada uno trae algo de comer. – ¿Y a veces hay peleas? – Pocas veces. Una vez un vecino hacía demasiado ruido por la noche. Lo hablamos con calma y se arregló."],
+    [["Herr Wagner, Sie arbeiten seit drei Jahren von zu Hause aus. Was gefällt Ihnen daran?", "Ich spare jeden Tag zwei Stunden Fahrzeit. Diese Zeit habe ich jetzt für meine Familie.", "Gibt es auch Nachteile?", "Ja, die Kollegen fehlen mir manchmal. Deshalb fahre ich einmal pro Woche ins Büro."],
+      "Herr Wagner geht einmal pro Woche ins Büro.", "Richtig", ["Falsch"],
+      "– Mr Wagner, you've been working from home for three years. What do you like about it? – I save two hours of travel every day. Now I have that time for my family. – Are there disadvantages too? – Yes, I sometimes miss my colleagues. That's why I go into the office once a week.",
+      "– Señor Wagner, lleva tres años trabajando desde casa. ¿Qué le gusta de eso? – Me ahorro dos horas de trayecto cada día. Ahora ese tiempo es para mi familia. – ¿Tiene también desventajas? – Sí, a veces echo de menos a los compañeros. Por eso voy a la oficina una vez por semana."],
+    [["Frau López, Sie kommen aus Mexiko und leben seit vier Jahren in Leipzig. Wie haben Sie Deutsch gelernt?", "Zuerst in einem Kurs an der Volkshochschule. Aber am meisten habe ich im Chor gelernt. Wir singen jeden Montag zusammen und gehen danach oft noch etwas trinken.", "Was war am schwierigsten?", "Die Artikel! Der, die, das, das ist für mich immer noch schwer."],
+      "Frau López hat am meisten im Deutschkurs gelernt.", "Falsch", ["Richtig"],
+      "– Ms López, you're from Mexico and have lived in Leipzig for four years. How did you learn German? – First on a course at the adult education centre. But I learnt most in the choir. We sing together every Monday and often go for a drink afterwards. – What was the hardest thing? – The articles! Der, die, das: that's still hard for me.",
+      "– Señora López, usted es de México y vive desde hace cuatro años en Leipzig. ¿Cómo aprendió alemán? – Primero en un curso de la escuela de adultos. Pero donde más aprendí fue en el coro. Cantamos juntos cada lunes y luego solemos ir a tomar algo. – ¿Qué fue lo más difícil? – ¡Los artículos! Der, die, das: todavía me cuesta."],
+    [["Herr Schulz, Sie sind Rentner und helfen zweimal pro Woche bei der Tafel. Was machen Sie dort?", "Wir holen Lebensmittel aus Supermärkten ab, die dort nicht mehr verkauft werden, und geben sie an Menschen mit wenig Geld weiter.", "Warum machen Sie das?", "Ich möchte etwas Sinnvolles tun. Und ich habe dort viele nette Leute kennengelernt."],
+      "Herr Schulz arbeitet jeden Tag bei der Tafel.", "Falsch", ["Richtig"],
+      "– Mr Schulz, you're retired and help at the food bank twice a week. What do you do there? – We collect food from supermarkets that they can't sell any more and pass it on to people with little money. – Why do you do it? – I want to do something worthwhile. And I've met lots of nice people there.",
+      "– Señor Schulz, usted está jubilado y ayuda dos veces por semana en el banco de alimentos. ¿Qué hace allí? – Recogemos en los supermercados la comida que ya no venden y la repartimos entre personas con poco dinero. – ¿Por qué lo hace? – Quiero hacer algo útil. Y allí he conocido a mucha gente maja."],
+    [["Familie Berger versucht, ohne Plastik zu leben. Frau Berger, ist das nicht sehr schwierig?", "Am Anfang schon. Heute kaufen wir auf dem Markt ein und bringen eigene Taschen und Gläser mit.", "Ist das nicht teurer?", "Manche Sachen sind teurer. Aber wir kaufen weniger und werfen fast nichts mehr weg. Am Ende geben wir nicht mehr Geld aus als früher."],
+      "Familie Berger gibt heute mehr Geld für Lebensmittel aus.", "Falsch", ["Richtig"],
+      "– The Berger family try to live without plastic. Ms Berger, isn't that very difficult? – At first, yes. Now we shop at the market and bring our own bags and jars. – Isn't that more expensive? – Some things are. But we buy less and hardly throw anything away. In the end we don't spend more money than before.",
+      "– La familia Berger intenta vivir sin plástico. Señora Berger, ¿no es muy difícil? – Al principio, sí. Ahora compramos en el mercado y llevamos nuestras propias bolsas y tarros. – ¿No es más caro? – Algunas cosas sí. Pero compramos menos y casi no tiramos nada. Al final no gastamos más que antes."],
+    [["Herr Krause, Sie machen dieses Jahr Urlaub zu Hause. Warum?", "Wir haben letztes Jahr eine Wohnung gekauft, deshalb müssen wir sparen. Aber das finde ich gar nicht schlimm.", "Was machen Sie denn in den Ferien?", "Wir machen Ausflüge in die Umgebung, gehen wandern und schwimmen im See. Die Kinder finden das toll."],
+      "Familie Krause bleibt zu Hause, weil sie sparen muss.", "Richtig", ["Falsch"],
+      "– Mr Krause, you're spending your holiday at home this year. Why? – We bought a flat last year, so we have to save. But I don't mind at all. – So what are you doing in the holidays? – We go on trips in the area, go hiking and swim in the lake. The children love it.",
+      "– Señor Krause, este año pasa las vacaciones en casa. ¿Por qué? – El año pasado compramos un piso, así que tenemos que ahorrar. Pero no me parece nada mal. – ¿Y qué hacen en vacaciones? – Hacemos excursiones por la zona, vamos de senderismo y nadamos en el lago. A los niños les encanta."],
+    [["Frau Hahn, Sie haben mit fünfzig Jahren angefangen zu laufen. Wie kam das?", "Mein Arzt hat gesagt, ich soll mich mehr bewegen. Am Anfang bin ich nur zehn Minuten gelaufen.", "Und heute?", "Heute laufe ich dreimal pro Woche. Im Mai mache ich sogar beim Stadtlauf mit."],
+      "Frau Hahn hat mit dem Laufen angefangen, weil ihr Arzt es ihr geraten hat.", "Richtig", ["Falsch"],
+      "– Ms Hahn, you started running at fifty. How did that happen? – My doctor said I should move more. At first I only ran for ten minutes. – And today? – Today I run three times a week. In May I'm even taking part in the city run.",
+      "– Señora Hahn, usted empezó a correr a los cincuenta años. ¿Cómo fue? – Mi médico me dijo que tenía que moverme más. Al principio solo corría diez minutos. – ¿Y ahora? – Ahora corro tres veces por semana. En mayo hasta voy a participar en la carrera de la ciudad."],
+    [["Herr Petrov, Sie sind wegen Ihrer Arbeit nach Hamburg gezogen. Wie war der Anfang?", "Die Wohnungssuche war schwierig. Ich habe drei Monate bei einem Kollegen gewohnt.", "Und fühlen Sie sich jetzt wohl?", "Ja, sehr. Ich spiele in einem Fußballverein, und dort habe ich schnell Freunde gefunden."],
+      "Herr Petrov hat sofort eine Wohnung gefunden.", "Falsch", ["Richtig"],
+      "– Mr Petrov, you moved to Hamburg for your job. How was the start? – Finding a flat was hard. I lived with a colleague for three months. – And do you feel at home now? – Yes, very much. I play in a football club, and I made friends there quickly.",
+      "– Señor Petrov, usted se mudó a Hamburgo por trabajo. ¿Cómo fue el principio? – Fue difícil encontrar piso. Viví tres meses en casa de un compañero. – ¿Y ahora se siente a gusto? – Sí, mucho. Juego en un club de fútbol y allí hice amigos enseguida."]
   ]}
+];
+/* ---------- Prüfung: speaking, reading and writing parts of the Goethe A2/B1 exam ---------- */
+// A2 Sprechen: each player has a different diary for the same day and they look for the one hour both are free.
+const MEETINGS = [
+  ["Ihr wollt zusammen eine Freundin im Krankenhaus besuchen.", "You want to visit a friend in hospital together.", "Queréis visitar juntos a una amiga en el hospital."],
+  ["Ihr wollt zusammen ein Geschenk für einen Kollegen kaufen.", "You want to buy a present for a colleague together.", "Queréis comprar juntos un regalo para un compañero."],
+  ["Ihr wollt zusammen für die Deutschprüfung lernen.", "You want to study for the German exam together.", "Queréis estudiar juntos para el examen de alemán."],
+  ["Ihr wollt zusammen ins Schwimmbad gehen.", "You want to go to the swimming pool together.", "Queréis ir juntos a la piscina."],
+  ["Ihr wollt einem Freund beim Umzug helfen.", "You want to help a friend move house.", "Queréis ayudar a un amigo con la mudanza."],
+  ["Ihr wollt zusammen einen Kuchen für das Hoffest backen.", "You want to bake a cake together for the courtyard party.", "Queréis hacer juntos un pastel para la fiesta del patio."],
+  ["Ihr wollt zusammen neue Fahrräder anschauen.", "You want to go and look at new bikes together.", "Queréis ir juntos a ver bicis nuevas."],
+  ["Ihr wollt zusammen einen Ausflug für eure Kursgruppe planen.", "You want to plan a trip for your course group together.", "Queréis planear juntos una excursión para vuestro grupo del curso."]
+];
+const ERRANDS = ["Zahnarzt", "Deutschkurs", "Einkaufen", "Mittagessen mit Oma", "Joggen", "Arbeit", "Friseur", "Kinder abholen", "Auto in die Werkstatt bringen",
+  "Yoga", "Besprechung", "Wäsche waschen", "Termin bei der Bank", "Bürgeramt", "Paket abholen", "Fußballtraining", "Kochen", "Wohnung putzen", "Telefonkonferenz", "Hund ausführen"];
+const DIARY_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+// B1 Sprechen: plan something together, talking through each point.
+const PLANS = [
+  ["Eine Kollegin hat bald Geburtstag. Ihr wollt im Büro eine kleine Feier organisieren.", "A colleague's birthday is coming up. You want to organise a small party at the office.", "Pronto es el cumpleaños de una compañera. Queréis organizar una pequeña fiesta en la oficina.",
+    ["Wann feiert ihr?", "Wo genau?", "Essen und Getränke?", "Welches Geschenk?"]],
+  ["Ein Freund aus eurem Deutschkurs liegt seit einer Woche im Krankenhaus. Ihr wollt ihn besuchen.", "A friend from your German course has been in hospital for a week. You want to visit him.", "Un amigo del curso de alemán lleva una semana en el hospital. Queréis visitarlo.",
+    ["Wann geht ihr hin?", "Wie kommt ihr dorthin?", "Was bringt ihr mit?", "Wer fragt die anderen aus dem Kurs?"]],
+  ["Ihr wollt am Wochenende mit Freunden einen Ausflug machen.", "You want to go on a trip with friends at the weekend.", "Queréis hacer una excursión con amigos el fin de semana.",
+    ["Wohin?", "Wie fahrt ihr hin?", "Was nehmt ihr mit?", "Was macht ihr, wenn es regnet?"]],
+  ["Eure Nachbarin ist neu im Haus. Ihr wollt sie zum Kaffee einladen.", "Your neighbour is new in the building. You want to invite her for coffee.", "Vuestra vecina es nueva en el edificio. Queréis invitarla a un café.",
+    ["Wann?", "Bei wem?", "Was gibt es zu essen?", "Wen ladet ihr noch ein?"]],
+  ["Ihr wollt zusammen für eure Familie ein Abendessen kochen.", "You want to cook dinner for your family together.", "Queréis cocinar juntos una cena para vuestra familia.",
+    ["Was kocht ihr?", "Wer kauft ein?", "Wer macht was in der Küche?", "Wann esst ihr?"]],
+  ["Euer Deutschkurs ist bald zu Ende. Ihr wollt ein Abschiedsfest organisieren.", "Your German course is ending soon. You want to organise a farewell party.", "Vuestro curso de alemán termina pronto. Queréis organizar una fiesta de despedida.",
+    ["Wo feiert ihr?", "Wann?", "Was bringt jeder mit?", "Ein Geschenk für die Lehrerin?"]]
+];
+const SPEAK_PHRASES = {
+  termin: ["Hast du am Vormittag Zeit?", "Wie wäre es um zehn Uhr?", "Da kann ich leider nicht. Da habe ich einen Termin beim Zahnarzt.", "Um elf Uhr passt es mir gut.", "Und wie sieht es bei dir am Nachmittag aus?", "Gut, dann treffen wir uns um drei Uhr."],
+  planen: ["Was hältst du davon, wenn wir am Freitag feiern?", "Ich schlage vor, dass wir einen Kuchen kaufen.", "Das finde ich eine gute Idee.", "Ich bin nicht sicher, ob das klappt.", "Wer kümmert sich um die Getränke?", "Gut, dann machen wir es so."]
+};
+// Lesen: each item is [text, question, answer, [wrong options], english, spanish].
+const READING = [
+  { id: "ads", name: "Anzeigen", en: "Small ads", items: [
+    ["Zimmer frei in Zweier-WG, Nähe Uni, 18 m², 390 € warm, ab 1. März. Nichtraucher bevorzugt. Tel. 0176 2345678 (ab 18 Uhr).",
+      "Wann kann man anrufen?", "ab 18 Uhr", ["den ganzen Tag", "nur am Vormittag"],
+      "Room free in a two-person flatshare near the university, 18 m², €390 incl. bills, from 1 March. Non-smokers preferred. Tel. 0176 2345678 (from 6 pm).",
+      "Habitación libre en piso compartido para dos, cerca de la universidad, 18 m², 390 € con gastos, desde el 1 de marzo. Preferiblemente no fumadores. Tel. 0176 2345678 (a partir de las 18 h)."],
+    ["Verkaufe Kinderfahrrad, 20 Zoll, blau, kaum benutzt, 60 €. Kein Versand, nur Abholung in Köln-Ehrenfeld.",
+      "Was muss der Käufer tun?", "das Fahrrad selbst abholen", ["den Versand bezahlen", "das Fahrrad reparieren"],
+      "For sale: children's bike, 20 inch, blue, hardly used, €60. No delivery, collection only in Cologne-Ehrenfeld.",
+      "Vendo bici infantil, 20 pulgadas, azul, casi sin usar, 60 €. Sin envío, solo recogida en Colonia-Ehrenfeld."],
+    ["Wir suchen eine freundliche Aushilfe für unser Café am Wochenende (Sa + So, 9–15 Uhr). Erfahrung ist nicht nötig, Deutschkenntnisse B1. Bewerbung bitte per E-Mail.",
+      "Was braucht man für den Job?", "Deutsch auf B1-Niveau", ["Erfahrung im Café", "ein Auto"],
+      "We're looking for a friendly weekend helper for our café (Sat + Sun, 9 am–3 pm). No experience needed, German at B1. Please apply by email.",
+      "Buscamos ayudante simpático para nuestra cafetería los fines de semana (sáb. y dom., 9–15 h). No hace falta experiencia, alemán B1. Envíen su solicitud por correo electrónico."],
+    ["Yoga für Anfänger: jeden Dienstag 19–20.30 Uhr im Gemeindehaus. Die erste Stunde ist kostenlos! Bitte eine Matte mitbringen.",
+      "Was muss man mitbringen?", "eine Matte", ["Geld für die erste Stunde", "Sportschuhe"],
+      "Yoga for beginners: every Tuesday 7–8.30 pm in the community hall. The first class is free! Please bring a mat.",
+      "Yoga para principiantes: todos los martes de 19 a 20:30 h en el centro parroquial. ¡La primera clase es gratis! Traigan una esterilla."],
+    ["Flohmarkt im Hof! Samstag, 10–16 Uhr, Gartenstraße 12. Bei Regen in der Turnhalle der Grundschule.",
+      "Wo ist der Flohmarkt, wenn es regnet?", "in der Turnhalle", ["im Hof", "Er fällt aus."],
+      "Flea market in the courtyard! Saturday, 10 am–4 pm, Gartenstraße 12. If it rains, in the primary school gym.",
+      "¡Mercadillo en el patio! Sábado, de 10 a 16 h, Gartenstraße 12. Si llueve, en el gimnasio del colegio."]
+  ]},
+  { id: "mails", name: "E-Mails & Briefe", en: "Emails & letters", items: [
+    ["Liebe Meri, danke für die Einladung zu deinem Geburtstag! Leider kann ich am Samstag nicht kommen, weil meine Eltern zu Besuch sind. Hast du nächste Woche Zeit für einen Kaffee? Ich lade dich ein! Liebe Grüße, Sabine",
+      "Warum kommt Sabine nicht?", "Ihre Eltern besuchen sie.", ["Sie ist krank.", "Sie muss arbeiten."],
+      "Dear Meri, thanks for inviting me to your birthday! Unfortunately I can't come on Saturday because my parents are visiting. Have you got time for a coffee next week? My treat! Love, Sabine",
+      "Querida Meri: ¡gracias por invitarme a tu cumpleaños! Por desgracia el sábado no puedo ir porque vienen mis padres de visita. ¿Tienes tiempo la semana que viene para un café? ¡Invito yo! Un abrazo, Sabine"],
+    ["Sehr geehrte Mieterinnen und Mieter, am Montag wird zwischen 8 und 14 Uhr das Treppenhaus gestrichen. Bitte stellen Sie keine Schuhe oder Fahrräder in den Flur. Vielen Dank! Ihre Hausverwaltung",
+      "Was sollen die Mieter tun?", "nichts in den Flur stellen", ["das Treppenhaus streichen", "am Montag zu Hause bleiben"],
+      "Dear tenants, on Monday the stairwell will be painted between 8 am and 2 pm. Please don't leave shoes or bikes in the hallway. Thank you! Your property management",
+      "Estimados inquilinos: el lunes, entre las 8 y las 14 h, se pintará la escalera. Por favor, no dejen zapatos ni bicicletas en el rellano. ¡Gracias! La administración"],
+    ["Hallo Herr Rossi, leider ist unsere Kursleiterin krank. Der Kurs am Donnerstag fällt deshalb aus. Wir holen die Stunde am Samstag um 10 Uhr nach. Bitte geben Sie uns kurz Bescheid, ob Sie kommen können. Mit freundlichen Grüßen, Ihre Volkshochschule",
+      "Was soll Herr Rossi tun?", "antworten, ob er am Samstag kommt", ["am Donnerstag kommen", "die Kursleiterin anrufen"],
+      "Hello Mr Rossi, unfortunately our course leader is ill, so Thursday's class is cancelled. We'll make it up on Saturday at 10 am. Please let us know whether you can come. Kind regards, your adult education centre",
+      "Hola, señor Rossi: lamentablemente nuestra profesora está enferma, así que la clase del jueves se suspende. La recuperaremos el sábado a las 10. Díganos, por favor, si puede venir. Un saludo, su escuela de adultos"],
+    ["Hi Tom, ich komme am Freitag um 17.40 Uhr am Hauptbahnhof an. Kannst du mich abholen? Mein Koffer ist sehr schwer. Wenn du keine Zeit hast, nehme ich ein Taxi, kein Problem. Bis bald, Jana",
+      "Was macht Jana, wenn Tom keine Zeit hat?", "Sie nimmt ein Taxi.", ["Sie fährt mit dem Bus.", "Sie kommt später."],
+      "Hi Tom, I arrive at the main station on Friday at 5.40 pm. Can you pick me up? My suitcase is really heavy. If you haven't got time I'll take a taxi, no problem. See you soon, Jana",
+      "Hola, Tom: llego el viernes a las 17:40 a la estación central. ¿Puedes venir a buscarme? Mi maleta pesa mucho. Si no tienes tiempo, cojo un taxi, no pasa nada. Hasta pronto, Jana"],
+    ["Sehr geehrte Frau Navarro, vielen Dank für Ihre Bewerbung. Wir möchten Sie gern kennenlernen und laden Sie am Mittwoch um 11 Uhr zu einem Gespräch ein. Bitte bringen Sie Ihre Zeugnisse mit. Mit freundlichen Grüßen, Anna Berg",
+      "Warum schreibt Frau Berg?", "Sie lädt zu einem Vorstellungsgespräch ein.", ["Sie sagt die Bewerbung ab.", "Sie schickt die Zeugnisse zurück."],
+      "Dear Ms Navarro, thank you for your application. We would like to meet you and invite you to an interview on Wednesday at 11 am. Please bring your certificates. Kind regards, Anna Berg",
+      "Estimada señora Navarro: muchas gracias por su solicitud. Nos gustaría conocerla y la invitamos a una entrevista el miércoles a las 11. Traiga sus certificados, por favor. Atentamente, Anna Berg"]
+  ]},
+  { id: "signs", name: "Schilder & Aushänge", en: "Signs & notices", items: [
+    ["Liebe Patientinnen und Patienten, die Praxis ist vom 22.12. bis 2.1. geschlossen. In dringenden Fällen gehen Sie bitte zu Dr. Kramer, Bahnhofstraße 5.",
+      "Wohin geht man in dieser Zeit, wenn es dringend ist?", "zu Dr. Kramer", ["in die Notaufnahme", "Man wartet bis Januar."],
+      "Dear patients, the surgery is closed from 22 December to 2 January. In urgent cases please go to Dr Kramer, Bahnhofstraße 5.",
+      "Estimados pacientes: la consulta estará cerrada del 22 de diciembre al 2 de enero. En caso urgente, acudan al doctor Kramer, Bahnhofstraße 5."],
+    ["Fundbüro. Öffnungszeiten: Montag bis Donnerstag 8–12 Uhr, dienstags zusätzlich 14–18 Uhr. Freitag geschlossen.",
+      "Wann kann man am Nachmittag zum Fundbüro gehen?", "am Dienstag", ["am Freitag", "jeden Tag"],
+      "Lost property office. Opening hours: Monday to Thursday 8 am–12 noon, Tuesdays also 2–6 pm. Closed on Friday.",
+      "Oficina de objetos perdidos. Horario: de lunes a jueves de 8 a 12 h; los martes, también de 14 a 18 h. Viernes cerrado."],
+    ["Bitte keine Werbung einwerfen! Danke.",
+      "Was möchte die Person nicht in ihrem Briefkasten?", "Werbung", ["Briefe", "Zeitungen von Freunden"],
+      "No junk mail, please! Thank you.",
+      "¡Por favor, no dejen publicidad! Gracias."],
+    ["Achtung! Ab 1. April gelten neue Abfahrtszeiten. Den neuen Fahrplan finden Sie im Internet oder im Kundencenter am Marktplatz.",
+      "Was ändert sich?", "wann die Busse fahren", ["die Preise der Tickets", "die Adresse des Kundencenters"],
+      "Attention! New departure times apply from 1 April. You'll find the new timetable online or at the customer centre on the market square.",
+      "¡Atención! A partir del 1 de abril hay nuevos horarios de salida. Encontrará el nuevo horario en internet o en el centro de atención al cliente de la plaza del mercado."],
+    ["Waschküche: Bitte die Waschmaschine nach 22 Uhr nicht mehr benutzen. Das Sieb im Trockner nach jedem Trocknen sauber machen!",
+      "Was darf man nach 22 Uhr nicht?", "Wäsche waschen", ["den Trockner sauber machen", "in den Keller gehen"],
+      "Laundry room: please don't use the washing machine after 10 pm. Clean the dryer filter after every use!",
+      "Lavandería: por favor, no usen la lavadora después de las 22 h. ¡Limpien el filtro de la secadora después de cada uso!"]
+  ]},
+  { id: "news", name: "Zeitung (B1)", en: "Newspaper, true or false", items: [
+    ["Immer mehr Menschen in Deutschland fahren mit dem Fahrrad zur Arbeit. In Großstädten nutzt inzwischen jeder Vierte das Rad. Viele Firmen unterstützen das: Sie bieten Duschen an oder bezahlen einen Teil für ein neues Fahrrad.",
+      "Manche Firmen helfen beim Kauf eines Fahrrads.", "Richtig", ["Falsch"],
+      "More and more people in Germany cycle to work. In big cities one in four now uses a bike. Many companies support this: they provide showers or pay part of the cost of a new bike.",
+      "Cada vez más gente en Alemania va al trabajo en bici. En las grandes ciudades ya lo hace uno de cada cuatro. Muchas empresas lo apoyan: ofrecen duchas o pagan parte de una bici nueva."],
+    ["Die Stadtbibliothek hat ab Januar länger geöffnet: von Montag bis Samstag bis 22 Uhr. Nach 18 Uhr gibt es keine Beratung, aber man kann Bücher mit seiner Karte selbst ausleihen und zurückgeben.",
+      "Nach 18 Uhr kann man keine Bücher mehr ausleihen.", "Falsch", ["Richtig"],
+      "From January the city library is open longer: Monday to Saturday until 10 pm. After 6 pm there's no staff help, but you can borrow and return books yourself with your card.",
+      "A partir de enero la biblioteca municipal abre más horas: de lunes a sábado hasta las 22 h. Después de las 18 h no hay atención, pero se pueden sacar y devolver libros uno mismo con el carné."],
+    ["Ein Café in Leipzig bietet jeden Mittwoch einen Sprachtreff an. Menschen aus vielen Ländern üben dort zusammen Deutsch. Die Teilnahme ist kostenlos, man bezahlt nur seine Getränke.",
+      "Für den Sprachtreff muss man Eintritt bezahlen.", "Falsch", ["Richtig"],
+      "A café in Leipzig holds a language meet-up every Wednesday. People from many countries practise German together there. Taking part is free; you only pay for your drinks.",
+      "Una cafetería de Leipzig organiza cada miércoles un intercambio de idiomas. Allí practica alemán gente de muchos países. La participación es gratuita; solo se pagan las bebidas."],
+    ["Weil Wohnungen in der Innenstadt oft zu teuer sind, ziehen immer mehr junge Familien aufs Land. Dort sind die Mieten niedriger und die Kinder haben mehr Platz. Allerdings brauchen viele dann ein Auto, um zur Arbeit zu kommen.",
+      "Auf dem Land brauchen viele Familien ein Auto.", "Richtig", ["Falsch"],
+      "Because flats in the city centre are often too expensive, more and more young families are moving to the country. Rents are lower there and children have more space. But many then need a car to get to work.",
+      "Como los pisos del centro suelen ser demasiado caros, cada vez más familias jóvenes se mudan al campo. Allí los alquileres son más bajos y los niños tienen más espacio. Pero muchos necesitan entonces un coche para ir a trabajar."],
+    ["Seit letztem Monat kann man in München viele Anträge online stellen, zum Beispiel für einen Parkausweis. Für einen neuen Personalausweis muss man aber weiterhin persönlich ins Bürgerbüro kommen.",
+      "Den Personalausweis kann man jetzt online beantragen.", "Falsch", ["Richtig"],
+      "Since last month you can make many applications online in Munich, for example for a parking permit. But for a new ID card you still have to go to the citizens' office in person.",
+      "Desde el mes pasado en Múnich se pueden hacer muchos trámites por internet, por ejemplo pedir un permiso de aparcamiento. Pero para un nuevo DNI hay que seguir yendo en persona a la oficina del ciudadano."]
+  ]}
+];
+// Schreiben: { level, words, de, en, es, points, model, modelEn }. The model answer shows after writing.
+const WRITING = [
+  { level: "A2", words: 30, de: "Du kannst am Samstag nicht zum Geburtstag deines Freundes Paul kommen. Schreib ihm eine E-Mail.",
+    en: "You can't come to your friend Paul's birthday on Saturday. Write him an email.", es: "No puedes ir al cumpleaños de tu amigo Paul el sábado. Escríbele un correo.",
+    points: ["Bedank dich für die Einladung.", "Erklär, warum du nicht kommen kannst.", "Mach einen Vorschlag für ein anderes Treffen."],
+    model: "Lieber Paul,\nvielen Dank für deine Einladung! Leider kann ich am Samstag nicht kommen, weil meine Schwester an diesem Tag heiratet. Das tut mir sehr leid.\nHast du nächste Woche Zeit? Wir könnten zusammen essen gehen. Ich lade dich ein!\nLiebe Grüße\nAlex",
+    modelEn: "Dear Paul, thank you so much for the invitation! Unfortunately I can't come on Saturday because my sister is getting married that day. I'm really sorry. Are you free next week? We could go out for a meal. My treat! Best wishes, Alex" },
+  { level: "A2", words: 30, de: "Du bist krank und kannst morgen nicht zum Deutschkurs kommen. Schreib deiner Kursleiterin, Frau Wolf.",
+    en: "You're ill and can't come to your German class tomorrow. Write to your teacher, Ms Wolf.", es: "Estás enfermo y mañana no puedes ir a clase de alemán. Escribe a tu profesora, la señora Wolf.",
+    points: ["Sag, warum du nicht kommst.", "Frag nach den Hausaufgaben.", "Sag, wann du wiederkommst."],
+    model: "Liebe Frau Wolf,\nleider kann ich morgen nicht zum Kurs kommen. Ich habe Fieber und muss im Bett bleiben.\nKönnen Sie mir bitte die Hausaufgaben schicken?\nIch hoffe, dass ich am Donnerstag wieder da bin.\nViele Grüße\nAlex",
+    modelEn: "Dear Ms Wolf, unfortunately I can't come to class tomorrow. I've got a fever and have to stay in bed. Could you please send me the homework? I hope to be back on Thursday. Best regards, Alex" },
+  { level: "A2", words: 30, de: "Dein Freund Max zieht nächste Woche um und hat dich um Hilfe gebeten. Schreib ihm.",
+    en: "Your friend Max is moving next week and has asked you for help. Write to him.", es: "Tu amigo Max se muda la semana que viene y te ha pedido ayuda. Escríbele.",
+    points: ["Sag, dass du hilfst.", "Frag, wann und wo ihr euch trefft.", "Biete an, etwas mitzubringen."],
+    model: "Hallo Max,\nnatürlich helfe ich dir beim Umzug! Wann soll ich kommen, und wo treffen wir uns? Bei deiner alten Wohnung?\nIch kann Kartons und etwas zu essen mitbringen.\nBis bald\nAlex",
+    modelEn: "Hi Max, of course I'll help you move! When should I come, and where shall we meet? At your old flat? I can bring boxes and something to eat. See you soon, Alex" },
+  { level: "B1", words: 80, de: "Du warst letztes Wochenende auf einem Konzert. Schreib deiner Freundin Julia eine E-Mail.",
+    en: "You went to a concert last weekend. Write an email to your friend Julia.", es: "El fin de semana pasado fuiste a un concierto. Escribe un correo a tu amiga Julia.",
+    points: ["Beschreib, wie das Konzert war.", "Begründe, was dir besonders gut gefallen hat.", "Mach einen Vorschlag für ein Treffen."],
+    model: "Liebe Julia,\nwie geht es dir? Ich muss dir unbedingt von meinem Wochenende erzählen! Am Samstag war ich mit Meri auf einem Konzert im Stadtpark. Es war wunderbar, obwohl es am Anfang ein bisschen geregnet hat.\nBesonders gut hat mir die Sängerin gefallen, weil sie eine tolle Stimme hat und viel mit dem Publikum gesprochen hat. Alle haben mitgesungen!\nIm Sommer gibt es noch ein Konzert. Hättest du Lust, mitzukommen? Wir könnten vorher zusammen essen gehen.\nViele Grüße\nAlex",
+    modelEn: "Dear Julia, how are you? I have to tell you about my weekend! On Saturday Meri and I went to a concert in the city park. It was wonderful, although it rained a bit at the start. I especially liked the singer, because she has a great voice and talked a lot with the audience. Everyone sang along! There's another concert in the summer. Would you like to come along? We could have dinner together beforehand. Best wishes, Alex" },
+  { level: "B1", words: 40, de: "Du hast am Dienstag einen Termin bei deiner Ärztin, Frau Dr. Schmidt, aber du kannst nicht kommen. Schreib der Praxis.",
+    en: "You have an appointment with your doctor, Dr Schmidt, on Tuesday, but you can't come. Write to the surgery.", es: "Tienes cita con tu médica, la doctora Schmidt, el martes, pero no puedes ir. Escribe a la consulta.",
+    points: ["Sag den Termin höflich ab.", "Nenn den Grund.", "Bitte um einen neuen Termin."],
+    model: "Sehr geehrte Frau Dr. Schmidt,\nleider muss ich meinen Termin am Dienstag um 10 Uhr absagen, weil ich an diesem Tag beruflich nach Hamburg fahren muss.\nKönnten Sie mir bitte einen neuen Termin in der nächsten Woche geben? Vormittags würde es mir am besten passen.\nMit freundlichen Grüßen\nAlex García",
+    modelEn: "Dear Dr Schmidt, unfortunately I have to cancel my appointment on Tuesday at 10, because I have to go to Hamburg for work that day. Could you please give me a new appointment next week? Mornings would suit me best. Kind regards, Alex García" },
+  { level: "B1", words: 80, de: "In einem Forum geht es um das Thema „Arbeiten im Homeoffice“. Schreib deine Meinung.",
+    en: "An online forum is discussing working from home. Write your opinion.", es: "En un foro se habla de trabajar desde casa. Escribe tu opinión.",
+    points: ["Was ist gut daran?", "Was ist nicht so gut?", "Wie ist es bei dir?"],
+    model: "Ich finde, das Homeoffice hat viele Vorteile. Man spart viel Zeit, weil man nicht zur Arbeit fahren muss, und man kann sich die Zeit besser einteilen.\nAllerdings fehlt mir manchmal der Kontakt zu den Kollegen. Außerdem ist es zu Hause nicht immer ruhig, besonders wenn die Kinder da sind.\nIch arbeite zwei Tage pro Woche zu Hause und drei Tage im Büro. Für mich ist das die beste Lösung, denn so habe ich beides.",
+    modelEn: "I think working from home has many advantages. You save a lot of time because you don't have to travel to work, and you can organise your time better. However, I sometimes miss contact with colleagues. And it isn't always quiet at home, especially when the children are there. I work from home two days a week and in the office three days. For me that's the best solution, because I get both." }
 ];
 
 const $ = (id) => document.getElementById(id);
@@ -1449,6 +2127,12 @@ let settings = { ...DEFAULTS };
 try {
   const saved = JSON.parse(localStorage.getItem("sagsDeutsch.settings") || "null");
   if (saved) settings = { ...DEFAULTS, ...saved };
+  // Kinds of text added after the player last saved are switched on, so new content shows up.
+  if (saved?.lkinds) {
+    const known = saved.lknown || ["announce", "voicemail", "talks", "radio"];
+    settings.lkinds = [...saved.lkinds, ...LISTENING.map((k) => k.id).filter((id) => !known.includes(id))];
+  }
+  settings.lknown = LISTENING.map((k) => k.id);
 } catch (e) { /* storage or audio unavailable: carry on without it */ }
 function save() { try { localStorage.setItem("sagsDeutsch.settings", JSON.stringify(settings)); } catch (e) { /* storage or audio unavailable: carry on without it */ } }
 
@@ -1542,6 +2226,7 @@ function spokenTexts() {
   for (const l of GRAMMAR) for (const [s, a] of l.items) texts.add(filled({ s, a }));
   for (const b of document.querySelectorAll("#theory .ex")) texts.add(b.textContent);
   for (const k of LISTENING) for (const [lines] of k.items) for (const line of lines) texts.add(line);
+  for (const list of Object.values(SPEAK_PHRASES)) for (const p of list) texts.add(p);
   return [...texts];
 }
 const recPath = (v, text) => `audio/${v.id}/${audioName(text)}.mp3`;
@@ -1734,8 +2419,8 @@ function startGame(deck) {
 }
 
 function show(screen) {
-  for (const s of ["setup", "play", "done", "grammar", "theory", "quiz", "qdone", "listen", "hear", "ldone"]) $(s).hidden = s !== screen;
-  $("topbar").hidden = $("areas").hidden = !["setup", "grammar", "listen"].includes(screen);
+  for (const s of ["setup", "play", "done", "grammar", "theory", "quiz", "qdone", "listen", "hear", "ldone", "exam", "talk", "read", "write"]) $(s).hidden = s !== screen;
+  $("topbar").hidden = $("areas").hidden = !["setup", "grammar", "listen", "exam"].includes(screen);
   setSeg("areas", screen);
   window.scrollTo(0, 0);
 }
@@ -2215,6 +2900,175 @@ document.addEventListener("keydown", (e) => {
   else if (racing() && (k === "a" || k === "l")) lbuzz(k === "a" ? 0 : 1);
   else if (racing() && k === "n") reveal(false);
 });
+
+/* ---------- Prüfung ---------- */
+const EXAM_TASKS = [
+  { id: "termin", icon: "🗓️", name: "Termin finden", en: "Speaking A2 · find an hour you're both free" },
+  { id: "planen", icon: "🤝", name: "Gemeinsam planen", en: "Speaking B1 · plan something together" },
+  { id: "lesen", icon: "📖", name: "Lesen", en: `Reading A2/B1 · ${READING.reduce((a, k) => a + k.items.length, 0)} texts` },
+  { id: "schreiben", icon: "✍️", name: "Schreiben", en: `Writing A2/B1 · ${WRITING.length} emails` }
+];
+$("tasks").innerHTML = html`${EXAM_TASKS.map((t) => html`
+  <div class="lesson">
+    <span class="ico">${picImg(t.icon, "") || t.icon}</span><h3>${t.name}</h3><p>${t.en}</p>
+    <div class="row"><button class="ctl good" type="button" data-task="${t.id}">Los geht's</button></div>
+  </div>`)}`;
+$("tasks").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-task]"); if (!b) return;
+  const id = b.dataset.task;
+  if (id === "lesen") startReading();
+  else if (id === "schreiben") openWriting(Math.floor(Math.random() * WRITING.length));
+  else openTalk(id, newCode());
+});
+[$("talkBack"), $("readBack"), $("writeBack"), $("rMenu")].forEach((b) => { b.onclick = () => { hush(); show("exam"); }; });
+
+// A task number picks the same task and diaries on every device, so two phones can play one task.
+const newCode = () => 1000 + Math.floor(Math.random() * 9000);
+function seeded(n) {
+  let a = n >>> 0;
+  return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+// Two diaries for one day with exactly one hour when both players are free.
+function diaries(code) {
+  const r = seeded(code), pick = (a) => a[Math.floor(r() * a.length)];
+  const mix = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const meeting = pick(MEETINGS);
+  const free = DIARY_HOURS[1 + Math.floor(r() * (DIARY_HOURS.length - 2))];
+  const pools = [mix([...ERRANDS]), mix([...ERRANDS])];
+  const days = [{}, {}];
+  for (const h of DIARY_HOURS) {
+    if (h === free) continue;
+    const x = r();
+    for (const p of x < 0.4 ? [0] : x < 0.8 ? [1] : [0, 1]) days[p][h] = pools[p].pop();
+  }
+  return { meeting, free, days };
+}
+const planFor = (code) => PLANS[Math.floor(seeded(code)() * PLANS.length)];
+
+let talk = null;
+function openTalk(kind, code) {
+  hush();
+  talk = { kind, code, who: null };
+  $("taskNo").textContent = code;
+  $("tCode").value = "";
+  $("tSolution").hidden = true;
+  const termin = kind === "termin";
+  $("tKind").textContent = termin ? "Sprechen A2 · Termin finden" : "Sprechen B1 · Gemeinsam planen";
+  const [de, en, es, points = []] = termin ? diaries(code).meeting : planFor(code);
+  $("tTask").textContent = termin ? `${de} Wann habt ihr beide Zeit?` : de;
+  $("tEn").textContent = termin ? `${en} When are you both free?` : en;
+  $("tEs").textContent = termin ? `${es} ¿Cuándo tenéis tiempo los dos?` : es;
+  $("tPoints").innerHTML = html`${points.map((p) => html`<li>${p}</li>`)}`;
+  $("tDiaryWrap").hidden = !termin;
+  $("tSolve").hidden = !termin;
+  $("tPhrases").innerHTML = html`${SPEAK_PHRASES[kind].map((p) => html`<button class="ex" type="button">${p}</button>`)}`;
+  renderDiary();
+  show("talk");
+}
+function renderDiary() {
+  const [a, b] = names();
+  $("whoSeg").innerHTML = html`${[a, b].map((n, p) => html`<button type="button" data-v="${p}" aria-pressed="${talk.who === p}">${n}</button>`)}`;
+  if (talk.kind !== "termin" || talk.who === null) { $("tDiary").innerHTML = ""; return; }
+  const day = diaries(talk.code).days[talk.who];
+  $("tDiary").innerHTML = html`${DIARY_HOURS.map((h) => html`<li class="${day[h] ? "busy" : ""}"><span class="h">${h}:00</span><span>${day[h] || ""}</span></li>`)}`;
+}
+$("whoSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; talk.who = Number(b.dataset.v); renderDiary(); };
+$("tPhrases").addEventListener("click", (e) => { const b = e.target.closest(".ex"); if (b) say(b.textContent); });
+$("tSolve").onclick = () => {
+  const { free } = diaries(talk.code);
+  $("tSolution").textContent = `Ihr habt beide um ${free} Uhr Zeit.`;
+  $("tSolution").hidden = false;
+};
+$("tNew").onclick = () => openTalk(talk.kind, newCode());
+$("tCodeForm").onsubmit = (e) => {
+  e.preventDefault();
+  const n = Number($("tCode").value);
+  if (Number.isInteger(n) && n >= 1000 && n <= 9999) openTalk(talk.kind, n);
+};
+
+// Reading round: like listening practice, a wrong option is marked and you try again.
+let reading = null;
+function startReading() {
+  const deck = shuffle(READING.flatMap((k) => k.items.map(([text, q, a, wrong, en, es]) => ({ text, q, a, wrong, en, es, kind: k.name })))).slice(0, 8);
+  reading = { deck, i: 0, right: 0 };
+  show("read");
+  dealReading();
+}
+function dealReading() {
+  const t = reading.deck[reading.i];
+  Object.assign(reading, { opts: shuffle([t.a, ...t.wrong]), tried: [], done: false });
+  $("rprog").textContent = `Text ${reading.i + 1} / ${reading.deck.length}`;
+  $("rprogbar").style.width = `${(reading.i / reading.deck.length) * 100}%`;
+  $("rKind").textContent = t.kind;
+  $("rText").textContent = t.text;
+  $("rQuestion").textContent = t.q;
+  $("rFeedback").hidden = true; $("rDone").hidden = true;
+  $("rEn").textContent = t.en; $("rEs").textContent = t.es;
+  renderReading();
+}
+function renderReading() {
+  const t = reading.deck[reading.i];
+  $("rOpts").innerHTML = html`${reading.opts.map((o, n) => {
+    const cls = reading.done && o === t.a ? " ok" : reading.tried.includes(o) ? " bad" : "";
+    return html`<button class="opt${cls}" type="button" data-n="${n}"${reading.done || reading.tried.includes(o) ? " disabled" : ""}>${o} <span class="k">${n + 1}</span></button>`;
+  })}`;
+  $("rTurn").textContent = !reading.done && reading.tried.length ? "Nicht ganz. Read it again and try another one." : "";
+  $("rscores").innerHTML = html`<div class="score" style="color:var(--good)"><span>Gewusst</span><b>${reading.right}</b></div>`;
+}
+function rchoose(n) {
+  if (!reading || reading.done) return;
+  const o = reading.opts[n], t = reading.deck[reading.i];
+  if (o === undefined || reading.tried.includes(o)) return;
+  if (o !== t.a) { reading.tried.push(o); beep(220); renderReading(); return; }
+  reading.done = true;
+  if (!reading.tried.length) reading.right++;
+  $("rVerdict").textContent = reading.tried.length ? "Jetzt stimmt's!" : "Richtig!";
+  $("rVerdict").className = "verdict ok";
+  $("rFeedback").hidden = false;
+  renderReading();
+}
+function nextReading() {
+  if (!reading?.done) return;
+  if (reading.i + 1 < reading.deck.length) { reading.i++; dealReading(); return; }
+  $("rprogbar").style.width = "100%";
+  $("rFeedback").hidden = true;
+  $("rFinal").textContent = `Fertig! ${reading.right} / ${reading.deck.length} right first time.`;
+  $("rDone").hidden = false;
+  reading.finished = true;
+}
+$("rOpts").addEventListener("click", (e) => { const b = e.target.closest(".opt"); if (b) rchoose(Number(b.dataset.n)); });
+$("rNext").onclick = nextReading;
+$("rAgain").onclick = startReading;
+document.addEventListener("keydown", (e) => {
+  if ($("read").hidden || !reading || reading.finished) return;
+  if (e.target.matches("input, select, textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (reading.done) { if (k === "enter" || k === " " || k === "arrowright") { e.preventDefault(); nextReading(); } }
+  else if (/^[1-3]$/.test(k)) rchoose(Number(k) - 1);
+});
+
+// Writing: write freely, then compare with the model answer.
+let writeIdx = 0;
+function openWriting(i) {
+  writeIdx = i;
+  const w = WRITING[i];
+  $("wKind").textContent = `Schreiben ${w.level} · about ${w.words} words`;
+  $("wTask").textContent = w.de; $("wEn").textContent = w.en; $("wEs").textContent = w.es;
+  $("wPoints").innerHTML = html`${w.points.map((p) => html`<li>${p}</li>`)}`;
+  $("wText").value = "";
+  $("wModelBox").hidden = true;
+  $("wModelText").innerHTML = html`${w.model.split("\n").map((l) => html`<p>${l}</p>`)}`;
+  $("wModelEn").textContent = w.modelEn;
+  countWords();
+  show("write");
+}
+function countWords() {
+  const n = $("wText").value.trim().split(/\s+/).filter(Boolean).length;
+  $("wCount").textContent = `${n} ${n === 1 ? "word" : "words"} · aim for about ${WRITING[writeIdx].words}`;
+}
+$("wText").addEventListener("input", countWords);
+$("wModel").onclick = () => { $("wModelBox").hidden = false; };
+$("wNew").onclick = () => openWriting((writeIdx + 1) % WRITING.length);
 
 /* ---------- Init ---------- */
 $("p1").value = settings.p1; $("p2").value = settings.p2; $("speak").checked = settings.speak;

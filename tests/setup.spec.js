@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => { await mockSpeech(page); });
 test("shows every topic with the default selection", async ({ page }) => {
   const errors = await open(page);
   const chips = page.locator("#topics .topic-chip");
-  await expect(chips).toHaveCount(19);
+  await expect(chips).toHaveCount(23);
   const pressed = await page.locator('#topics [aria-pressed="true"]').evaluateAll((els) => els.map((e) => e.dataset.id));
   expect(pressed.sort()).toEqual(["colors", "food", "numbers", "verbs"]);
   await expect(page.locator("#avail")).toContainText("cards in the chosen topics");

@@ -39,7 +39,7 @@ test("the light/dark button shows on the menus but not during a round", async ({
 
 // Ferran's phone is 360px wide; the tabs wrapped onto two lines there once Hören was added.
 for (const width of [320, 360, 412]) {
-  test(`the section tabs stay on one line at ${width}px, even with a fourth tab`, async ({ page }) => {
+  test(`the section tabs stay on one line at ${width}px, even with one more tab`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await open(page);
     const layout = () => page.evaluate(() => {
@@ -60,7 +60,7 @@ for (const width of [320, 360, 412]) {
     await expect(page.locator("#theme")).toBeInViewport();
 
     // Out of the tab row, the light/dark button sits beside each area's title and must not cover its text.
-    for (const area of ["setup", "grammar", "listen"]) {
+    for (const area of ["setup", "grammar", "listen", "exam"]) {
       await page.click(`#areas [data-v="${area}"]`);
       const covered = await page.evaluate((id) => {
         const t = document.getElementById("theme").getBoundingClientRect();
