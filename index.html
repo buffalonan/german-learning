@@ -336,6 +336,26 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 .script { display: grid; gap: 6px; width: 100%; max-width: 560px; text-align: left; background: var(--surface-2); border-radius: var(--r-m); padding: 12px 16px; }
 .script p { margin: 0; }
 .script .who { font-weight: 800; font-size: .8rem; color: var(--muted); margin-right: 6px; }
+/* Prüfung */
+.taskno { margin-left: auto; font-weight: 700; color: var(--muted); }
+.taskno b { font-family: var(--display); font-weight: 900; color: var(--ink); font-variant-numeric: tabular-nums; }
+.points { margin: 0 auto; padding-left: 1.2em; text-align: left; display: grid; gap: 6px; max-width: 46ch; font-weight: 700; }
+.points:empty { display: none; }
+.diary-wrap { justify-items: center; }
+.diary { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; width: 100%; max-width: 420px; text-align: left; }
+.diary li { display: grid; grid-template-columns: 4.2em 1fr; gap: 10px; padding: 8px 14px; border-radius: var(--r-s); background: var(--surface-2); }
+.diary li.busy { background: var(--pastel-1); }
+.diary .h { font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+.phrases { display: grid; gap: 4px; justify-items: start; width: 100%; max-width: 560px; margin: 0 auto; text-align: left; }
+.phrases > div { display: grid; gap: 2px; justify-items: start; }
+.solution { margin: 0; font-family: var(--display); font-weight: 900; font-size: 1.3rem; color: var(--good); }
+.codeform { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; color: var(--muted); font-size: .92rem; }
+.codeform input { font: inherit; font-weight: 800; color: var(--ink); background: var(--surface-2); border: 3px solid var(--line); border-radius: var(--r-s); padding: 8px 12px; min-height: 48px; width: 6.5em; text-align: center; }
+.rtext { margin: 0 auto; font-size: 1.08rem; line-height: 1.5; }
+.wbox { display: grid; gap: 8px; width: 100%; max-width: 560px; margin: 0 auto; text-align: left; }
+.wbox textarea { font: inherit; color: var(--ink); background: var(--surface-2); border: 3px solid var(--line); border-radius: var(--r-s); padding: 12px 14px; width: 100%; min-height: 180px; resize: vertical; box-shadow: inset 0 3px 6px -3px var(--drop); }
+.wbox textarea:focus { border-color: var(--primary); background: var(--surface); }
+#wModelBox .help { max-width: 560px; text-align: left; }
 .ltr { max-width: 560px; }
 .ltr div { grid-template-columns: 2.4em 1fr; }
 .ltr dd { font-size: .95rem; }
@@ -346,7 +366,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
      line of the title. */
   .topbar { position: relative; }
   .areas { display: flex; flex-wrap: nowrap; gap: 2px; width: 100%; padding: 5px 7px; }
-  .areas button { flex: 1 1 auto; padding: 9px 4px; font-size: clamp(.76rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
+  .areas button { flex: 1 1 auto; padding: 9px 4px; font-size: clamp(.66rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: -.01em; }
   .theme-btn { position: absolute; right: 0; top: calc(100% + 42px + clamp(1.75rem, 8.4vw, 3.6rem) * .54 - 24px); }
   .intro .plate h1 { padding-right: 56px; } /* keeps the title clear of that button; the subtitle runs under it */
   .brand { gap: 12px; }
@@ -372,6 +392,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
       <button type="button" data-v="setup">Wortkarten</button>
       <button type="button" data-v="grammar">Grammatik</button>
       <button type="button" data-v="listen">Hören</button>
+      <button type="button" data-v="exam">Prüfung</button>
     </nav>
     <button class="theme-btn" id="theme" type="button"></button>
   </div>
@@ -906,6 +927,107 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
         <button class="btn-main" id="lagain" type="button">Noch mal</button>
         <button class="ctl" id="lreplayMissed" type="button">Replay the missed texts</button>
         <button class="ctl" id="ltoMenu" type="button">Hören</button>
+      </div>
+    </div>
+  </section>
+  <section id="exam" hidden>
+    <div class="intro">
+      <div class="plate"><h1>Prüfung</h1><small>Sprechen · Lesen · Schreiben</small></div>
+      <p>The other parts of the Goethe A2 and B1 exam: talk a task through together, read short texts and answer, or write an email and compare it with a model answer.</p>
+    </div>
+    <div class="sheet"><div class="lessons" id="tasks"></div></div>
+  </section>
+
+  <section id="talk" hidden>
+    <div class="bar">
+      <button class="ghost" id="talkBack" type="button"><span class="i i-back" aria-hidden="true"></span> Prüfung</button>
+      <span class="taskno">Aufgabe <b id="taskNo"></b></span>
+    </div>
+    <div class="qcard">
+      <div class="ctopic"><span id="tKind"></span></div>
+      <p class="lq" id="tTask"></p>
+      <dl class="tr ltr">
+        <div><dt>EN</dt><dd id="tEn"></dd></div>
+        <div><dt>ES</dt><dd id="tEs"></dd></div>
+      </dl>
+      <ul class="points" id="tPoints"></ul>
+      <div class="field diary-wrap" id="tDiaryWrap">
+        <span class="label">Whose diary?</span>
+        <div class="seg" id="whoSeg"></div>
+        <p class="help" id="tWhoHelp">Look only at your own diary and find a free hour by talking. On two phones, open the same task number and each pick your own name.</p>
+        <ul class="diary" id="tDiary"></ul>
+      </div>
+      <div class="phrases">
+        <span class="label">Useful phrases</span>
+        <div id="tPhrases"></div>
+      </div>
+      <p class="solution" id="tSolution" aria-live="polite" hidden></p>
+      <div class="controls">
+        <button class="ctl" id="tSolve" type="button"><span class="i i-check" aria-hidden="true"></span> Lösung zeigen</button>
+        <button class="ctl big" id="tNew" type="button">Neue Aufgabe</button>
+      </div>
+      <form class="codeform" id="tCodeForm">
+        <label for="tCode">Your partner's task number</label>
+        <input id="tCode" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off">
+        <button class="ctl" type="submit">Öffnen</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="read" hidden>
+    <div class="bar">
+      <button class="ghost" id="readBack" type="button"><span class="i i-back" aria-hidden="true"></span> Prüfung</button>
+      <div class="progress"><span id="rprog">1 / 8</span><div class="track"><i id="rprogbar"></i></div></div>
+      <div class="scores" id="rscores"></div>
+    </div>
+    <div class="qcard">
+      <div class="ctopic"><span id="rKind"></span></div>
+      <div class="script rtext" id="rText" lang="de"></div>
+      <p class="lq" id="rQuestion"></p>
+      <p class="turn" id="rTurn" aria-live="polite"></p>
+      <div class="opts lopts" id="rOpts"></div>
+      <div class="feedback" id="rFeedback" aria-live="polite" hidden>
+        <p class="verdict" id="rVerdict"></p>
+        <dl class="tr ltr">
+          <div><dt>EN</dt><dd id="rEn"></dd></div>
+          <div><dt>ES</dt><dd id="rEs"></dd></div>
+        </dl>
+        <div class="controls"><button class="ctl big" id="rNext" type="button">Weiter <span class="k">Enter</span></button></div>
+      </div>
+      <div class="feedback" id="rDone" hidden>
+        <p class="verdict ok" id="rFinal"></p>
+        <div class="controls">
+          <button class="ctl big" id="rAgain" type="button">Noch mal</button>
+          <button class="ctl" id="rMenu" type="button">Prüfung</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="write" hidden>
+    <div class="bar">
+      <button class="ghost" id="writeBack" type="button"><span class="i i-back" aria-hidden="true"></span> Prüfung</button>
+    </div>
+    <div class="qcard">
+      <div class="ctopic"><span id="wKind"></span></div>
+      <p class="lq" id="wTask"></p>
+      <dl class="tr ltr">
+        <div><dt>EN</dt><dd id="wEn"></dd></div>
+        <div><dt>ES</dt><dd id="wEs"></dd></div>
+      </dl>
+      <ul class="points" id="wPoints"></ul>
+      <label class="wbox" for="wText"><span class="label">Deine E-Mail</span>
+        <textarea id="wText" lang="de" spellcheck="true" rows="8"></textarea>
+      </label>
+      <p class="help" id="wCount" aria-live="polite"></p>
+      <div class="controls">
+        <button class="ctl" id="wModel" type="button"><span class="i i-book" aria-hidden="true"></span> Musterlösung</button>
+        <button class="ctl big" id="wNew" type="button">Neue Aufgabe</button>
+      </div>
+      <div class="feedback" id="wModelBox" hidden>
+        <div class="script" id="wModelText" lang="de"></div>
+        <p class="help" id="wModelEn" lang="en"></p>
+        <p class="help">Check your own email: did you answer all three points, start with a greeting (Liebe… / Sehr geehrte…) and end with one (Viele Grüße / Mit freundlichen Grüßen)?</p>
       </div>
     </div>
   </section>
@@ -1832,6 +1954,164 @@ const LISTENING = [
       "– Señor Petrov, usted se mudó a Hamburgo por trabajo. ¿Cómo fue el principio? – Fue difícil encontrar piso. Viví tres meses en casa de un compañero. – ¿Y ahora se siente a gusto? – Sí, mucho. Juego en un club de fútbol y allí hice amigos enseguida."]
   ]}
 ];
+/* ---------- Prüfung: speaking, reading and writing parts of the Goethe A2/B1 exam ---------- */
+// A2 Sprechen: each player has a different diary for the same day and they look for the one hour both are free.
+const MEETINGS = [
+  ["Ihr wollt zusammen eine Freundin im Krankenhaus besuchen.", "You want to visit a friend in hospital together.", "Queréis visitar juntos a una amiga en el hospital."],
+  ["Ihr wollt zusammen ein Geschenk für einen Kollegen kaufen.", "You want to buy a present for a colleague together.", "Queréis comprar juntos un regalo para un compañero."],
+  ["Ihr wollt zusammen für die Deutschprüfung lernen.", "You want to study for the German exam together.", "Queréis estudiar juntos para el examen de alemán."],
+  ["Ihr wollt zusammen ins Schwimmbad gehen.", "You want to go to the swimming pool together.", "Queréis ir juntos a la piscina."],
+  ["Ihr wollt einem Freund beim Umzug helfen.", "You want to help a friend move house.", "Queréis ayudar a un amigo con la mudanza."],
+  ["Ihr wollt zusammen einen Kuchen für das Hoffest backen.", "You want to bake a cake together for the courtyard party.", "Queréis hacer juntos un pastel para la fiesta del patio."],
+  ["Ihr wollt zusammen neue Fahrräder anschauen.", "You want to go and look at new bikes together.", "Queréis ir juntos a ver bicis nuevas."],
+  ["Ihr wollt zusammen einen Ausflug für eure Kursgruppe planen.", "You want to plan a trip for your course group together.", "Queréis planear juntos una excursión para vuestro grupo del curso."]
+];
+const ERRANDS = ["Zahnarzt", "Deutschkurs", "Einkaufen", "Mittagessen mit Oma", "Joggen", "Arbeit", "Friseur", "Kinder abholen", "Auto in die Werkstatt bringen",
+  "Yoga", "Besprechung", "Wäsche waschen", "Termin bei der Bank", "Bürgeramt", "Paket abholen", "Fußballtraining", "Kochen", "Wohnung putzen", "Telefonkonferenz", "Hund ausführen"];
+const DIARY_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+// B1 Sprechen: plan something together, talking through each point.
+const PLANS = [
+  ["Eine Kollegin hat bald Geburtstag. Ihr wollt im Büro eine kleine Feier organisieren.", "A colleague's birthday is coming up. You want to organise a small party at the office.", "Pronto es el cumpleaños de una compañera. Queréis organizar una pequeña fiesta en la oficina.",
+    ["Wann feiert ihr?", "Wo genau?", "Essen und Getränke?", "Welches Geschenk?"]],
+  ["Ein Freund aus eurem Deutschkurs liegt seit einer Woche im Krankenhaus. Ihr wollt ihn besuchen.", "A friend from your German course has been in hospital for a week. You want to visit him.", "Un amigo del curso de alemán lleva una semana en el hospital. Queréis visitarlo.",
+    ["Wann geht ihr hin?", "Wie kommt ihr dorthin?", "Was bringt ihr mit?", "Wer fragt die anderen aus dem Kurs?"]],
+  ["Ihr wollt am Wochenende mit Freunden einen Ausflug machen.", "You want to go on a trip with friends at the weekend.", "Queréis hacer una excursión con amigos el fin de semana.",
+    ["Wohin?", "Wie fahrt ihr hin?", "Was nehmt ihr mit?", "Was macht ihr, wenn es regnet?"]],
+  ["Eure Nachbarin ist neu im Haus. Ihr wollt sie zum Kaffee einladen.", "Your neighbour is new in the building. You want to invite her for coffee.", "Vuestra vecina es nueva en el edificio. Queréis invitarla a un café.",
+    ["Wann?", "Bei wem?", "Was gibt es zu essen?", "Wen ladet ihr noch ein?"]],
+  ["Ihr wollt zusammen für eure Familie ein Abendessen kochen.", "You want to cook dinner for your family together.", "Queréis cocinar juntos una cena para vuestra familia.",
+    ["Was kocht ihr?", "Wer kauft ein?", "Wer macht was in der Küche?", "Wann esst ihr?"]],
+  ["Euer Deutschkurs ist bald zu Ende. Ihr wollt ein Abschiedsfest organisieren.", "Your German course is ending soon. You want to organise a farewell party.", "Vuestro curso de alemán termina pronto. Queréis organizar una fiesta de despedida.",
+    ["Wo feiert ihr?", "Wann?", "Was bringt jeder mit?", "Ein Geschenk für die Lehrerin?"]]
+];
+const SPEAK_PHRASES = {
+  termin: ["Hast du am Vormittag Zeit?", "Wie wäre es um zehn Uhr?", "Da kann ich leider nicht. Da habe ich einen Termin beim Zahnarzt.", "Um elf Uhr passt es mir gut.", "Und wie sieht es bei dir am Nachmittag aus?", "Gut, dann treffen wir uns um drei Uhr."],
+  planen: ["Was hältst du davon, wenn wir am Freitag feiern?", "Ich schlage vor, dass wir einen Kuchen kaufen.", "Das finde ich eine gute Idee.", "Ich bin nicht sicher, ob das klappt.", "Wer kümmert sich um die Getränke?", "Gut, dann machen wir es so."]
+};
+// Lesen: each item is [text, question, answer, [wrong options], english, spanish].
+const READING = [
+  { id: "ads", name: "Anzeigen", en: "Small ads", items: [
+    ["Zimmer frei in Zweier-WG, Nähe Uni, 18 m², 390 € warm, ab 1. März. Nichtraucher bevorzugt. Tel. 0176 2345678 (ab 18 Uhr).",
+      "Wann kann man anrufen?", "ab 18 Uhr", ["den ganzen Tag", "nur am Vormittag"],
+      "Room free in a two-person flatshare near the university, 18 m², €390 incl. bills, from 1 March. Non-smokers preferred. Tel. 0176 2345678 (from 6 pm).",
+      "Habitación libre en piso compartido para dos, cerca de la universidad, 18 m², 390 € con gastos, desde el 1 de marzo. Preferiblemente no fumadores. Tel. 0176 2345678 (a partir de las 18 h)."],
+    ["Verkaufe Kinderfahrrad, 20 Zoll, blau, kaum benutzt, 60 €. Kein Versand, nur Abholung in Köln-Ehrenfeld.",
+      "Was muss der Käufer tun?", "das Fahrrad selbst abholen", ["den Versand bezahlen", "das Fahrrad reparieren"],
+      "For sale: children's bike, 20 inch, blue, hardly used, €60. No delivery, collection only in Cologne-Ehrenfeld.",
+      "Vendo bici infantil, 20 pulgadas, azul, casi sin usar, 60 €. Sin envío, solo recogida en Colonia-Ehrenfeld."],
+    ["Wir suchen eine freundliche Aushilfe für unser Café am Wochenende (Sa + So, 9–15 Uhr). Erfahrung ist nicht nötig, Deutschkenntnisse B1. Bewerbung bitte per E-Mail.",
+      "Was braucht man für den Job?", "Deutsch auf B1-Niveau", ["Erfahrung im Café", "ein Auto"],
+      "We're looking for a friendly weekend helper for our café (Sat + Sun, 9 am–3 pm). No experience needed, German at B1. Please apply by email.",
+      "Buscamos ayudante simpático para nuestra cafetería los fines de semana (sáb. y dom., 9–15 h). No hace falta experiencia, alemán B1. Envíen su solicitud por correo electrónico."],
+    ["Yoga für Anfänger: jeden Dienstag 19–20.30 Uhr im Gemeindehaus. Die erste Stunde ist kostenlos! Bitte eine Matte mitbringen.",
+      "Was muss man mitbringen?", "eine Matte", ["Geld für die erste Stunde", "Sportschuhe"],
+      "Yoga for beginners: every Tuesday 7–8.30 pm in the community hall. The first class is free! Please bring a mat.",
+      "Yoga para principiantes: todos los martes de 19 a 20:30 h en el centro parroquial. ¡La primera clase es gratis! Traigan una esterilla."],
+    ["Flohmarkt im Hof! Samstag, 10–16 Uhr, Gartenstraße 12. Bei Regen in der Turnhalle der Grundschule.",
+      "Wo ist der Flohmarkt, wenn es regnet?", "in der Turnhalle", ["im Hof", "Er fällt aus."],
+      "Flea market in the courtyard! Saturday, 10 am–4 pm, Gartenstraße 12. If it rains, in the primary school gym.",
+      "¡Mercadillo en el patio! Sábado, de 10 a 16 h, Gartenstraße 12. Si llueve, en el gimnasio del colegio."]
+  ]},
+  { id: "mails", name: "E-Mails & Briefe", en: "Emails & letters", items: [
+    ["Liebe Meri, danke für die Einladung zu deinem Geburtstag! Leider kann ich am Samstag nicht kommen, weil meine Eltern zu Besuch sind. Hast du nächste Woche Zeit für einen Kaffee? Ich lade dich ein! Liebe Grüße, Sabine",
+      "Warum kommt Sabine nicht?", "Ihre Eltern besuchen sie.", ["Sie ist krank.", "Sie muss arbeiten."],
+      "Dear Meri, thanks for inviting me to your birthday! Unfortunately I can't come on Saturday because my parents are visiting. Have you got time for a coffee next week? My treat! Love, Sabine",
+      "Querida Meri: ¡gracias por invitarme a tu cumpleaños! Por desgracia el sábado no puedo ir porque vienen mis padres de visita. ¿Tienes tiempo la semana que viene para un café? ¡Invito yo! Un abrazo, Sabine"],
+    ["Sehr geehrte Mieterinnen und Mieter, am Montag wird zwischen 8 und 14 Uhr das Treppenhaus gestrichen. Bitte stellen Sie keine Schuhe oder Fahrräder in den Flur. Vielen Dank! Ihre Hausverwaltung",
+      "Was sollen die Mieter tun?", "nichts in den Flur stellen", ["das Treppenhaus streichen", "am Montag zu Hause bleiben"],
+      "Dear tenants, on Monday the stairwell will be painted between 8 am and 2 pm. Please don't leave shoes or bikes in the hallway. Thank you! Your property management",
+      "Estimados inquilinos: el lunes, entre las 8 y las 14 h, se pintará la escalera. Por favor, no dejen zapatos ni bicicletas en el rellano. ¡Gracias! La administración"],
+    ["Hallo Herr Rossi, leider ist unsere Kursleiterin krank. Der Kurs am Donnerstag fällt deshalb aus. Wir holen die Stunde am Samstag um 10 Uhr nach. Bitte geben Sie uns kurz Bescheid, ob Sie kommen können. Mit freundlichen Grüßen, Ihre Volkshochschule",
+      "Was soll Herr Rossi tun?", "antworten, ob er am Samstag kommt", ["am Donnerstag kommen", "die Kursleiterin anrufen"],
+      "Hello Mr Rossi, unfortunately our course leader is ill, so Thursday's class is cancelled. We'll make it up on Saturday at 10 am. Please let us know whether you can come. Kind regards, your adult education centre",
+      "Hola, señor Rossi: lamentablemente nuestra profesora está enferma, así que la clase del jueves se suspende. La recuperaremos el sábado a las 10. Díganos, por favor, si puede venir. Un saludo, su escuela de adultos"],
+    ["Hi Tom, ich komme am Freitag um 17.40 Uhr am Hauptbahnhof an. Kannst du mich abholen? Mein Koffer ist sehr schwer. Wenn du keine Zeit hast, nehme ich ein Taxi, kein Problem. Bis bald, Jana",
+      "Was macht Jana, wenn Tom keine Zeit hat?", "Sie nimmt ein Taxi.", ["Sie fährt mit dem Bus.", "Sie kommt später."],
+      "Hi Tom, I arrive at the main station on Friday at 5.40 pm. Can you pick me up? My suitcase is really heavy. If you haven't got time I'll take a taxi, no problem. See you soon, Jana",
+      "Hola, Tom: llego el viernes a las 17:40 a la estación central. ¿Puedes venir a buscarme? Mi maleta pesa mucho. Si no tienes tiempo, cojo un taxi, no pasa nada. Hasta pronto, Jana"],
+    ["Sehr geehrte Frau Navarro, vielen Dank für Ihre Bewerbung. Wir möchten Sie gern kennenlernen und laden Sie am Mittwoch um 11 Uhr zu einem Gespräch ein. Bitte bringen Sie Ihre Zeugnisse mit. Mit freundlichen Grüßen, Anna Berg",
+      "Warum schreibt Frau Berg?", "Sie lädt zu einem Vorstellungsgespräch ein.", ["Sie sagt die Bewerbung ab.", "Sie schickt die Zeugnisse zurück."],
+      "Dear Ms Navarro, thank you for your application. We would like to meet you and invite you to an interview on Wednesday at 11 am. Please bring your certificates. Kind regards, Anna Berg",
+      "Estimada señora Navarro: muchas gracias por su solicitud. Nos gustaría conocerla y la invitamos a una entrevista el miércoles a las 11. Traiga sus certificados, por favor. Atentamente, Anna Berg"]
+  ]},
+  { id: "signs", name: "Schilder & Aushänge", en: "Signs & notices", items: [
+    ["Liebe Patientinnen und Patienten, die Praxis ist vom 22.12. bis 2.1. geschlossen. In dringenden Fällen gehen Sie bitte zu Dr. Kramer, Bahnhofstraße 5.",
+      "Wohin geht man in dieser Zeit, wenn es dringend ist?", "zu Dr. Kramer", ["in die Notaufnahme", "Man wartet bis Januar."],
+      "Dear patients, the surgery is closed from 22 December to 2 January. In urgent cases please go to Dr Kramer, Bahnhofstraße 5.",
+      "Estimados pacientes: la consulta estará cerrada del 22 de diciembre al 2 de enero. En caso urgente, acudan al doctor Kramer, Bahnhofstraße 5."],
+    ["Fundbüro. Öffnungszeiten: Montag bis Donnerstag 8–12 Uhr, dienstags zusätzlich 14–18 Uhr. Freitag geschlossen.",
+      "Wann kann man am Nachmittag zum Fundbüro gehen?", "am Dienstag", ["am Freitag", "jeden Tag"],
+      "Lost property office. Opening hours: Monday to Thursday 8 am–12 noon, Tuesdays also 2–6 pm. Closed on Friday.",
+      "Oficina de objetos perdidos. Horario: de lunes a jueves de 8 a 12 h; los martes, también de 14 a 18 h. Viernes cerrado."],
+    ["Bitte keine Werbung einwerfen! Danke.",
+      "Was möchte die Person nicht in ihrem Briefkasten?", "Werbung", ["Briefe", "Zeitungen von Freunden"],
+      "No junk mail, please! Thank you.",
+      "¡Por favor, no dejen publicidad! Gracias."],
+    ["Achtung! Ab 1. April gelten neue Abfahrtszeiten. Den neuen Fahrplan finden Sie im Internet oder im Kundencenter am Marktplatz.",
+      "Was ändert sich?", "wann die Busse fahren", ["die Preise der Tickets", "die Adresse des Kundencenters"],
+      "Attention! New departure times apply from 1 April. You'll find the new timetable online or at the customer centre on the market square.",
+      "¡Atención! A partir del 1 de abril hay nuevos horarios de salida. Encontrará el nuevo horario en internet o en el centro de atención al cliente de la plaza del mercado."],
+    ["Waschküche: Bitte die Waschmaschine nach 22 Uhr nicht mehr benutzen. Das Sieb im Trockner nach jedem Trocknen sauber machen!",
+      "Was darf man nach 22 Uhr nicht?", "Wäsche waschen", ["den Trockner sauber machen", "in den Keller gehen"],
+      "Laundry room: please don't use the washing machine after 10 pm. Clean the dryer filter after every use!",
+      "Lavandería: por favor, no usen la lavadora después de las 22 h. ¡Limpien el filtro de la secadora después de cada uso!"]
+  ]},
+  { id: "news", name: "Zeitung (B1)", en: "Newspaper, true or false", items: [
+    ["Immer mehr Menschen in Deutschland fahren mit dem Fahrrad zur Arbeit. In Großstädten nutzt inzwischen jeder Vierte das Rad. Viele Firmen unterstützen das: Sie bieten Duschen an oder bezahlen einen Teil für ein neues Fahrrad.",
+      "Manche Firmen helfen beim Kauf eines Fahrrads.", "Richtig", ["Falsch"],
+      "More and more people in Germany cycle to work. In big cities one in four now uses a bike. Many companies support this: they provide showers or pay part of the cost of a new bike.",
+      "Cada vez más gente en Alemania va al trabajo en bici. En las grandes ciudades ya lo hace uno de cada cuatro. Muchas empresas lo apoyan: ofrecen duchas o pagan parte de una bici nueva."],
+    ["Die Stadtbibliothek hat ab Januar länger geöffnet: von Montag bis Samstag bis 22 Uhr. Nach 18 Uhr gibt es keine Beratung, aber man kann Bücher mit seiner Karte selbst ausleihen und zurückgeben.",
+      "Nach 18 Uhr kann man keine Bücher mehr ausleihen.", "Falsch", ["Richtig"],
+      "From January the city library is open longer: Monday to Saturday until 10 pm. After 6 pm there's no staff help, but you can borrow and return books yourself with your card.",
+      "A partir de enero la biblioteca municipal abre más horas: de lunes a sábado hasta las 22 h. Después de las 18 h no hay atención, pero se pueden sacar y devolver libros uno mismo con el carné."],
+    ["Ein Café in Leipzig bietet jeden Mittwoch einen Sprachtreff an. Menschen aus vielen Ländern üben dort zusammen Deutsch. Die Teilnahme ist kostenlos, man bezahlt nur seine Getränke.",
+      "Für den Sprachtreff muss man Eintritt bezahlen.", "Falsch", ["Richtig"],
+      "A café in Leipzig holds a language meet-up every Wednesday. People from many countries practise German together there. Taking part is free; you only pay for your drinks.",
+      "Una cafetería de Leipzig organiza cada miércoles un intercambio de idiomas. Allí practica alemán gente de muchos países. La participación es gratuita; solo se pagan las bebidas."],
+    ["Weil Wohnungen in der Innenstadt oft zu teuer sind, ziehen immer mehr junge Familien aufs Land. Dort sind die Mieten niedriger und die Kinder haben mehr Platz. Allerdings brauchen viele dann ein Auto, um zur Arbeit zu kommen.",
+      "Auf dem Land brauchen viele Familien ein Auto.", "Richtig", ["Falsch"],
+      "Because flats in the city centre are often too expensive, more and more young families are moving to the country. Rents are lower there and children have more space. But many then need a car to get to work.",
+      "Como los pisos del centro suelen ser demasiado caros, cada vez más familias jóvenes se mudan al campo. Allí los alquileres son más bajos y los niños tienen más espacio. Pero muchos necesitan entonces un coche para ir a trabajar."],
+    ["Seit letztem Monat kann man in München viele Anträge online stellen, zum Beispiel für einen Parkausweis. Für einen neuen Personalausweis muss man aber weiterhin persönlich ins Bürgerbüro kommen.",
+      "Den Personalausweis kann man jetzt online beantragen.", "Falsch", ["Richtig"],
+      "Since last month you can make many applications online in Munich, for example for a parking permit. But for a new ID card you still have to go to the citizens' office in person.",
+      "Desde el mes pasado en Múnich se pueden hacer muchos trámites por internet, por ejemplo pedir un permiso de aparcamiento. Pero para un nuevo DNI hay que seguir yendo en persona a la oficina del ciudadano."]
+  ]}
+];
+// Schreiben: { level, words, de, en, es, points, model, modelEn }. The model answer shows after writing.
+const WRITING = [
+  { level: "A2", words: 30, de: "Du kannst am Samstag nicht zum Geburtstag deines Freundes Paul kommen. Schreib ihm eine E-Mail.",
+    en: "You can't come to your friend Paul's birthday on Saturday. Write him an email.", es: "No puedes ir al cumpleaños de tu amigo Paul el sábado. Escríbele un correo.",
+    points: ["Bedank dich für die Einladung.", "Erklär, warum du nicht kommen kannst.", "Mach einen Vorschlag für ein anderes Treffen."],
+    model: "Lieber Paul,\nvielen Dank für deine Einladung! Leider kann ich am Samstag nicht kommen, weil meine Schwester an diesem Tag heiratet. Das tut mir sehr leid.\nHast du nächste Woche Zeit? Wir könnten zusammen essen gehen. Ich lade dich ein!\nLiebe Grüße\nAlex",
+    modelEn: "Dear Paul, thank you so much for the invitation! Unfortunately I can't come on Saturday because my sister is getting married that day. I'm really sorry. Are you free next week? We could go out for a meal. My treat! Best wishes, Alex" },
+  { level: "A2", words: 30, de: "Du bist krank und kannst morgen nicht zum Deutschkurs kommen. Schreib deiner Kursleiterin, Frau Wolf.",
+    en: "You're ill and can't come to your German class tomorrow. Write to your teacher, Ms Wolf.", es: "Estás enfermo y mañana no puedes ir a clase de alemán. Escribe a tu profesora, la señora Wolf.",
+    points: ["Sag, warum du nicht kommst.", "Frag nach den Hausaufgaben.", "Sag, wann du wiederkommst."],
+    model: "Liebe Frau Wolf,\nleider kann ich morgen nicht zum Kurs kommen. Ich habe Fieber und muss im Bett bleiben.\nKönnen Sie mir bitte die Hausaufgaben schicken?\nIch hoffe, dass ich am Donnerstag wieder da bin.\nViele Grüße\nAlex",
+    modelEn: "Dear Ms Wolf, unfortunately I can't come to class tomorrow. I've got a fever and have to stay in bed. Could you please send me the homework? I hope to be back on Thursday. Best regards, Alex" },
+  { level: "A2", words: 30, de: "Dein Freund Max zieht nächste Woche um und hat dich um Hilfe gebeten. Schreib ihm.",
+    en: "Your friend Max is moving next week and has asked you for help. Write to him.", es: "Tu amigo Max se muda la semana que viene y te ha pedido ayuda. Escríbele.",
+    points: ["Sag, dass du hilfst.", "Frag, wann und wo ihr euch trefft.", "Biete an, etwas mitzubringen."],
+    model: "Hallo Max,\nnatürlich helfe ich dir beim Umzug! Wann soll ich kommen, und wo treffen wir uns? Bei deiner alten Wohnung?\nIch kann Kartons und etwas zu essen mitbringen.\nBis bald\nAlex",
+    modelEn: "Hi Max, of course I'll help you move! When should I come, and where shall we meet? At your old flat? I can bring boxes and something to eat. See you soon, Alex" },
+  { level: "B1", words: 80, de: "Du warst letztes Wochenende auf einem Konzert. Schreib deiner Freundin Julia eine E-Mail.",
+    en: "You went to a concert last weekend. Write an email to your friend Julia.", es: "El fin de semana pasado fuiste a un concierto. Escribe un correo a tu amiga Julia.",
+    points: ["Beschreib, wie das Konzert war.", "Begründe, was dir besonders gut gefallen hat.", "Mach einen Vorschlag für ein Treffen."],
+    model: "Liebe Julia,\nwie geht es dir? Ich muss dir unbedingt von meinem Wochenende erzählen! Am Samstag war ich mit Meri auf einem Konzert im Stadtpark. Es war wunderbar, obwohl es am Anfang ein bisschen geregnet hat.\nBesonders gut hat mir die Sängerin gefallen, weil sie eine tolle Stimme hat und viel mit dem Publikum gesprochen hat. Alle haben mitgesungen!\nIm Sommer gibt es noch ein Konzert. Hättest du Lust, mitzukommen? Wir könnten vorher zusammen essen gehen.\nViele Grüße\nAlex",
+    modelEn: "Dear Julia, how are you? I have to tell you about my weekend! On Saturday Meri and I went to a concert in the city park. It was wonderful, although it rained a bit at the start. I especially liked the singer, because she has a great voice and talked a lot with the audience. Everyone sang along! There's another concert in the summer. Would you like to come along? We could have dinner together beforehand. Best wishes, Alex" },
+  { level: "B1", words: 40, de: "Du hast am Dienstag einen Termin bei deiner Ärztin, Frau Dr. Schmidt, aber du kannst nicht kommen. Schreib der Praxis.",
+    en: "You have an appointment with your doctor, Dr Schmidt, on Tuesday, but you can't come. Write to the surgery.", es: "Tienes cita con tu médica, la doctora Schmidt, el martes, pero no puedes ir. Escribe a la consulta.",
+    points: ["Sag den Termin höflich ab.", "Nenn den Grund.", "Bitte um einen neuen Termin."],
+    model: "Sehr geehrte Frau Dr. Schmidt,\nleider muss ich meinen Termin am Dienstag um 10 Uhr absagen, weil ich an diesem Tag beruflich nach Hamburg fahren muss.\nKönnten Sie mir bitte einen neuen Termin in der nächsten Woche geben? Vormittags würde es mir am besten passen.\nMit freundlichen Grüßen\nAlex García",
+    modelEn: "Dear Dr Schmidt, unfortunately I have to cancel my appointment on Tuesday at 10, because I have to go to Hamburg for work that day. Could you please give me a new appointment next week? Mornings would suit me best. Kind regards, Alex García" },
+  { level: "B1", words: 80, de: "In einem Forum geht es um das Thema „Arbeiten im Homeoffice“. Schreib deine Meinung.",
+    en: "An online forum is discussing working from home. Write your opinion.", es: "En un foro se habla de trabajar desde casa. Escribe tu opinión.",
+    points: ["Was ist gut daran?", "Was ist nicht so gut?", "Wie ist es bei dir?"],
+    model: "Ich finde, das Homeoffice hat viele Vorteile. Man spart viel Zeit, weil man nicht zur Arbeit fahren muss, und man kann sich die Zeit besser einteilen.\nAllerdings fehlt mir manchmal der Kontakt zu den Kollegen. Außerdem ist es zu Hause nicht immer ruhig, besonders wenn die Kinder da sind.\nIch arbeite zwei Tage pro Woche zu Hause und drei Tage im Büro. Für mich ist das die beste Lösung, denn so habe ich beides.",
+    modelEn: "I think working from home has many advantages. You save a lot of time because you don't have to travel to work, and you can organise your time better. However, I sometimes miss contact with colleagues. And it isn't always quiet at home, especially when the children are there. I work from home two days a week and in the office three days. For me that's the best solution, because I get both." }
+];
 
 const $ = (id) => document.getElementById(id);
 // html`...` builds markup and escapes every value in it, unless the value was itself built with html`...`.
@@ -1945,6 +2225,7 @@ function spokenTexts() {
   for (const l of GRAMMAR) for (const [s, a] of l.items) texts.add(filled({ s, a }));
   for (const b of document.querySelectorAll("#theory .ex")) texts.add(b.textContent);
   for (const k of LISTENING) for (const [lines] of k.items) for (const line of lines) texts.add(line);
+  for (const list of Object.values(SPEAK_PHRASES)) for (const p of list) texts.add(p);
   return [...texts];
 }
 const recPath = (v, text) => `audio/${v.id}/${audioName(text)}.mp3`;
@@ -2137,8 +2418,8 @@ function startGame(deck) {
 }
 
 function show(screen) {
-  for (const s of ["setup", "play", "done", "grammar", "theory", "quiz", "qdone", "listen", "hear", "ldone"]) $(s).hidden = s !== screen;
-  $("topbar").hidden = $("areas").hidden = !["setup", "grammar", "listen"].includes(screen);
+  for (const s of ["setup", "play", "done", "grammar", "theory", "quiz", "qdone", "listen", "hear", "ldone", "exam", "talk", "read", "write"]) $(s).hidden = s !== screen;
+  $("topbar").hidden = $("areas").hidden = !["setup", "grammar", "listen", "exam"].includes(screen);
   setSeg("areas", screen);
   window.scrollTo(0, 0);
 }
@@ -2618,6 +2899,175 @@ document.addEventListener("keydown", (e) => {
   else if (racing() && (k === "a" || k === "l")) lbuzz(k === "a" ? 0 : 1);
   else if (racing() && k === "n") reveal(false);
 });
+
+/* ---------- Prüfung ---------- */
+const EXAM_TASKS = [
+  { id: "termin", icon: "🗓️", name: "Termin finden", en: "Speaking A2 · find an hour you're both free" },
+  { id: "planen", icon: "🤝", name: "Gemeinsam planen", en: "Speaking B1 · plan something together" },
+  { id: "lesen", icon: "📖", name: "Lesen", en: `Reading A2/B1 · ${READING.reduce((a, k) => a + k.items.length, 0)} texts` },
+  { id: "schreiben", icon: "✍️", name: "Schreiben", en: `Writing A2/B1 · ${WRITING.length} emails` }
+];
+$("tasks").innerHTML = html`${EXAM_TASKS.map((t) => html`
+  <div class="lesson">
+    <span class="ico">${picImg(t.icon, "") || t.icon}</span><h3>${t.name}</h3><p>${t.en}</p>
+    <div class="row"><button class="ctl good" type="button" data-task="${t.id}">Los geht's</button></div>
+  </div>`)}`;
+$("tasks").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-task]"); if (!b) return;
+  const id = b.dataset.task;
+  if (id === "lesen") startReading();
+  else if (id === "schreiben") openWriting(Math.floor(Math.random() * WRITING.length));
+  else openTalk(id, newCode());
+});
+[$("talkBack"), $("readBack"), $("writeBack"), $("rMenu")].forEach((b) => { b.onclick = () => { hush(); show("exam"); }; });
+
+// A task number picks the same task and diaries on every device, so two phones can play one task.
+const newCode = () => 1000 + Math.floor(Math.random() * 9000);
+function seeded(n) {
+  let a = n >>> 0;
+  return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+// Two diaries for one day with exactly one hour when both players are free.
+function diaries(code) {
+  const r = seeded(code), pick = (a) => a[Math.floor(r() * a.length)];
+  const mix = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const meeting = pick(MEETINGS);
+  const free = DIARY_HOURS[1 + Math.floor(r() * (DIARY_HOURS.length - 2))];
+  const pools = [mix([...ERRANDS]), mix([...ERRANDS])];
+  const days = [{}, {}];
+  for (const h of DIARY_HOURS) {
+    if (h === free) continue;
+    const x = r();
+    for (const p of x < 0.4 ? [0] : x < 0.8 ? [1] : [0, 1]) days[p][h] = pools[p].pop();
+  }
+  return { meeting, free, days };
+}
+const planFor = (code) => PLANS[Math.floor(seeded(code)() * PLANS.length)];
+
+let talk = null;
+function openTalk(kind, code) {
+  hush();
+  talk = { kind, code, who: null };
+  $("taskNo").textContent = code;
+  $("tCode").value = "";
+  $("tSolution").hidden = true;
+  const termin = kind === "termin";
+  $("tKind").textContent = termin ? "Sprechen A2 · Termin finden" : "Sprechen B1 · Gemeinsam planen";
+  const [de, en, es, points = []] = termin ? diaries(code).meeting : planFor(code);
+  $("tTask").textContent = termin ? `${de} Wann habt ihr beide Zeit?` : de;
+  $("tEn").textContent = termin ? `${en} When are you both free?` : en;
+  $("tEs").textContent = termin ? `${es} ¿Cuándo tenéis tiempo los dos?` : es;
+  $("tPoints").innerHTML = html`${points.map((p) => html`<li>${p}</li>`)}`;
+  $("tDiaryWrap").hidden = !termin;
+  $("tSolve").hidden = !termin;
+  $("tPhrases").innerHTML = html`${SPEAK_PHRASES[kind].map((p) => html`<button class="ex" type="button">${p}</button>`)}`;
+  renderDiary();
+  show("talk");
+}
+function renderDiary() {
+  const [a, b] = names();
+  $("whoSeg").innerHTML = html`${[a, b].map((n, p) => html`<button type="button" data-v="${p}" aria-pressed="${talk.who === p}">${n}</button>`)}`;
+  if (talk.kind !== "termin" || talk.who === null) { $("tDiary").innerHTML = ""; return; }
+  const day = diaries(talk.code).days[talk.who];
+  $("tDiary").innerHTML = html`${DIARY_HOURS.map((h) => html`<li class="${day[h] ? "busy" : ""}"><span class="h">${h}:00</span><span>${day[h] || ""}</span></li>`)}`;
+}
+$("whoSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; talk.who = Number(b.dataset.v); renderDiary(); };
+$("tPhrases").addEventListener("click", (e) => { const b = e.target.closest(".ex"); if (b) say(b.textContent); });
+$("tSolve").onclick = () => {
+  const { free } = diaries(talk.code);
+  $("tSolution").textContent = `Ihr habt beide um ${free} Uhr Zeit.`;
+  $("tSolution").hidden = false;
+};
+$("tNew").onclick = () => openTalk(talk.kind, newCode());
+$("tCodeForm").onsubmit = (e) => {
+  e.preventDefault();
+  const n = Number($("tCode").value);
+  if (Number.isInteger(n) && n >= 1000 && n <= 9999) openTalk(talk.kind, n);
+};
+
+// Reading round: like listening practice, a wrong option is marked and you try again.
+let reading = null;
+function startReading() {
+  const deck = shuffle(READING.flatMap((k) => k.items.map(([text, q, a, wrong, en, es]) => ({ text, q, a, wrong, en, es, kind: k.name })))).slice(0, 8);
+  reading = { deck, i: 0, right: 0 };
+  show("read");
+  dealReading();
+}
+function dealReading() {
+  const t = reading.deck[reading.i];
+  Object.assign(reading, { opts: shuffle([t.a, ...t.wrong]), tried: [], done: false });
+  $("rprog").textContent = `Text ${reading.i + 1} / ${reading.deck.length}`;
+  $("rprogbar").style.width = `${(reading.i / reading.deck.length) * 100}%`;
+  $("rKind").textContent = t.kind;
+  $("rText").textContent = t.text;
+  $("rQuestion").textContent = t.q;
+  $("rFeedback").hidden = true; $("rDone").hidden = true;
+  $("rEn").textContent = t.en; $("rEs").textContent = t.es;
+  renderReading();
+}
+function renderReading() {
+  const t = reading.deck[reading.i];
+  $("rOpts").innerHTML = html`${reading.opts.map((o, n) => {
+    const cls = reading.done && o === t.a ? " ok" : reading.tried.includes(o) ? " bad" : "";
+    return html`<button class="opt${cls}" type="button" data-n="${n}"${reading.done || reading.tried.includes(o) ? " disabled" : ""}>${o} <span class="k">${n + 1}</span></button>`;
+  })}`;
+  $("rTurn").textContent = !reading.done && reading.tried.length ? "Nicht ganz. Read it again and try another one." : "";
+  $("rscores").innerHTML = html`<div class="score" style="color:var(--good)"><span>Gewusst</span><b>${reading.right}</b></div>`;
+}
+function rchoose(n) {
+  if (!reading || reading.done) return;
+  const o = reading.opts[n], t = reading.deck[reading.i];
+  if (o === undefined || reading.tried.includes(o)) return;
+  if (o !== t.a) { reading.tried.push(o); beep(220); renderReading(); return; }
+  reading.done = true;
+  if (!reading.tried.length) reading.right++;
+  $("rVerdict").textContent = reading.tried.length ? "Jetzt stimmt's!" : "Richtig!";
+  $("rVerdict").className = "verdict ok";
+  $("rFeedback").hidden = false;
+  renderReading();
+}
+function nextReading() {
+  if (!reading?.done) return;
+  if (reading.i + 1 < reading.deck.length) { reading.i++; dealReading(); return; }
+  $("rprogbar").style.width = "100%";
+  $("rFeedback").hidden = true;
+  $("rFinal").textContent = `Fertig! ${reading.right} / ${reading.deck.length} right first time.`;
+  $("rDone").hidden = false;
+  reading.finished = true;
+}
+$("rOpts").addEventListener("click", (e) => { const b = e.target.closest(".opt"); if (b) rchoose(Number(b.dataset.n)); });
+$("rNext").onclick = nextReading;
+$("rAgain").onclick = startReading;
+document.addEventListener("keydown", (e) => {
+  if ($("read").hidden || !reading || reading.finished) return;
+  if (e.target.matches("input, select, textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (reading.done) { if (k === "enter" || k === " " || k === "arrowright") { e.preventDefault(); nextReading(); } }
+  else if (/^[1-3]$/.test(k)) rchoose(Number(k) - 1);
+});
+
+// Writing: write freely, then compare with the model answer.
+let writeIdx = 0;
+function openWriting(i) {
+  writeIdx = i;
+  const w = WRITING[i];
+  $("wKind").textContent = `Schreiben ${w.level} · about ${w.words} words`;
+  $("wTask").textContent = w.de; $("wEn").textContent = w.en; $("wEs").textContent = w.es;
+  $("wPoints").innerHTML = html`${w.points.map((p) => html`<li>${p}</li>`)}`;
+  $("wText").value = "";
+  $("wModelBox").hidden = true;
+  $("wModelText").innerHTML = html`${w.model.split("\n").map((l) => html`<p>${l}</p>`)}`;
+  $("wModelEn").textContent = w.modelEn;
+  countWords();
+  show("write");
+}
+function countWords() {
+  const n = $("wText").value.trim().split(/\s+/).filter(Boolean).length;
+  $("wCount").textContent = `${n} ${n === 1 ? "word" : "words"} · aim for about ${WRITING[writeIdx].words}`;
+}
+$("wText").addEventListener("input", countWords);
+$("wModel").onclick = () => { $("wModelBox").hidden = false; };
+$("wNew").onclick = () => openWriting((writeIdx + 1) % WRITING.length);
 
 /* ---------- Init ---------- */
 $("p1").value = settings.p1; $("p2").value = settings.p2; $("speak").checked = settings.speak;
