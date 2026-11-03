@@ -38,8 +38,8 @@ test("every grammar sentence is complete", async ({ page }) => {
 test("the Grammatik tab shows every lesson and goes back to the cards", async ({ page }) => {
   const errors = await openGrammar(page);
   await expect(page.locator("#setup")).toBeHidden();
-  await expect(page.locator("#lessons .lesson")).toHaveCount(4);
-  for (const name of ["Akkusativ & Dativ", "Präpositionen", "Perfekt", "Trennbare Verben"]) await expect(page.locator("#lessons")).toContainText(name);
+  await expect(page.locator("#lessons .lesson")).toHaveCount(8);
+  for (const name of ["Akkusativ & Dativ", "Präpositionen", "Perfekt", "Trennbare Verben", "weil, dass, wenn, obwohl", "Präteritum", "Höflich: hätte, könnte, würde", "Komparativ & Superlativ"]) await expect(page.locator("#lessons")).toContainText(name);
   await page.click('#areas [data-v="setup"]');
   await expect(page.locator("#setup")).toBeVisible();
   expect(errors).toEqual([]);
@@ -187,4 +187,14 @@ test("grammar settings are remembered and All plays every sentence", async ({ pa
   expect(await noSideScroll(page)).toBe(true);
   await page.click("#quizQuit");
   await expect(page.locator("#grammar")).toBeVisible();
+});
+
+test("the B1 lessons fit a phone without scrolling sideways", async ({ page }) => {
+  await openGrammar(page);
+  for (const id of ["nebensatz", "praeteritum", "konjunktiv", "komparativ"]) {
+    await page.click(`#lessons [data-theory="${id}"]`);
+    await expect(page.locator(`#theory [data-lesson="${id}"]`)).toBeVisible();
+    expect(await noSideScroll(page)).toBe(true);
+    await page.click("#theoryBack");
+  }
 });
