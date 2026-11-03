@@ -63,7 +63,7 @@ test.describe("in the Android app", () => {
     await mockNativeSpeech(page, { voices: phoneVoices });
     await open(page);
     await page.click('#areas [data-v="listen"]');
-    for (const id of ["announce", "voicemail", "radio"]) await page.click(`#kinds [data-id="${id}"]`);
+    for (const id of ["announce", "voicemail", "radio", "tours"]) await page.click(`#kinds [data-id="${id}"]`);
     await page.click("#lstart");
     const lines = await page.evaluate(() => listen.deck[listen.i].lines);
     await expect.poll(() => page.evaluate(() => window.__spoken.map((s) => [s.text, s.pitch]))).toEqual(lines.map((l, n) => [l, n % 2 ? 0.7 : 1]));

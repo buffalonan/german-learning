@@ -4212,6 +4212,269 @@ $("wText").addEventListener("input", () => {
 $("wModel").onclick = () => { $("wModelBox").hidden = false; };
 $("wNew").onclick = () => openWriting((writeIdx + 1) % WRITING.length);
 
+/* ---------- Zwei Handys ---------- */
+// Two phones play one round together. They find each other through PeerJS's free meeting service with a four-digit
+// room code, then talk directly (WebRTC). The phone that made the room is the referee: it deals the round, decides
+// who was first, keeps the score and sends the state to the other phone after every change. The other phone only
+// sends its taps. Each phone shows the round from its own player's side.
+const ROOM = "sagsdeutsch-raum-";
+const DUO_AREA = { cards: "setup", quiz: "grammar", listen: "listen" };
+let duo = null; // { peer, conn, host, me, names, lag, kind, deck, s }
+let duoFrom = "cards";
+
+function loadPeer() {
+  if (window.Peer) return Promise.resolve();
+  return new Promise((ok, fail) => {
+    const tag = document.createElement("script");
+    tag.src = "peerjs.min.js";
+    tag.onload = () => (window.Peer ? ok() : fail(new Error("no Peer")));
+    tag.onerror = fail;
+    document.head.append(tag);
+  });
+}
+const myName = (me = duo?.me || 0) => $("duoName").value.trim() || names()[me];
+function lobby(view) {
+  for (const [id, v] of [["duoStart", "start"], ["duoWait", "wait"], ["duoReady", "ready"]]) $(id).hidden = view !== v;
+  $("duoName").disabled = view !== "start";
+}
+function duoError(msg) { $("duoError").textContent = msg; $("duoError").hidden = !msg; }
+function duoClose() {
+  if (!duo) return;
+  const d = duo; duo = null;
+  try { if (d.conn?.open) d.conn.send({ t: "bye" }); } catch (e) { /* already gone */ }
+  setTimeout(() => { try { d.peer?.destroy(); } catch (e) { /* already gone */ } }, 200);
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-duo]"); if (!b) return;
+  duoFrom = b.dataset.duo;
+  $("duoName").value = settings.me || "";
+  $("duoName").placeholder = names()[0];
+  duoError(""); lobby("start");
+  show("duo");
+});
+$("duoName").oninput = () => { settings.me = $("duoName").value; save(); };
+$("duoBack").onclick = () => { duoClose(); show(DUO_AREA[duoFrom]); };
+$("duoQuit").onclick = () => { const kind = duo?.kind || duoFrom; hush(); duoClose(); show(DUO_AREA[kind]); };
+
+async function startPeer(id) {
+  try { await loadPeer(); } catch (e) { duoError("Zwei Handys needs the internet (and works in the app and on the website)."); lobby("start"); return null; }
+  return id ? new window.Peer(id) : new window.Peer();
+}
+async function duoHost(tries = 0) {
+  duoError("");
+  const code = 1000 + Math.floor(Math.random() * 9000);
+  $("duoCodeShow").textContent = code;
+  $("duoWaitText").textContent = "Making the room…";
+  lobby("wait");
+  const peer = await startPeer(ROOM + code); if (!peer) return;
+  duo = { peer, conn: null, host: true, me: 0, names: [myName(0), ""], lag: 0 };
+  peer.on("open", () => { $("duoWaitText").textContent = "On the other phone, open Zwei Handys, tap Beitreten and type this code."; });
+  peer.on("connection", (conn) => { if (duo?.peer !== peer || duo.conn) { conn.close(); return; } attach(conn); });
+  peer.on("error", (err) => {
+    if (duo?.peer !== peer) return;
+    duo = null; peer.destroy();
+    if (err.type === "unavailable-id" && tries < 3) duoHost(tries + 1);
+    else { duoError("Couldn't make a room. Check the internet and try again."); lobby("start"); }
+  });
+}
+async function duoJoin(code) {
+  duoError("");
+  $("duoCodeShow").textContent = code;
+  $("duoWaitText").textContent = "Connecting…";
+  lobby("wait");
+  const peer = await startPeer(); if (!peer) return;
+  duo = { peer, conn: null, host: false, me: 1, names: ["", myName(1)], lag: 0 };
+  peer.on("open", () => attach(peer.connect(ROOM + code, { reliable: true })));
+  peer.on("error", (err) => {
+    if (duo?.peer !== peer) return;
+    duo = null; peer.destroy();
+    duoError(err.type === "peer-unavailable" ? `No game with the code ${code}. Check the number on the other phone.` : "Couldn't connect. Check the internet and try again.");
+    lobby("start");
+  });
+}
+$("duoHost").onclick = () => duoHost();
+$("duoJoinForm").onsubmit = (e) => {
+  e.preventDefault();
+  const code = $("duoCode").value.trim();
+  if (/^[0-9]{4}$/.test(code)) duoJoin(code); else duoError("The room code has four digits.");
+};
+
+function attach(conn) {
+  duo.conn = conn;
+  conn.on("open", () => {
+    conn.send({ t: "hi", name: myName() });
+    if (duo?.host) conn.send({ t: "ping", at: performance.now() });
+  });
+  conn.on("data", (m) => { if (duo?.conn === conn) onDuoMessage(m); });
+  conn.on("close", () => { if (duo?.conn === conn) duoLost(); });
+}
+function duoLost() {
+  hush();
+  duoClose();
+  show("duo"); lobby("start");
+  duoError("The other phone left the game.");
+}
+function send(m) { try { duo?.conn?.send(m); } catch (e) { /* the close event follows */ } }
+function onDuoMessage(m) {
+  if (!m || typeof m !== "object") return;
+  if (m.t === "hi") {
+    duo.names[1 - duo.me] = String(m.name || "").slice(0, 16) || names()[1 - duo.me];
+    duo.names[duo.me] = myName();
+    $("duoVs").innerHTML = html`<span class="p1">${duo.names[0]}</span> gegen <span class="p2">${duo.names[1]}</span>`;
+    $("duoPick").hidden = !duo.host;
+    $("duoGuestWait").textContent = duo.host ? "" : `${duo.names[0]} picks the game…`;
+    lobby("ready");
+  } else if (m.t === "ping") send({ t: "pong", at: m.at });
+  else if (m.t === "pong" && duo.host) duo.lag = Math.min(150, Math.max(0, (performance.now() - m.at) / 2));
+  else if (m.t === "bye") duoLost();
+  else if (!duo.host && m.t === "start") { Object.assign(duo, { kind: m.kind, deck: m.deck, names: m.names }); duo.s = m.s; duoRender(); }
+  else if (!duo.host && m.t === "state") { duo.s = m.s; duoRender(); }
+  else if (duo.host && m.t === "act" && m.act) applyAct(1, m.act);
+}
+
+// The referee's side.
+function duoItem(kind, x) {
+  return kind === "cards" ? x : { ...x, opts: options(x.a, x.wrong) };
+}
+function duoStart(kind) {
+  const deck = kind === "cards" ? buildDeck() : kind === "listen" ? buildTexts()
+    : quizDeck(settings.glast ? [settings.glast] : GRAMMAR.map((l) => l.id));
+  if (!deck.length) { duoError("Pick at least one topic in that section first."); return; }
+  duo.kind = kind;
+  duo.deck = deck.map((x) => duoItem(kind, x));
+  duo.s = { i: 0, scores: [0, 0], phase: "ask", buzz: null, locked: [false, false], tried: [], winner: null };
+  send({ t: "start", kind, deck: duo.deck, names: duo.names, s: duo.s });
+  duoRender();
+  duoSpeak();
+}
+$("duoPick").addEventListener("click", (e) => { const b = e.target.closest("[data-duogame]"); if (b && duo?.host && duo.conn?.open) duoStart(b.dataset.duogame); });
+
+// A tap on this phone. On the referee, taps that race the other phone wait as long as a message takes to arrive,
+// so neither phone has a head start.
+function duoAct(a, extra = {}) {
+  if (!duo?.s) return;
+  const act = { a, i: duo.s.i, ...extra };
+  if (!duo.host) { send({ t: "act", act }); return; }
+  if ((a === "buzz" || a === "choose") && duo.lag) setTimeout(() => applyAct(0, act), duo.lag);
+  else applyAct(0, act);
+}
+function applyAct(p, act) {
+  const s = duo?.s; if (!s || act.i !== s.i) return;
+  const item = duo.deck[s.i], before = s.phase;
+  if (s.phase === "end") {
+    if (act.a === "again" && p === 0) duoStart(duo.kind);
+    return;
+  }
+  if (duo.kind === "cards") {
+    if (act.a === "buzz" && s.phase === "ask" && s.buzz === null) { s.buzz = p; beep(p === 0 ? 523 : 659); }
+    else if (act.a === "flip" && s.phase === "ask") s.phase = "check";
+    else if (act.a === "judge" && s.phase === "check" && s.buzz !== null && p !== s.buzz) { if (act.ok) s.scores[s.buzz]++; duoNext(); }
+    else if (act.a === "next" && s.phase === "check" && s.buzz === null) duoNext();
+    else return;
+  } else {
+    if (act.a === "choose" && s.phase === "ask" && !s.locked[p] && act.n in item.opts && !s.tried.includes(act.n)) {
+      if (item.opts[act.n] === item.a) { s.scores[p]++; s.winner = p; s.phase = "done"; beep(784); }
+      else {
+        s.tried.push(act.n); s.locked[p] = true; beep(220);
+        if (s.locked.every(Boolean) || s.tried.length >= item.opts.length - 1) s.phase = "done";
+      }
+    } else if (act.a === "show" && s.phase === "ask") s.phase = "done";
+    else if (act.a === "next" && s.phase === "done") duoNext();
+    else return;
+  }
+  send({ t: "state", s });
+  duoRender();
+  if (s.phase !== before || s.i !== act.i) duoSpeak();
+}
+function duoNext() {
+  const s = duo.s;
+  if (s.i + 1 >= duo.deck.length) { s.phase = "end"; s.i++; return; }
+  Object.assign(s, { i: s.i + 1, phase: "ask", buzz: null, locked: [false, false], tried: [], winner: null });
+}
+// Only the referee's phone reads aloud, so the two phones don't echo each other.
+function duoSpeak() {
+  if (!duo?.host || !duo.s) return;
+  const s = duo.s, item = duo.deck[s.i];
+  if (!item) return;
+  if (duo.kind === "listen" && s.phase === "ask") sayLines(item.lines, item.dialogue);
+  else if (duo.kind === "cards" && s.phase === "check" && settings.speak) say(deSpeech(item));
+  else if (duo.kind === "quiz" && s.phase === "done" && settings.speak) say(filled(item));
+}
+
+// Both phones draw the round from the same state, each from its own player's side.
+function duoRender() {
+  const { s, kind, deck, me } = duo, [a, b] = duo.names, other = 1 - me;
+  const pname = (p) => html`<span class="p${p + 1}">${duo.names[p]}</span>`;
+  if (current !== "duoplay") show("duoplay");
+  const word = kind === "cards" ? "Karte" : kind === "quiz" ? "Satz" : "Text";
+  const n = Math.min(s.i, deck.length - 1);
+  $("dprog").textContent = s.phase === "end" ? "Fertig" : `${word} ${s.i + 1} / ${deck.length}`;
+  $("dprogbar").style.width = `${(Math.min(s.i, deck.length) / deck.length) * 100}%`;
+  $("dscores").innerHTML = html`${[a, b].map((nm, p) => html`<div class="score p${p + 1}${p === me ? " buzzed" : ""}"><span>${nm}</span><b>${s.scores[p]}</b></div>`)}`;
+  if (s.phase === "end") {
+    const [sa, sb] = s.scores;
+    const title = sa === sb ? "Unentschieden!" : `${sa > sb ? a : b} gewinnt!`;
+    $("dBody").innerHTML = html`<div class="sheet result">
+      <h2 class="dflash">${title}</h2>
+      <div class="final">${[a, b].map((nm, p) => html`<div class="score p${p + 1}"><span>${nm}</span><b>${s.scores[p]}</b></div>`)}</div>
+      <div class="start-row">${duo.host
+        ? html`<button class="btn-main" type="button" data-dact="again">Noch mal</button><button class="ctl" type="button" data-dact="other">Anderes Spiel</button>`
+        : html`<p class="help">${a} starts the next round…</p>`}</div></div>`;
+    return;
+  }
+  const item = deck[n];
+  let body;
+  if (kind === "cards") {
+    const back = s.phase === "check";
+    const turn = s.buzz === null ? (back ? "Nobody knew it." : "Who knows it?")
+      : s.buzz === me ? (back ? html`${pname(other)} decides if you got it right.` : "You were first! Say it out loud, then flip.")
+      : back ? html`Did ${pname(s.buzz)} get it right?` : html`${pname(s.buzz)} war schneller!`;
+    const controls = !back
+      ? html`<button class="buzzer p${me + 1}" type="button" data-dact="buzz"${s.buzz !== null ? " disabled" : ""}>Ich weiß es!</button>
+        <div class="controls"><button class="ctl" type="button" data-dact="flip">${s.buzz === null ? "Nobody knows it, flip" : "Flip"}</button></div>`
+      : s.buzz === null ? html`<div class="controls"><button class="ctl big" type="button" data-dact="next">Weiter</button></div>`
+      : s.buzz === me ? ""
+      : html`<div class="controls"><button class="ctl good" type="button" data-dact="judge" data-ok="1"><span class="i i-check" aria-hidden="true"></span> Richtig</button><button class="ctl" type="button" data-dact="judge" data-ok="">Falsch</button></div>`;
+    body = html`<div class="qcard dcard">
+      <div class="ctopic"><span>${item.topic}</span></div>
+      ${back ? html`<div class="de">${deHTML(item)}</div><dl class="tr"><div><dt>EN</dt><dd>${item.en}</dd></div><div><dt>ES</dt><dd>${item.es}</dd></div></dl>`
+        : html`<div>${frontHTML(item, "pic")}</div>${settings.hint !== "none" || item.cue ? html`<p class="cue">${item[settings.hint !== "none" ? settings.hint : "es"]}</p>` : ""}`}
+      <p class="dturn${s.buzz !== null ? " dflash" : ""}" aria-live="polite">${turn}</p>
+      ${controls}</div>`;
+  } else {
+    const done = s.phase === "done";
+    const turn = done ? (s.winner === null ? html`Die Antwort: „${item.a}“` : s.winner === me ? "Richtig! A point for you." : html`${pname(s.winner)} hatte recht!`)
+      : s.locked[me] ? html`Nicht ganz. Now it's ${pname(other)}'s turn.` : s.locked[other] ? html`${pname(other)} was wrong. Your turn!` : "Whoever taps the right answer first gets the point.";
+    const question = kind === "quiz"
+      ? html`<p class="sentence">${item.s.split("___")[0]}<span class="blank${done ? " ok" : ""}">${done ? item.a : html`&nbsp;`}</span>${item.s.split("___")[1]}</p>`
+      : html`<div class="controls play-row"><button class="ctl big" type="button" data-dact="play"><span class="i i-vol" aria-hidden="true"></span> Anhören</button></div><p class="lq">${item.q}</p>`;
+    body = html`<div class="qcard">
+      <div class="ctopic"><span>${kind === "quiz" ? item.lesson : item.kind}</span></div>
+      ${question}
+      <div class="opts${kind === "listen" ? " lopts" : ""}">${item.opts.map((o, k) => {
+        const cls = done && o === item.a ? " ok" : s.tried.includes(k) ? " bad" : "";
+        const off = done || s.locked[me] || s.tried.includes(k);
+        return html`<button class="opt${cls}" type="button" data-dact="choose" data-n="${k}"${off ? " disabled" : ""}>${o}</button>`;
+      })}</div>
+      <p class="dturn${done ? " dflash" : ""}" aria-live="polite">${turn}</p>
+      ${done ? html`${kind === "quiz" ? html`<p class="why">${item.why}</p>` : html`<details class="more"${s.winner === null ? " open" : ""}><summary>Text zeigen</summary><div class="script">${item.lines.map((l, k) => html`<p>${item.dialogue ? html`<span class="who">${k % 2 ? "B" : "A"}</span>` : ""}${l}</p>`)}</div></details>`}
+        <details class="more"><summary>Übersetzung</summary><dl class="tr ltr"><div><dt>EN</dt><dd>${item.en}</dd></div><div><dt>ES</dt><dd>${item.es}</dd></div></dl></details>
+        <div class="controls"><button class="ctl big" type="button" data-dact="next">Weiter</button></div>`
+      : html`<div class="controls"><button class="ctl" type="button" data-dact="show">Nobody knows it</button></div>`}
+    </div>`;
+  }
+  $("dBody").innerHTML = body;
+}
+$("dBody").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-dact]"); if (!b || !duo?.s) return;
+  const a = b.dataset.dact;
+  if (a === "play") { const t = duo.deck[duo.s.i]; sayLines(t.lines, t.dialogue); return; }
+  if (a === "other") { hush(); lobby("ready"); show("duo"); return; }
+  if (a === "choose") duoAct(a, { n: Number(b.dataset.n) });
+  else if (a === "judge") duoAct(a, { ok: !!b.dataset.ok });
+  else duoAct(a);
+});
+
 /* ---------- Init ---------- */
 $("p1").value = settings.p1; $("p2").value = settings.p2; $("speak").checked = settings.speak;
 setSeg("countSeg", settings.count); setSeg("hintSeg", settings.hint);

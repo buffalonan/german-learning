@@ -143,7 +143,7 @@ test("a recorded conversation alternates Kerstin and Thorsten", async ({ page })
   await page.selectOption("#voice", "rec:kerstin");
   await page.click("#prefsBack");
   await page.click('#areas [data-v="listen"]');
-  for (const id of ["announce", "voicemail", "radio"]) await page.click(`#kinds [data-id="${id}"]`);
+  for (const id of ["announce", "voicemail", "radio", "tours"]) await page.click(`#kinds [data-id="${id}"]`);
   await page.click("#lstart");
   const lines = await page.evaluate(() => listen.deck[listen.i].lines);
   const names = await Promise.all(lines.map((l) => nameOf(page, l)));

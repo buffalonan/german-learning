@@ -2,6 +2,7 @@
 // Usage: node scripts/build-app-web.js [out dir, default www] [--web]
 //   --web leaves out capacitor.js, which only the app needs. npm run app:sync runs this and then cap sync.
 // The painted card illustrations (art.js and art/), the hedgehog logo (logo/) and manifest.webmanifest are copied too.
+// peerjs.min.js (from the peerjs package) is copied too: the Zwei Handys mode loads it when two phones connect.
 // If audio/ exists (recorded voices from scripts/build-audio.py), it's copied too and the page is told which voices it has.
 const fs = require("fs");
 const path = require("path");
@@ -39,5 +40,6 @@ fs.copyFileSync(path.join(root, "art.js"), path.join(out, "art.js"));
 fs.cpSync(path.join(root, "art"), path.join(out, "art"), { recursive: true });
 fs.cpSync(path.join(root, "logo"), path.join(out, "logo"), { recursive: true });
 fs.copyFileSync(path.join(root, "manifest.webmanifest"), path.join(out, "manifest.webmanifest"));
+fs.copyFileSync(require.resolve("peerjs/dist/peerjs.min.js"), path.join(out, "peerjs.min.js"));
 
 console.log(`Wrote ${fs.readdirSync(out).join(", ")} to ${path.relative(root, out) || "."}${voices.length ? ` with recorded voices: ${voices.join(", ")}` : ""}`);
