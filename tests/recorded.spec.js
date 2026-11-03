@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { mockSpeech, spoken, open, startRound } = require("./helpers");
+const { mockSpeech, spoken, open, openPrefs, startRound } = require("./helpers");
 
 // A tenth of a second of silence, served for every recording.
 function silentWav() {
@@ -37,7 +37,9 @@ test.describe("recorded voices", () => {
     await open(page);
     await expect(page.locator("#voice option")).toHaveText(["Anna", "Kerstin (aufgenommen)", "Thorsten (aufgenommen)"]);
     await expect(page.locator("#voice")).toHaveValue("Anna");
+    await openPrefs(page);
     await page.selectOption("#voice", "rec:kerstin");
+    await page.click("#prefsBack");
     await startRound(page, { topics: ["food"] });
     const c = await page.evaluate(() => game.deck[game.i]);
     await page.keyboard.press(" ");
@@ -58,8 +60,10 @@ test.describe("recorded voices", () => {
     await mockSpeech(page);
     const requested = await withRecordings(page);
     await open(page);
+    await openPrefs(page);
     await page.selectOption("#voice", "rec:thorsten");
     await page.reload();
+    await openPrefs(page);
     await expect(page.locator("#voice")).toHaveValue("rec:thorsten");
     await page.click("#testVoice");
     await expect.poll(() => requested).toEqual([`thorsten/${await nameOf(page, "Guten Tag! Wie geht's?")}.mp3`]);
@@ -69,6 +73,7 @@ test.describe("recorded voices", () => {
     await mockSpeech(page);
     const requested = await withRecordings(page, { missing: () => true });
     await open(page);
+    await openPrefs(page);
     await page.selectOption("#voice", "rec:kerstin");
     await page.click("#testVoice");
     await expect.poll(() => spoken(page)).toEqual(["Guten Tag! Wie geht's?"]);
@@ -85,6 +90,7 @@ test.describe("recorded voices", () => {
     await open(page);
     await expect(page.locator("#voice option")).toHaveText(["Google Deutsch (online)", "Kerstin (aufgenommen)", "Thorsten (aufgenommen)"]);
     await expect(page.locator("#voice")).toHaveValue("Google Deutsch");
+    await openPrefs(page);
     await page.click("#testVoice");
     await expect.poll(() => page.evaluate(() => window.__spoken.map((s) => s.voice))).toEqual(["Google Deutsch"]);
     expect(requested).toEqual([]);
@@ -133,7 +139,9 @@ test("a recorded conversation alternates Kerstin and Thorsten", async ({ page })
   await mockSpeech(page);
   const requested = await withRecordings(page);
   await open(page);
+  await openPrefs(page);
   await page.selectOption("#voice", "rec:kerstin");
+  await page.click("#prefsBack");
   await page.click('#areas [data-v="listen"]');
   for (const id of ["announce", "voicemail", "radio"]) await page.click(`#kinds [data-id="${id}"]`);
   await page.click("#lstart");

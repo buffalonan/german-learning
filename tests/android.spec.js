@@ -1,7 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const { execFileSync } = require("child_process");
 const path = require("path");
-const { mockSpeech, mockNativeSpeech, spoken, open, startRound } = require("./helpers");
+const { mockSpeech, mockNativeSpeech, spoken, open, openPrefs, startRound } = require("./helpers");
 
 // As the plugin reports them: every name is the language, the id is in voiceURI, sorted by id.
 const phoneVoices = [
@@ -39,18 +39,21 @@ test.describe("in the Android app", () => {
   test("each phone voice plays as itself, and the choice is remembered", async ({ page }) => {
     await mockNativeSpeech(page, { voices: phoneVoices });
     await open(page);
+    await openPrefs(page);
     for (const [id, index] of [["de-de-x-deg-network", 3], ["de-de-x-nfh-local", 4]]) {
       await page.selectOption("#voice", id);
       await page.click("#testVoice");
       expect(await page.evaluate(() => window.__spoken.at(-1).voice)).toBe(index);
     }
     await page.reload();
+    await openPrefs(page);
     await expect(page.locator("#voice")).toHaveValue("de-de-x-nfh-local");
   });
 
   test("explains how to add a German voice when the phone has none", async ({ page }) => {
     await mockNativeSpeech(page, { voices: phoneVoices.slice(-1), speakError: "This language is not supported." });
     await open(page);
+    await openPrefs(page);
     await page.click("#testVoice");
     await expect(page.locator("#soundNote")).toContainText("Install voice data → Deutsch");
     expect(await page.evaluate(() => window.__spoken[0].lang)).toBe("de-DE");
