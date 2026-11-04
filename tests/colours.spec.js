@@ -84,7 +84,7 @@ test.describe("colours", () => {
       await startRound(page, { mode: "practice", topics: ["colors"], count: "0" });
       const seen = new Set();
       const deck = await page.evaluate(() => game.deck.length);
-      for (let k = 0; k < deck; k++) {
+      for (let k = 0; await page.locator("#play").isVisible(); k++) {
         const card = await page.evaluate(() => ({ ...game.deck[game.i], illo: illustration(game.deck[game.i]) }));
         // A colour with a painted picture shows that instead of its "#hex" swatch.
         if (card.illo) {
@@ -99,9 +99,8 @@ test.describe("colours", () => {
         seen.add(card.front);
         await page.keyboard.press(" ");
         await expect(page.locator("#card")).toHaveClass(/flipped/);
-        // "Again" on the first card, so the summary has a colour dot to check.
+        // "Again" on the first card, so the summary has a colour dot to check. It comes back later in the round.
         await page.keyboard.press(k === 0 ? "1" : "2");
-        if (k === 0) { await page.keyboard.press(" "); await page.keyboard.press("2"); }
       }
       expect(seen.size).toBe(deck);
       await expect(page.locator("#done")).toBeVisible();

@@ -52,7 +52,19 @@ async function open(page) {
   return errors;
 }
 
+// The full settings fold away once a round has been played; "Ändern" opens them again.
+async function openSetup(page) {
+  if (await page.locator("#setupSheet").isHidden()) await page.click("#editSetup");
+}
+
+// Spieler & Stimme (names, voice, reading aloud) is one page, opened from any section.
+async function openPrefs(page) {
+  await page.locator("section:not([hidden]) [data-prefs]").click();
+  await expect(page.locator("#prefs")).toBeVisible();
+}
+
 async function chooseTopics(page, ids) {
+  await openSetup(page);
   await page.click("#noTopics");
   for (const id of ids) await page.click(`#topics [data-id="${id}"]`);
 }
@@ -68,4 +80,4 @@ async function startRound(page, { mode = "race", topics = ["food"], count = "10"
 
 const isFlipped = (page) => page.locator("#card").evaluate((el) => el.classList.contains("flipped"));
 
-module.exports = { mockSpeech, mockNativeSpeech, spoken, open, chooseTopics, startRound, isFlipped };
+module.exports = { mockSpeech, mockNativeSpeech, spoken, open, openSetup, openPrefs, chooseTopics, startRound, isFlipped };

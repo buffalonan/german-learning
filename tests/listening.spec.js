@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { mockSpeech, spoken, open } = require("./helpers");
+const { mockSpeech, spoken, open, openPrefs } = require("./helpers");
 
 test.beforeEach(async ({ page }) => { await mockSpeech(page); });
 
@@ -53,8 +53,8 @@ test("every listening text is complete", async ({ page }) => {
 
 test("the Hören tab lists the kinds of text, with practice as the default", async ({ page }) => {
   const errors = await openListening(page);
-  await expect(page.locator("#kinds .topic-chip")).toHaveCount(4);
-  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(4);
+  await expect(page.locator("#kinds .topic-chip")).toHaveCount(6);
+  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(6);
   await expect(page.locator('#lmodeSeg [data-v="practice"]')).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator('#lcountSeg [data-v="10"]')).toHaveAttribute("aria-pressed", "true");
   expect(await noSideScroll(page)).toBe(true);
@@ -70,7 +70,7 @@ test("the Hören tab lists the kinds of text, with practice as the default", asy
 test("practice: the text plays straight away, a wrong answer can be tried again", async ({ page }) => {
   await startListening(page, { kinds: ["announce"] });
   const t = await current(page);
-  await expect(page.locator("#lprog")).toHaveText("Text 1 / 8");
+  await expect(page.locator("#lprog")).toHaveText("Text 1 / 10");
   await expect(page.locator("#lQuestion")).toHaveText(t.q);
   await expect(page.locator("#lBuzz")).toBeHidden();
   await expect.poll(() => spoken(page)).toEqual(t.lines);
@@ -97,7 +97,7 @@ test("practice: the text plays straight away, a wrong answer can be tried again"
   expect(await noSideScroll(page)).toBe(true);
 
   await page.keyboard.press("Enter");
-  await expect(page.locator("#lprog")).toHaveText("Text 2 / 8");
+  await expect(page.locator("#lprog")).toHaveText("Text 2 / 10");
   await expect(page.locator("#lFeedback")).toBeHidden();
 });
 
@@ -198,8 +198,9 @@ test("listening settings are remembered and All plays every text", async ({ page
 
 test("player names stay plain text in the listening turn line", async ({ page }) => {
   await open(page);
-  await page.click('#modeSeg [data-v="race"]');
+  await openPrefs(page);
   await page.fill("#p2", "<i>Meri</i>");
+  await page.click("#prefsBack");
   await page.click('#areas [data-v="listen"]');
   await page.click('#lmodeSeg [data-v="race"]');
   await expect(page.locator("#lmodeHelp")).toContainText("<i>Meri</i> with L");
@@ -207,4 +208,56 @@ test("player names stay plain text in the listening turn line", async ({ page })
   await page.keyboard.press("l");
   await expect(page.locator("#lTurn")).toHaveText("<i>Meri</i>, pick an answer.");
   await expect(page.locator("#lTurn i")).toHaveCount(0);
+});
+
+test("interviews are B1 true/false questions with two speakers", async ({ page }) => {
+  await startListening(page, { kinds: ["interviews"] });
+  const t = await current(page);
+  await expect(page.locator("#lOpts .opt")).toHaveCount(2);
+  expect([...(await page.evaluate(() => listen.opts))].sort()).toEqual(["Falsch", "Richtig"]);
+  await expect.poll(async () => (await page.evaluate(() => window.__spoken)).length).toBe(t.lines.length);
+  await page.keyboard.press(String((await rightOpt(page)) + 1));
+  await expect(page.locator("#lScript .who")).toHaveText(t.lines.map((_, n) => (n % 2 ? "B" : "A")));
+});
+
+test("guided tours are B1 monologues read by one voice, a few sentences at a time", async ({ page }) => {
+  await startListening(page, { kinds: ["tours"] });
+  const t = await current(page);
+  expect(t.lines.length).toBeGreaterThanOrEqual(4);
+  await expect(page.locator("#lOpts .opt")).toHaveCount(3);
+  await expect.poll(() => spoken(page)).toEqual(t.lines);
+  const pitches = await page.evaluate(() => window.__spoken.map((s) => s.pitch));
+  expect(new Set(pitches).size).toBe(1);
+  await page.keyboard.press(String((await rightOpt(page)) + 1));
+  await expect(page.locator("#lScript p")).toHaveCount(t.lines.length);
+  await expect(page.locator("#lScript .who")).toHaveCount(0);
+});
+
+test("a kind added after interviews is switched on for players who already knew interviews", async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!sessionStorage.getItem("seeded")) {
+      localStorage.setItem("sagsDeutsch.settings", JSON.stringify({ lkinds: ["radio"], lknown: ["announce", "voicemail", "talks", "radio", "interviews"] }));
+    }
+    sessionStorage.setItem("seeded", "1");
+  });
+  await openListening(page);
+  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(2);
+  await expect(page.locator('#kinds [data-id="tours"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator('#kinds [data-id="interviews"]')).toHaveAttribute("aria-pressed", "false");
+});
+
+test("a kind of text added since the last visit is switched on", async ({ page }) => {
+  // Settings saved before interviews existed: only the first visit starts from them.
+  await page.addInitScript(() => {
+    if (!sessionStorage.getItem("seeded")) localStorage.setItem("sagsDeutsch.settings", JSON.stringify({ lkinds: ["talks"] }));
+    sessionStorage.setItem("seeded", "1");
+  });
+  await openListening(page);
+  await expect(page.locator('#kinds [aria-pressed="true"]')).toHaveCount(3);
+  await expect(page.locator('#kinds [data-id="interviews"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator('#kinds [data-id="tours"]')).toHaveAttribute("aria-pressed", "true");
+  await page.click('#kinds [data-id="interviews"]');
+  await page.reload();
+  await page.click('#areas [data-v="listen"]');
+  await expect(page.locator('#kinds [data-id="interviews"]')).toHaveAttribute("aria-pressed", "false");
 });

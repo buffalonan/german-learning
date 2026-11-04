@@ -24,7 +24,9 @@
   "dependencies": {
     "@capacitor-community/text-to-speech": "8.0.2",
     "@capacitor/android": "8.5.3",
-    "@capacitor/core": "8.5.3"
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.5.3",
+    "peerjs": "1.5.5"
   },
   "overrides": {
     "xcode": {

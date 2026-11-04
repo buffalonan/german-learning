@@ -3,17 +3,19 @@ const { mockSpeech, open, startRound, isFlipped } = require("./helpers");
 
 test.beforeEach(async ({ page }) => { await mockSpeech(page); });
 
-test("Again turns the same card back over", async ({ page }) => {
+test("Again brings the card back after three others", async ({ page }) => {
   await open(page);
   await startRound(page, { mode: "practice" });
   const first = await page.evaluate(() => game.deck[game.i].de);
   await page.keyboard.press(" ");
   await page.click('[data-act="again"]');
   expect(await isFlipped(page)).toBe(false);
-  expect(await page.evaluate(() => game.deck[game.i].de)).toBe(first);
-  await expect(page.locator("#prog")).toHaveText("Karte 1 / 10");
-  await expect(page.locator("#status")).toHaveText("Same card again. Say it, then flip.");
+  await expect(page.locator("#prog")).toHaveText("Karte 2 / 11");
+  await expect(page.locator("#status")).toHaveText("That one comes back in a few cards.");
   await expect(page.locator("#scores .score").nth(1).locator("b")).toHaveText("1");
+  expect(await page.evaluate(() => game.deck[game.i].de)).not.toBe(first);
+  for (let k = 0; k < 3; k++) { await page.keyboard.press(" "); await page.keyboard.press("2"); }
+  expect(await page.evaluate(() => game.deck[game.i].de)).toBe(first);
 });
 
 test("Got it moves on and counts the card", async ({ page }) => {

@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { mockSpeech, spoken, open } = require("./helpers");
+const { mockSpeech, spoken, open, openPrefs } = require("./helpers");
 
 test.beforeEach(async ({ page }) => { await mockSpeech(page); });
 
@@ -38,8 +38,8 @@ test("every grammar sentence is complete", async ({ page }) => {
 test("the Grammatik tab shows every lesson and goes back to the cards", async ({ page }) => {
   const errors = await openGrammar(page);
   await expect(page.locator("#setup")).toBeHidden();
-  await expect(page.locator("#lessons .lesson")).toHaveCount(4);
-  for (const name of ["Akkusativ & Dativ", "Präpositionen", "Perfekt", "Trennbare Verben"]) await expect(page.locator("#lessons")).toContainText(name);
+  await expect(page.locator("#lessons .lesson")).toHaveCount(8);
+  for (const name of ["Akkusativ & Dativ", "Präpositionen", "Perfekt", "Trennbare Verben", "weil, dass, wenn, obwohl", "Präteritum", "Höflich: hätte, könnte, würde", "Komparativ & Superlativ"]) await expect(page.locator("#lessons")).toContainText(name);
   await page.click('#areas [data-v="setup"]');
   await expect(page.locator("#setup")).toBeVisible();
   expect(errors).toEqual([]);
@@ -85,10 +85,20 @@ test("the separable verbs drill reads its examples and quizzes only its own sent
   expect(lessons).toEqual(["Trennbare Verben"]);
 });
 
-test("the Perfekt lesson has plenty of everyday sentences", async ({ page }) => {
+test("every grammar lesson has plenty of everyday sentences", async ({ page }) => {
   await open(page);
-  const n = await page.evaluate(() => GRAMMAR.find((l) => l.id === "perfekt").items.length);
-  expect(n).toBeGreaterThanOrEqual(100);
+  const short = await page.evaluate(() => GRAMMAR.filter((l) => l.items.length < 100).map((l) => `${l.id}: ${l.items.length}`));
+  expect(short).toEqual([]);
+});
+
+test("the prepositions drill practises both wohin and wo", async ({ page }) => {
+  await open(page);
+  const n = await page.evaluate(() => {
+    const whys = GRAMMAR.find((l) => l.id === "preps").items.map((it) => it[5]);
+    return { wohin: whys.filter((w) => w.startsWith("Wohin?")).length, wo: whys.filter((w) => w.startsWith("Wo?")).length };
+  });
+  expect(n.wohin).toBeGreaterThanOrEqual(20);
+  expect(n.wo).toBeGreaterThanOrEqual(20);
 });
 
 test("the Perfekt drill explains haben or sein after an answer", async ({ page }) => {
@@ -164,8 +174,9 @@ test("keys do nothing until an answer is chosen, and only once", async ({ page }
 
 test("player names stay plain text in the turn line", async ({ page }) => {
   await open(page);
-  await page.click('#modeSeg [data-v="race"]');
+  await openPrefs(page);
   await page.fill("#p1", "<b>Ana</b>");
+  await page.click("#prefsBack");
   await page.click('#areas [data-v="grammar"]');
   await page.click('#gmodeSeg [data-v="turns"]');
   await page.click('#lessons [data-quiz="cases"]');
@@ -187,4 +198,14 @@ test("grammar settings are remembered and All plays every sentence", async ({ pa
   expect(await noSideScroll(page)).toBe(true);
   await page.click("#quizQuit");
   await expect(page.locator("#grammar")).toBeVisible();
+});
+
+test("the B1 lessons fit a phone without scrolling sideways", async ({ page }) => {
+  await openGrammar(page);
+  for (const id of ["nebensatz", "praeteritum", "konjunktiv", "komparativ"]) {
+    await page.click(`#lessons [data-theory="${id}"]`);
+    await expect(page.locator(`#theory [data-lesson="${id}"]`)).toBeVisible();
+    expect(await noSideScroll(page)).toBe(true);
+    await page.click("#theoryBack");
+  }
 });
