@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { mockSpeech, spoken, open } = require("./helpers");
+const { mockSpeech, spoken, open, openPrefs } = require("./helpers");
 
 test.beforeEach(async ({ page }) => { await mockSpeech(page); });
 
@@ -198,8 +198,9 @@ test("listening settings are remembered and All plays every text", async ({ page
 
 test("player names stay plain text in the listening turn line", async ({ page }) => {
   await open(page);
-  await page.click('#modeSeg [data-v="race"]');
+  await openPrefs(page);
   await page.fill("#p2", "<i>Meri</i>");
+  await page.click("#prefsBack");
   await page.click('#areas [data-v="listen"]');
   await page.click('#lmodeSeg [data-v="race"]');
   await expect(page.locator("#lmodeHelp")).toContainText("<i>Meri</i> with L");

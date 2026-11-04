@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { mockSpeech, spoken, open, startRound } = require("./helpers");
+const { mockSpeech, spoken, open, openPrefs, startRound } = require("./helpers");
 
 test.describe("card faces", () => {
   test.beforeEach(async ({ page }) => { await mockSpeech(page); });
@@ -113,7 +113,9 @@ test.describe("voice", () => {
   test("turning reading off keeps it quiet", async ({ page }) => {
     await mockSpeech(page);
     await open(page);
+    await openPrefs(page);
     await page.uncheck("#speak");
+    await page.click("#prefsBack");
     await startRound(page);
     await page.keyboard.press(" ");
     expect(await spoken(page)).toEqual([]);
@@ -126,6 +128,7 @@ test.describe("voice", () => {
       { name: "Samantha", lang: "en-US", localService: true },
     ] });
     await open(page);
+    await openPrefs(page);
     await expect(page.locator("#voice option")).toHaveCount(2);
     await expect(page.locator("#voice")).toHaveValue("Google Deutsch");
     await page.click("#testVoice");
@@ -148,8 +151,10 @@ test.describe("voice", () => {
       { name: "Markus", lang: "de-DE", localService: true },
     ] });
     await open(page);
+    await openPrefs(page);
     await page.selectOption("#voice", "Markus");
     await page.reload();
+    await openPrefs(page);
     await expect(page.locator("#voice")).toHaveValue("Markus");
     await page.click("#testVoice");
     expect(await page.evaluate(() => window.__spoken[0].voice)).toBe("Markus");
@@ -158,6 +163,7 @@ test.describe("voice", () => {
   test("a hint appears when no German voice plays", async ({ page }) => {
     await mockSpeech(page, { voices: [], plays: false });
     await open(page);
+    await openPrefs(page);
     await page.click("#testVoice");
     await expect(page.locator("#soundNote")).toBeVisible({ timeout: 4000 });
     await expect(page.locator("#soundNote")).toContainText("No German voice found");

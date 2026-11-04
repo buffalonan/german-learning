@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { mockSpeech, spoken, open } = require("./helpers");
+const { mockSpeech, spoken, open, openPrefs } = require("./helpers");
 
 test.beforeEach(async ({ page }) => { await mockSpeech(page); });
 
@@ -101,8 +101,9 @@ test("find a time: each player sees their own diary, and a task number opens the
 
 test("player names stay plain text on the diary buttons", async ({ page }) => {
   await open(page);
-  await page.click('#modeSeg [data-v="race"]');
+  await openPrefs(page);
   await page.fill("#p2", "<i>Meri</i>");
+  await page.click("#prefsBack");
   await page.click('#areas [data-v="exam"]');
   await page.click('[data-task="termin"]');
   await expect(page.locator('#whoSeg [data-v="1"]')).toHaveText("<i>Meri</i>");
