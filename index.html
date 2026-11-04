@@ -4271,7 +4271,9 @@ async function duoHost(tries = 0) {
   peer.on("open", () => { $("duoWaitText").textContent = "On the other phone, open Zwei Handys, tap Beitreten and type this code."; });
   peer.on("connection", (conn) => { if (duo?.peer !== peer || duo.conn) { conn.close(); return; } attach(conn); });
   peer.on("error", (err) => {
-    if (duo?.peer !== peer) return;
+    // Once the phones are linked they talk directly, so losing the PeerJS server doesn't end the game;
+    // a broken link to the other phone ends it through the connection's close event (duoLost).
+    if (duo?.peer !== peer || duo.conn?.open) return;
     duo = null; peer.destroy();
     if (err.type === "unavailable-id" && tries < 3) duoHost(tries + 1);
     else { duoError("Couldn't make a room. Check the internet and try again."); lobby("start"); }
@@ -4286,7 +4288,9 @@ async function duoJoin(code) {
   duo = { peer, conn: null, host: false, me: 1, names: ["", myName(1)], lag: 0 };
   peer.on("open", () => attach(peer.connect(ROOM + code, { reliable: true })));
   peer.on("error", (err) => {
-    if (duo?.peer !== peer) return;
+    // Once the phones are linked they talk directly, so losing the PeerJS server doesn't end the game;
+    // a broken link to the other phone ends it through the connection's close event (duoLost).
+    if (duo?.peer !== peer || duo.conn?.open) return;
     duo = null; peer.destroy();
     duoError(err.type === "peer-unavailable" ? `No game with the code ${code}. Check the number on the other phone.` : "Couldn't connect. Check the internet and try again.");
     lobby("start");

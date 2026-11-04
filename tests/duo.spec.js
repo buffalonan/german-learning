@@ -167,6 +167,15 @@ test("a listening round reads the text on the referee's phone only", async ({ pa
   await expect(guest.locator("#dBody .script")).toBeVisible();
 });
 
+test("a server hiccup in the middle of a game doesn't stop it", async ({ page }) => {
+  const { host, guest } = await pair(page.context());
+  await host.click('[data-duogame="cards"]');
+  for (const p of [host, guest]) await p.evaluate(() => duo.peer.emit("error", { type: "network" }));
+  await guest.click('[data-dact="buzz"]');
+  await expect(host.locator(".dturn")).toHaveText("Meri war schneller!");
+  await expect(guest.locator("#duoplay")).toBeVisible();
+});
+
 test("a wrong room code says so", async ({ page }) => {
   const guest = await phone(page.context(), "Meri");
   await guest.fill("#duoCode", "0000");
