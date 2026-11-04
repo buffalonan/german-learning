@@ -25,11 +25,14 @@ test("every card is complete and every picture exists", async ({ page }) => {
   expect(problems).toEqual([]);
 });
 
-test("every illustration belongs to a card and its file exists", async ({ page, request }) => {
+test("every illustration belongs to a card or a tile and its file exists", async ({ page, request }) => {
   await open(page);
   const { names, cards } = await page.evaluate(() => ({
     names: window.ART,
-    cards: TOPICS.flatMap((t) => t.items.map((it) => `${t.id}/${artName(it[1])}`)),
+    cards: [
+      ...TOPICS.flatMap((t) => t.items.map((it) => `${t.id}/${artName(it[1])}`)),
+      ...[...TOPICS, ...GRAMMAR, ...LISTENING].map((t) => `tiles/${t.id}`),
+    ],
   }));
   expect(names.length).toBeGreaterThan(0);
   expect(names.filter((n) => !cards.includes(n))).toEqual([]);

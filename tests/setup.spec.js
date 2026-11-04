@@ -142,3 +142,25 @@ test("voice names are shown as text, never run as code", async ({ page }) => {
   expect(await page.evaluate(() => window.__xss)).toBeUndefined();
   expect(await page.locator("#prefs img[src='x']").count()).toBe(0);
 });
+
+test.describe("tile pictures", () => {
+  test("tile ids are unique, so each tile painting belongs to one tile", async ({ page }) => {
+    await open(page);
+    const ids = await page.evaluate(() => [...TOPICS, ...GRAMMAR, ...LISTENING].map((t) => t.id));
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  test("topic, lesson and listening tiles show their painting, or the emoji without one", async ({ page }) => {
+    // Pretend only these three tiles have a painting, whatever art.js lists.
+    await page.route("**/art.js", (r) => r.fulfill({ contentType: "text/javascript", body: 'window.ART = ["tiles/food", "tiles/perfekt", "tiles/radio"];' }));
+    await open(page);
+    await expect(page.locator('#topics img.tile[src="art/tiles/food.webp"]')).toHaveCount(1);
+    await expect(page.locator("#topics img.tile")).toHaveCount(1);
+    // The other topics keep their 3D emoji.
+    await expect(page.locator("#topics .ico img:not(.tile)").first()).toBeVisible();
+    await page.click('#areas [data-v="grammar"]');
+    await expect(page.locator('img.tile[src="art/tiles/perfekt.webp"]')).toBeVisible();
+    await page.click('#areas [data-v="listen"]');
+    await expect(page.locator('img.tile[src="art/tiles/radio.webp"]')).toBeVisible();
+  });
+});

@@ -104,8 +104,11 @@ test.describe("colours", () => {
       }
       expect(seen.size).toBe(deck);
       await expect(page.locator("#done")).toBeVisible();
-      const missed = await page.evaluate(() => game.missed[0].front);
-      if (missed.startsWith("#")) {
+      const [missed, missedArt] = await page.evaluate(() => [game.missed[0].front, illustration(game.missed[0])]);
+      // The summary shows a missed card's painting too, and the colour dot only without one.
+      if (missedArt) {
+        await expect(page.locator("#missed img.thumb").first()).toHaveAttribute("src", missedArt);
+      } else if (missed.startsWith("#")) {
         const dot = page.locator("#missed .dot").first();
         await expect(dot).toBeVisible();
         expect(await pixel(page, dot)).toBe(missed);
