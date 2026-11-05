@@ -423,6 +423,10 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
   .brand { gap: 12px; }
   .logo { width: 76px; height: 76px; border-radius: var(--r-s); }
   .brand h1 { font-size: clamp(1.75rem, 8.4vw, 3.6rem); }
+  /* "Grammatik" can't wrap, so the other sections' titles are a little smaller, and their
+     subtitles wrap before the light/dark button. */
+  section:not(#setup) > .intro .brand h1 { font-size: clamp(1.5rem, 7.4vw, 3.6rem); }
+  section:not(#setup) > .intro .brand small { padding-right: 56px; }
 }
 @media (max-width: 340px) { .areas button { font-size: .66rem; } }
 @media (max-width: 480px) {
@@ -598,7 +602,10 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 
   <section id="grammar" hidden>
     <div class="intro">
-      <div class="plate"><h1>Grammatik</h1><small>Fälle · Perfekt · Nebensätze · Konjunktiv</small></div>
+      <div class="brand">
+        <img class="logo" src="logo/hedgehog-grammar.webp" alt="" width="112" height="112">
+        <div class="plate"><h1>Grammatik</h1><small>Fälle · Perfekt · Nebensätze · Konjunktiv</small></div>
+      </div>
       <p>Read a short explanation, then fill the gaps in everyday sentences. Each answer shows why, and you can hear the sentence.</p>
     </div>
     <div class="sheet quick">
@@ -960,7 +967,10 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
 
   <section id="listen" hidden>
     <div class="intro">
-      <div class="plate"><h1>Hören</h1><small>Durchsagen · Anrufe · Gespräche · Führungen</small></div>
+      <div class="brand">
+        <img class="logo" src="logo/hedgehog-listen.webp" alt="" width="112" height="112">
+        <div class="plate"><h1>Hören</h1><small>Durchsagen · Anrufe · Gespräche · Führungen</small></div>
+      </div>
       <p>Read the question, listen to an announcement, voicemail, conversation, interview or guided tour, and pick the right answer, like in the Goethe A2 and B1 listening test. Play it as often as you need.</p>
     </div>
     <div class="sheet quick">
@@ -1053,7 +1063,10 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
   </section>
   <section id="exam" hidden>
     <div class="intro">
-      <div class="plate"><h1>Prüfung</h1><small>Sprechen · Lesen · Schreiben</small></div>
+      <div class="brand">
+        <img class="logo" src="logo/hedgehog-exam.webp" alt="" width="112" height="112">
+        <div class="plate"><h1>Prüfung</h1><small>Sprechen · Lesen · Schreiben</small></div>
+      </div>
       <p>The other parts of the Goethe A2 and B1 exam: talk a task through together, read short texts and answer, or write an email and compare it with a model answer.</p>
     </div>
     <div class="sheet">
@@ -3099,14 +3112,18 @@ $("theme").onclick = () => { settings.theme = isDark() ? "light" : "dark"; save(
 darkQuery?.addEventListener?.("change", applyTheme);
 applyTheme();
 
-// The logo is as tall as the title block beside it, from the top of the flag bar to the subtitle (capped on narrow phones).
-const plate = document.querySelector(".brand .plate");
-// Resizing the logo can rewrap the title, so it waits for the next frame (no "ResizeObserver loop" error) and only
-// changes when the size really does.
-new ResizeObserver(() => requestAnimationFrame(() => {
-  const size = Math.round(Math.min(plate.offsetHeight, innerWidth * 0.32));
-  if (size && Math.abs(size - $("logo").offsetHeight) > 1) $("logo").style.width = $("logo").style.height = `${size}px`;
-})).observe(plate);
+// Each section's hedgehog is as tall as the title block beside it, from the top of the flag bar to the subtitle
+// (capped on narrow phones, a little more beside the long, unbreakable "Grammatik"). Resizing a logo can rewrap the
+// title, so it waits for the next frame (no "ResizeObserver loop" error) and only changes when the size really does.
+// A hidden section's plate has no height, so it's left alone.
+const brandObserver = new ResizeObserver((entries) => requestAnimationFrame(() => {
+  for (const { target: plate } of entries) {
+    const logo = plate.parentElement.querySelector(".logo");
+    const size = Math.round(Math.min(plate.offsetHeight, innerWidth * (logo.id === "logo" ? 0.32 : 0.28)));
+    if (size && Math.abs(size - logo.offsetHeight) > 1) logo.style.width = logo.style.height = `${size}px`;
+  }
+}));
+document.querySelectorAll(".brand .plate").forEach((plate) => brandObserver.observe(plate));
 
 /* ---------- Setup screen ---------- */
 // Each section opens on a quick-start card with the remembered choices; the full settings fold away under "Ändern"

@@ -61,3 +61,25 @@ for (const width of [320, 360, 412]) {
     expect(errors).toEqual([]);
   });
 }
+
+// Every other section has its own hedgehog pose beside its title, sized like the Wortkarten logo.
+for (const [section, title] of [["grammar", "Grammatik"], ["listen", "Hören"], ["exam", "Prüfung"]]) {
+  test(`the ${title} tab shows its own hedgehog pose beside the title`, async ({ page }) => {
+    await open(page);
+    await page.click(`#areas [data-v="${section}"]`);
+    const logo = page.locator(`#${section} .brand .logo`);
+    await expect(logo).toBeVisible();
+    await expect(logo).toHaveAttribute("src", `logo/hedgehog-${section}.webp`);
+    expect(await logo.evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
+    const plate = page.locator(`#${section} .brand .plate`);
+    await expect(async () => {
+      const [l, p] = [await logo.boundingBox(), await plate.boundingBox()];
+      expect(Math.abs(l.width - l.height)).toBeLessThan(1);
+      expect(l.x + l.width).toBeLessThanOrEqual(p.x);
+      expect(Math.abs(l.y - p.y)).toBeLessThan(1);
+      // As tall as the plate, but at most 28% of the width on narrow phones.
+      expect(Math.abs(l.height - Math.min(p.height, Math.round(page.viewportSize().width * 0.28)))).toBeLessThan(2);
+    }).toPass();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize().width);
+  });
+}
