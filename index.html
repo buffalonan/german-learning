@@ -100,6 +100,8 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 main { max-width: 760px; margin: 0 auto; }
+/* The visitor counter: one small grey line under the sections, only on the published web copy. */
+.visits { max-width: 760px; margin: 28px auto 0; text-align: center; font-size: .75rem; color: var(--muted); }
 button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, input:focus-visible, select:focus-visible, .card:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; margin: 0; line-height: 1.08; letter-spacing: -.015em; }
@@ -1251,6 +1253,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 900; text-wrap: balance; 
     <div id="dBody"></div>
   </section>
 </main>
+<footer class="visits" id="visits" hidden><span id="visitCount"></span> Besucher</footer>
 
 <script src="pictures.js"></script>
 <script src="art.js"></script>
@@ -3479,6 +3482,7 @@ function show(screen) {
   for (const s of SCREENS) $(s).hidden = s !== screen;
   const top = AREAS.includes(screen);
   $("topbar").hidden = $("areas").hidden = !top;
+  $("visits").hidden = !top || !$("visitCount").textContent;
   setSeg("areas", screen);
   window.scrollTo(0, 0);
   if (top && settings.area !== screen) { settings.area = screen; save(); }
@@ -4486,6 +4490,28 @@ $("dBody").addEventListener("click", (e) => {
   else duoAct(a);
 });
 
+/* ---------- Visitor counter ---------- */
+// Only the published web copy has <meta name="visitor-counter" content="namespace/key">, added by
+// scripts/build-app-web.js --web, so the app, the local copy and the tests count nothing. It uses Abacus
+// (abacus.jasoncameron.dev), a free counter with no account and no cookies. Each browser counts once:
+// its first visit asks /hit (adds one), later visits only /get. Offline, blocked or slow, the line stays hidden.
+const VISIT_COUNTER = document.querySelector('meta[name="visitor-counter"]')?.content || "";
+async function showVisits() {
+  if (!/^[\w.-]{3,64}\/[\w.-]{3,64}$/.test(VISIT_COUNTER) || window.Capacitor?.isNativePlatform?.()) return;
+  let counted = false;
+  try { counted = localStorage.getItem("sagsDeutsch.counted") === "1"; } catch { /* storage blocked: count again */ }
+  try {
+    const res = await fetch(`https://abacus.jasoncameron.dev/${counted ? "get" : "hit"}/${VISIT_COUNTER}`,
+      { credentials: "omit", referrerPolicy: "no-referrer", signal: AbortSignal.timeout?.(6000) });
+    if (!res.ok) return;
+    const { value } = await res.json();
+    if (!Number.isInteger(value) || value < 1) return;
+    if (!counted) try { localStorage.setItem("sagsDeutsch.counted", "1"); } catch { /* not remembered */ }
+    $("visitCount").textContent = value.toLocaleString("de-DE");
+    $("visits").hidden = !AREAS.includes(current);
+  } catch { /* offline or blocked: no counter */ }
+}
+
 /* ---------- Init ---------- */
 $("p1").value = settings.p1; $("p2").value = settings.p2; $("speak").checked = settings.speak;
 setSeg("countSeg", settings.count); setSeg("hintSeg", settings.hint);
@@ -4498,6 +4524,7 @@ renderResume(); renderMistakes();
 // A reload keeps the history entry of the screen it was on; start clean on a section (the last one used).
 if (history.state?.sub) history.replaceState(null, "");
 show(AREAS.includes(settings.area) ? settings.area : "setup");
+showVisits();
 </script>
 </body>
 </html>
