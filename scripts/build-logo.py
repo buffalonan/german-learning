@@ -2,6 +2,10 @@
 """Make the hedgehog logo in every size the web page and the Android app need.
 
 Usage: python3 scripts/build-logo.py <original picture>
+       python3 scripts/build-logo.py pose <section> <picture>
+
+The second form makes the hedgehog for another section's title (logo/hedgehog-<section>.webp, e.g. grammar, listen,
+exam), from a Gemini painting with the same layout as the original. Prompts: illustrations/logo/hedgehog-poses.md.
 
 The original (1646px square, hedgehog on the right, "hallo!" bubble on the left) is in the
 project's shared files at illustrations/logo/. Writes:
@@ -50,7 +54,17 @@ def circle(img):
     return out
 
 
+def pose(section, picture):
+    """A square crop from the middle of the picture, shrunk like hedgehog.webp."""
+    src = Image.open(picture).convert("RGB")
+    side = min(src.size)
+    src = src.crop(((src.width - side) // 2, (src.height - side) // 2, (src.width + side) // 2, (src.height + side) // 2))
+    src.resize((320, 320), Image.LANCZOS).save(os.path.join(ROOT, "logo", f"hedgehog-{section}.webp"), quality=82, method=6)
+
+
 def main():
+    if len(sys.argv) == 4 and sys.argv[1] == "pose":
+        return pose(sys.argv[2], sys.argv[3])
     if len(sys.argv) != 2:
         sys.exit(__doc__)
     src = Image.open(sys.argv[1]).convert("RGB")
