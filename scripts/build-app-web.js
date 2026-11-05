@@ -3,6 +3,7 @@
 //   --web leaves out capacitor.js, which only the app needs. npm run app:sync runs this and then cap sync.
 // The painted card illustrations (art.js and art/), the hedgehog logo (logo/) and manifest.webmanifest are copied too.
 // peerjs.min.js (from the peerjs package) is copied too: the Zwei Handys mode loads it when two phones connect.
+// With --web the page also gets <meta name="visitor-counter">, which turns on the footer's visitor counter.
 // If audio/ exists (recorded voices from scripts/build-audio.py), it's copied too and the page is told which voices it has.
 const fs = require("fs");
 const path = require("path");
@@ -32,6 +33,13 @@ if (voices.length) {
   const meta = '<meta charset="utf-8">';
   if (!page.includes(meta)) throw new Error(`Couldn't find ${meta} in index.html`);
   page = page.replace(meta, `${meta}\n<meta name="recorded-voices" content="${voices.join(" ")}">`);
+}
+
+// The web copy shows a small visitor counter in the footer (Abacus, no account). The app and local copies don't count.
+if (web) {
+  const meta = '<meta charset="utf-8">';
+  if (!page.includes(meta)) throw new Error(`Couldn't find ${meta} in index.html`);
+  page = page.replace(meta, `${meta}\n<meta name="visitor-counter" content="buffalonan-german-learning/besucher">`);
 }
 
 fs.writeFileSync(path.join(out, "index.html"), page);
