@@ -1,9 +1,15 @@
 name: Recorded voices
 description: Records every German text the game reads aloud with Piper into audio/ (kept in the CI cache between runs). Needs npm ci first.
+inputs:
+  minutes:
+    description: Stop recording after this many minutes; the rest is recorded by later runs, and the device voice reads it meanwhile.
+    default: "15"
 runs:
   using: composite
   steps:
-    - uses: actions/cache@v4
+    # Restore the newest recordings, and save them again even if the job fails or times out,
+    # so a cache that GitHub evicted fills up again over a few runs instead of never.
+    - uses: actions/cache/restore@v4
       with:
         path: |
           audio
@@ -15,6 +21,8 @@ runs:
         python-version: "3.12"
     - name: Record
       shell: bash
+      env:
+        AUDIO_MINUTES: ${{ inputs.minutes }}
       run: |
         sudo apt-get install -y --no-install-recommends ffmpeg > /dev/null
         pip install --quiet piper-tts==1.8.0
@@ -22,3 +30,10 @@ runs:
         node scripts/list-spoken.js "$RUNNER_TEMP/audio-texts.json"
         python scripts/build-audio.py "$RUNNER_TEMP/audio-texts.json"
         du -sh audio
+    - if: always()
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          audio
+          .piper-voices
+        key: recorded-voices-${{ hashFiles('index.html', 'scripts/build-audio.py') }}-${{ github.run_id }}-${{ github.run_attempt }}

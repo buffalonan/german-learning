@@ -3,12 +3,16 @@
 Usage: python scripts/build-audio.py audio-texts.json   (the list comes from scripts/list-spoken.js)
 Needs: pip install piper-tts, and ffmpeg. Voices download from Hugging Face on first use.
 Files that already exist are kept (CI caches audio/), and recordings of texts the game no longer uses are removed.
+With AUDIO_MINUTES set, recording stops after that many minutes and the rest waits for the next run (CI saves what was
+made in its cache either way). Texts without a recording are read by the device voice, so a partial set still works.
 """
 import json
+import os
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import wave
 from pathlib import Path
 
@@ -29,6 +33,8 @@ MODELS = ROOT / ".piper-voices"
 
 
 def main() -> None:
+    budget = float(os.environ.get("AUDIO_MINUTES") or 0) * 60
+    deadline = time.monotonic() + budget if budget else None
     items = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     MODELS.mkdir(exist_ok=True)
     for folder, model in VOICES.items():
@@ -52,6 +58,8 @@ def main() -> None:
             mp3 = out / f"{item['name']}.mp3"
             if mp3.exists():
                 continue
+            if deadline and time.monotonic() > deadline:
+                break
             with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
                 with wave.open(tmp.name, "wb") as wav:
                     voice.synthesize_wav(item["text"], wav, syn_config=SynthesisConfig(
@@ -61,7 +69,8 @@ def main() -> None:
                     check=True,
                 )
             made += 1
-        print(f"{folder}: {made} new, {len(wanted)} in total")
+        have = sum(1 for i in items if (out / f"{i['name']}.mp3").exists())
+        print(f"{folder}: {made} new, {have} of {len(wanted)} recorded")
     # Keep each voice's model card (with its licence) next to the recordings.
     for card in MODELS.glob("*.onnx.json"):
         shutil.copy(card, ROOT / "audio" / card.name)
