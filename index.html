@@ -1304,7 +1304,11 @@ const TOPICS = [
     ["🧂","Salz","das","salt","sal"],["🍋","Zitrone","die","lemon","limón"],["🍊","Orange","die","orange","naranja"],
     ["🥣","Joghurt","der","yoghurt","yogur"],["🫙","Marmelade","die","jam","mermelada"],["🍫","Schokolade","die","chocolate","chocolate"],
     ["🥒","Gurke","die","cucumber","pepino"],["🍇","Obst","das","fruit","fruta"],["🥦","Gemüse","das","vegetables","verdura"],
-    ["🥐","Frühstück","das","breakfast","desayuno"],["🍛","Mittagessen","das","lunch","comida"],["🍽️","Abendessen","das","dinner","cena"]
+    ["🥐","Frühstück","das","breakfast","desayuno"],["🍛","Mittagessen","das","lunch","comida"],["🍽️","Abendessen","das","dinner","cena"],
+    ["🍐","Birne","die","pear","pera"],["🍒","Kirsche","die","cherry","cereza"],["🍇","Weintraube","die","grape","uva"],
+    ["🍄","Pilz","der","mushroom","champiñón, seta"],["🫑","Paprika","die","(bell) pepper","pimiento"],["🍯","Honig","der","honey","miel"],
+    ["🥣","Müsli","das","muesli","muesli"],["🥛","Sahne","die","cream","nata"],["🧂","Pfeffer","der","pepper (spice)","pimienta"],
+    ["🫒","Öl","das","oil","aceite"]
   ]},
   { id: "verbs", name: "Verben", en: "Verbs", icon: "🏃", items: [
     ["🏃","rennen","","to run","correr"],["🚶","gehen","","to walk, to go","caminar, ir"],["😴","schlafen","","to sleep","dormir"],
@@ -1326,7 +1330,11 @@ const TOPICS = [
     ["🤲","geben","","to give","dar"],["📮","schicken","","to send","enviar"],["🔧","reparieren","","to repair","arreglar, reparar"],
     ["🤗","sich treffen","","to meet up","quedar, encontrarse"],["🚚","umziehen","","to move (house)","mudarse"],["⏩","sich beeilen","","to hurry","darse prisa"],
     ["💭","träumen","","to dream","soñar"],["🌄","aufwachen","","to wake up","despertarse"],["🏡","mieten","","to rent","alquilar"],
-    ["🧳","packen","","to pack","hacer la maleta"],["🥞","frühstücken","","to have breakfast","desayunar"]
+    ["🧳","packen","","to pack","hacer la maleta"],["🥞","frühstücken","","to have breakfast","desayunar"],
+    ["🛍️","kaufen","","to buy","comprar"],["🏷️","verkaufen","","to sell","vender"],["📦","tragen","","to carry, to wear","llevar"],
+    ["👉","zeigen","","to show, to point","mostrar, señalar"],["🧑‍🏫","erklären","","to explain","explicar"],["💡","verstehen","","to understand","entender"],
+    ["🥖","backen","","to bake","hornear"],["🔪","schneiden","","to cut","cortar"],["🧹","aufräumen","","to tidy up","ordenar, recoger"],
+    ["🧽","abwaschen","","to do the dishes","fregar los platos"],["👔","bügeln","","to iron","planchar"],["🪴","gießen","","to water (plants)","regar"]
   ]},
   { id: "home", name: "Wohnung & Möbel", en: "Home & furniture", icon: "🛋️", items: [
     ["🪑","Stuhl","der","chair","silla"],["🛏️","Bett","das","bed","cama"],["🛋️","Sofa","das","sofa","sofá"],
@@ -1345,7 +1353,11 @@ const TOPICS = [
     ["🌻","Garten","der","garden","jardín"],["♨️","Heizung","die","heating, radiator","calefacción"],["🫧","Waschmaschine","die","washing machine","lavadora"],
     ["🧺","Wäsche","die","laundry","colada, ropa sucia"],["🗑️","Müll","der","rubbish","basura"],["🔌","Steckdose","die","socket","enchufe"],
     ["🚰","Wasserhahn","der","tap","grifo"],["🛗","Aufzug","der","lift","ascensor"],["🔔","Klingel","die","doorbell","timbre"],
-    ["💰","Miete","die","rent","alquiler"],["🧑‍🦳","Vermieter","der","landlord","casero","die Vermieterin"],["🚛","Umzug","der","move (house)","mudanza"]
+    ["💰","Miete","die","rent","alquiler"],["🧑‍🦳","Vermieter","der","landlord","casero","die Vermieterin"],["🚛","Umzug","der","move (house)","mudanza"],
+    ["🛏️","Kissen","das","cushion, pillow","cojín, almohada"],["🛌","Decke","die","blanket","manta"],["🧶","Teppich","der","rug, carpet","alfombra"],
+    ["🪟","Vorhang","der","curtain","cortina"],["📚","Regal","das","shelf","estantería"],["🧖","Handtuch","das","towel","toalla"],
+    ["🍲","Topf","der","pot, saucepan","olla"],["🍳","Pfanne","die","frying pan","sartén"],["🌀","Staubsauger","der","vacuum cleaner","aspiradora"],
+    ["🍽️","Spülmaschine","die","dishwasher","lavavajillas"],["🧼","Seife","die","soap","jabón"],["🪥","Zahnbürste","die","toothbrush","cepillo de dientes"]
   ]},
   { id: "work", name: "Arbeit & Berufe", en: "Work & jobs", icon: "💼", items: [
     ["🏢","Büro","das","office","oficina"],["💻","Computer","der","computer","ordenador"],["📧","E-Mail","die","email","correo electrónico"],
@@ -1361,7 +1373,9 @@ const TOPICS = [
     ["👥","Besprechung","die","meeting","reunión"],["👨‍💼","Kollege","der","colleague","compañero de trabajo","die Kollegin"],
     ["🏪","Verkäufer","der","shop assistant","dependiente","die Verkäuferin"],["🤵","Kellner","der","waiter","camarero","die Kellnerin"],
     ["💈","Friseur","der","hairdresser","peluquero","die Friseurin"],["🪥","Zahnarzt","der","dentist","dentista","die Zahnärztin"],
-    ["🩺","Krankenpfleger","der","nurse","enfermero","die Krankenpflegerin"]
+    ["🩺","Krankenpfleger","der","nurse","enfermero","die Krankenpflegerin"],
+    ["🥐","Bäcker","der","baker","panadero","die Bäckerin"],["🚌","Busfahrer","der","bus driver","conductor de autobús","die Busfahrerin"],["⚖️","Anwalt","der","lawyer","abogado","die Anwältin"],
+    ["🔌","Elektriker","der","electrician","electricista","die Elektrikerin"],["👷","Ingenieur","der","engineer","ingeniero","die Ingenieurin"]
   ]},
   { id: "animals", name: "Tiere", en: "Animals", icon: "🐕", items: [
     ["🐕","Hund","der","dog","perro"],["🐈","Katze","die","cat","gato"],["🐎","Pferd","das","horse","caballo"],
@@ -1370,7 +1384,9 @@ const TOPICS = [
     ["🐔","Huhn","das","hen","gallina"],["🐝","Biene","die","bee","abeja"],["🦋","Schmetterling","der","butterfly","mariposa"],
     ["🐍","Schlange","die","snake","serpiente"],["🐘","Elefant","der","elephant","elefante"],["🦁","Löwe","der","lion","león"],
     ["🐇","Kaninchen","das","rabbit","conejo"],["🐸","Frosch","der","frog","rana"],["🦆","Ente","die","duck","pato"],
-    ["🐑","Schaf","das","sheep","oveja"],["🐒","Affe","der","monkey","mono"]
+    ["🐑","Schaf","das","sheep","oveja"],["🐒","Affe","der","monkey","mono"],
+    ["🦔","Igel","der","hedgehog","erizo"],["🐿️","Eichhörnchen","das","squirrel","ardilla"],["🐐","Ziege","die","goat","cabra"],
+    ["🫏","Esel","der","donkey","burro"],["🕷️","Spinne","die","spider","araña"],["🕊️","Taube","die","pigeon, dove","paloma"]
   ]},
   { id: "body", name: "Körper", en: "Body", icon: "✋", items: [
     ["💪","Arm","der","arm","brazo"],["🦵","Bein","das","leg","pierna"],["🦶","Fuß","der","foot","pie"],
@@ -1381,7 +1397,8 @@ const TOPICS = [
     ["👤","Kopf","der","head","cabeza"],["🙂","Gesicht","das","face","cara"],["🦒","Hals","der","neck, throat","cuello, garganta"],
     ["🙆","Schulter","die","shoulder","hombro"],["🎒","Rücken","der","back","espalda"],["🫃","Bauch","der","belly","barriga"],
     ["🦵","Knie","das","knee","rodilla"],["👍","Daumen","der","thumb","pulgar"],["🦶","Zeh","der","toe","dedo del pie"],
-    ["🧔","Bart","der","beard","barba"]
+    ["🧔","Bart","der","beard","barba"],
+    ["🖐️","Haut","die","skin","piel"],["💪","Ellbogen","der","elbow","codo"]
   ]},
   { id: "clothes", name: "Kleidung", en: "Clothes", icon: "👕", items: [
     ["👕","T-Shirt","das","T-shirt","camiseta"],["👖","Hose","die","trousers","pantalones"],["👗","Kleid","das","dress","vestido"],
@@ -1392,7 +1409,9 @@ const TOPICS = [
     ["🧶","Pullover","der","jumper","jersey"],["👔","Hemd","das","shirt","camisa"],["👚","Bluse","die","blouse","blusa"],
     ["👘","Rock","der","skirt","falda"],["🧥","Mantel","der","coat","abrigo"],["👖","Jeans","die","jeans","vaqueros"],
     ["👢","Stiefel","der","boot","bota"],["🪢","Gürtel","der","belt","cinturón"],["🌙","Schlafanzug","der","pyjamas","pijama"],
-    ["☂️","Regenschirm","der","umbrella","paraguas"]
+    ["☂️","Regenschirm","der","umbrella","paraguas"],
+    ["🩴","Sandalen","pl","sandals","sandalias"],["🕶️","Sonnenbrille","die","sunglasses","gafas de sol"],["📿","Kette","die","necklace, chain","collar, cadena"],
+    ["💍","Ring","der","ring","anillo"],["🎒","Rucksack","der","backpack","mochila"]
   ]},
   { id: "nature", name: "Wetter & Natur", en: "Weather & nature", icon: "🌦️", items: [
     ["🌧️","Regen","der","rain","lluvia"],["❄️","Schnee","der","snow","nieve"],["🌬️","Wind","der","wind","viento"],
@@ -1403,7 +1422,9 @@ const TOPICS = [
     ["🌷","Frühling","der","spring","primavera"],["🌞","Sommer","der","summer","verano"],["🍂","Herbst","der","autumn","otoño"],
     ["⛄","Winter","der","winter","invierno"],["🌤️","Himmel","der","sky","cielo"],["🌲","Wald","der","forest","bosque"],
     ["🛶","Fluss","der","river","río"],["🦢","See","der","lake","lago"],["🌼","Wiese","die","meadow","prado"],
-    ["🍃","Blatt","das","leaf","hoja"]
+    ["🍃","Blatt","das","leaf","hoja"],
+    ["🌪️","Sturm","der","storm, gale","temporal"],["🥵","Hitze","die","heat","calor"],["🪨","Stein","der","stone","piedra"],
+    ["🌱","Gras","das","grass","hierba"],["🌾","Feld","das","field","campo"],["🌇","Sonnenuntergang","der","sunset","puesta de sol"]
   ]},
   { id: "science", name: "Wissenschaft", en: "Science", icon: "🔬", items: [
     ["⚛️","Atom","das","atom","átomo"],["🧲","Magnet","der","magnet","imán"],["🔬","Mikroskop","das","microscope","microscopio"],
@@ -1425,7 +1446,11 @@ const TOPICS = [
     ["🛫","Flughafen","der","airport","aeropuerto"],["🧳","Koffer","der","suitcase","maleta"],["🛂","Reisepass","der","passport","pasaporte"],
     ["🛒","Supermarkt","der","supermarket","supermercado"],["🥖","Bäckerei","die","bakery","panadería"],["⚕️","Apotheke","die","pharmacy","farmacia"],
     ["🍝","Restaurant","das","restaurant","restaurante"],["🫖","Café","das","café","cafetería"],["🏤","Post","die","post office","correos"],
-    ["🎬","Kino","das","cinema","cine"],["🏞️","Park","der","park","parque"],["🌉","Brücke","die","bridge","puente"]
+    ["🎬","Kino","das","cinema","cine"],["🏞️","Park","der","park","parque"],["🌉","Brücke","die","bridge","puente"],
+    ["🚋","Straßenbahn","die","tram","tranvía"],["🏍️","Motorrad","das","motorbike","moto"],["⛽","Tankstelle","die","petrol station","gasolinera"],
+    ["🅿️","Parkplatz","der","car park, parking space","aparcamiento"],["🚸","Kreuzung","die","crossroads","cruce"],["🛤️","Gleis","das","platform, track","vía, andén"],
+    ["🚪","Eingang","der","entrance","entrada"],["🏃","Ausgang","der","exit","salida"],["🏛️","Rathaus","das","town hall","ayuntamiento"],
+    ["🕒","Fahrplan","der","timetable","horario"]
   ]},
   { id: "family", name: "Familie & Leute", en: "Family & people", icon: "👨‍👩‍👧", items: [
     ["👩","Mutter","die","mother","madre"],["👨","Vater","der","father","padre"],["👨‍👩‍👧","Eltern","pl","parents","padres"],
@@ -1434,7 +1459,9 @@ const TOPICS = [
     ["👴","Großvater","der","grandfather","abuelo"],["👵","Großmutter","die","grandmother","abuela"],["👨‍🦱","Onkel","der","uncle","tío"],
     ["👩‍🦰","Tante","die","aunt","tía"],["🙋‍♂️","Mann","der","man, husband","hombre, marido"],["🙋‍♀️","Frau","die","woman, wife","mujer"],
     ["💑","Paar","das","couple","pareja"],["💒","Hochzeit","die","wedding","boda"],["🧑‍🤝‍🧑","Freund","der","friend","amigo","die Freundin"],
-    ["🙋","Nachbar","der","neighbour","vecino","die Nachbarin"]
+    ["🙋","Nachbar","der","neighbour","vecino","die Nachbarin"],
+    ["👦","Enkel","der","grandson","nieto","die Enkelin"],["🧑","Cousin","der","cousin","primo","die Cousine"],["👫","Geschwister","pl","brothers and sisters, siblings","hermanos"],
+    ["🤝","Gast","der","guest","invitado"]
   ]},
   { id: "time", name: "Zeit & Termine", en: "Time & dates", icon: "⏰", cue: true, items: [
     ["🗓️","Montag","der","Monday","lunes"],["🗓️","Dienstag","der","Tuesday","martes"],["🗓️","Mittwoch","der","Wednesday","miércoles"],
@@ -1458,7 +1485,9 @@ const TOPICS = [
     ["📝","Rezept","das","prescription","receta"],["💊","Medikament","das","medicine","medicamento"],["🧴","Salbe","die","ointment, cream","pomada"],
     ["🩹","Pflaster","das","plaster","tirita"],["💉","Spritze","die","injection","inyección"],["🩸","Blut","das","blood","sangre"],
     ["🚑","Krankenwagen","der","ambulance","ambulancia"],["🚨","Notaufnahme","die","A&E, emergency room","urgencias"],["🏥","Praxis","die","doctor's surgery","consulta"],
-    ["💺","Wartezimmer","das","waiting room","sala de espera"],["🪪","Versichertenkarte","die","health insurance card","tarjeta sanitaria"]
+    ["💺","Wartezimmer","das","waiting room","sala de espera"],["🪪","Versichertenkarte","die","health insurance card","tarjeta sanitaria"],
+    ["😷","Halsschmerzen","pl","sore throat","dolor de garganta"],["🤧","Schnupfen","der","runny nose, head cold","resfriado, mocos"],["🌼","Allergie","die","allergy","alergia"],
+    ["🩹","Verband","der","bandage","venda"]
   ]},
   { id: "shopping", name: "Einkaufen", en: "Shopping", icon: "🛒", items: [
     ["🛒","Einkaufswagen","der","shopping trolley","carrito de la compra"],["💵","Kasse","die","checkout, till","caja"],["🧾","Kassenbon","der","receipt","tique"],
@@ -1467,7 +1496,9 @@ const TOPICS = [
     ["🔖","Preis","der","price","precio"],["📣","Angebot","das","special offer","oferta"],["👛","Geldbeutel","der","wallet, purse","monedero, cartera"],
     ["🪙","Münze","die","coin","moneda"],["🚪","Umkleidekabine","die","fitting room","probador"],["📏","Größe","die","size","talla"],
     ["🎁","Geschenk","das","present","regalo"],["🔄","umtauschen","","to exchange (in a shop)","cambiar (en una tienda)"],
-    ["🏷️","billig","","cheap","barato"],["💎","teuer","","expensive","caro"]
+    ["🏷️","billig","","cheap","barato"],["💎","teuer","","expensive","caro"],
+    ["💶","Bargeld","das","cash","dinero en efectivo"],["💳","Kreditkarte","die","credit card","tarjeta de crédito"],["🏬","Schaufenster","das","shop window","escaparate"],
+    ["🥩","Metzgerei","die","butcher's","carnicería"],["📝","Einkaufsliste","die","shopping list","lista de la compra"]
   ]},
   { id: "feelings", name: "Gefühle & Gegensätze", en: "Feelings & opposites", icon: "😊", items: [
     ["😊","glücklich","","happy","feliz"],["😞","traurig","","sad","triste"],["😠","wütend","","angry","enfadado, enfadada"],
@@ -1476,7 +1507,10 @@ const TOPICS = [
     ["🔥","heiß","","hot","caliente"],["🧊","kalt","","cold","frío"],["👵","alt","","old","viejo"],
     ["✨","neu","","new","nuevo"],["🐇","schnell","","fast","rápido"],["🐢","langsam","","slow","lento"],
     ["🫧","sauber","","clean","limpio"],["🐷","schmutzig","","dirty","sucio"],["🪶","leicht","","light (not heavy); easy","ligero; fácil"],
-    ["🪨","schwer","","heavy; difficult","pesado; difícil"],["🔋","voll","","full","lleno"],["🪫","leer","","empty","vacío"]
+    ["🪨","schwer","","heavy; difficult","pesado; difícil"],["🔋","voll","","full","lleno"],["🪫","leer","","empty","vacío"],
+    ["📢","laut","","loud","fuerte, ruidoso"],["🤫","leise","","quiet","bajo, silencioso"],["☀️","hell","","bright, light","claro, luminoso"],
+    ["🌑","dunkel","","dark","oscuro"],["💧","nass","","wet","mojado"],["🏜️","trocken","","dry","seco"],
+    ["😍","verliebt","","in love","enamorado, enamorada"],["😑","gelangweilt","","bored","aburrido, aburrida"]
   ]},
   { id: "leisure", name: "Freizeit & Hobbys", en: "Free time & hobbies", icon: "⚽", items: [
     ["🏖️","Urlaub","der","holiday","vacaciones"],["🎼","Konzert","das","concert","concierto"],["🏛️","Museum","das","museum","museo"],
@@ -1485,7 +1519,9 @@ const TOPICS = [
     ["🏋️","Fitnessstudio","das","gym","gimnasio"],["🤽","Schwimmbad","das","swimming pool","piscina"],["🧘","Yoga","das","yoga","yoga"],
     ["🎸","Gitarre","die","guitar","guitarra"],["🎲","Brettspiel","das","board game","juego de mesa"],["📕","Buch","das","book","libro"],
     ["🏔️","wandern","","to hike","hacer senderismo"],["🚴","Rad fahren","","to cycle","ir en bici"],["📸","fotografieren","","to take photos","hacer fotos"],
-    ["🖌️","malen","","to paint","pintar"]
+    ["🖌️","malen","","to paint","pintar"],
+    ["🗺️","Ausflug","der","trip, outing","excursión"],["🧺","Picknick","das","picnic","picnic"],["🍖","grillen","","to have a barbecue","hacer una barbacoa"],
+    ["🎣","angeln","","to fish","pescar"]
   ]},
   { id: "office", name: "Ämter & Post", en: "Offices, post & bank", icon: "🏛️", items: [
     ["📄","Formular","das","form","formulario"],["📝","Antrag","der","application (form)","solicitud"],["✍️","Unterschrift","die","signature","firma"],
@@ -1539,7 +1575,10 @@ const TOPICS = [
     ["🤤","Das schmeckt sehr gut!","","This tastes really good!","¡Esto está muy rico!"],["🍔","Ich habe Hunger.","","I'm hungry.","Tengo hambre."],
     ["🫗","Ich habe Durst.","","I'm thirsty.","Tengo sed."],["🥱","Ich bin müde.","","I'm tired.","Estoy cansado/a."],
     ["🤕","Ich habe Kopfschmerzen.","","I have a headache.","Me duele la cabeza."],["💐","Gute Besserung!","","Get well soon!","¡Que te mejores!"],
-    ["🗓️","Hast du heute Zeit?","","Are you free today?","¿Tienes tiempo hoy?"]
+    ["🗓️","Hast du heute Zeit?","","Are you free today?","¿Tienes tiempo hoy?"],
+    ["🤝","Freut mich!","","Nice to meet you!","¡Encantado! / ¡Encantada!"],["👌","Kein Problem.","","No problem.","No hay problema."],["👋","Bis später!","","See you later!","¡Hasta luego!"],
+    ["🎉","Schönes Wochenende!","","Have a nice weekend!","¡Buen fin de semana!"],["🗣️","Ich spreche ein bisschen Deutsch.","","I speak a little German.","Hablo un poco de alemán."],["🔁","Können Sie das bitte wiederholen?","","Could you repeat that, please?","¿Puede repetirlo, por favor?"],
+    ["🌍","Ich komme aus Spanien.","","I'm from Spain.","Soy de España."]
   ]}
 ];
 
