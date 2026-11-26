@@ -18,7 +18,7 @@ jobs:
   deploy:
     name: Publish to GitHub Pages
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     permissions:
       pages: write
       id-token: write
@@ -33,6 +33,8 @@ jobs:
           cache: npm
       - run: npm ci
       - uses: ./.github/actions/recorded-voices
+        with:
+          minutes: "5"
       - name: Collect the game's files
         run: node scripts/build-app-web.js _site --web
       - uses: actions/configure-pages@v5

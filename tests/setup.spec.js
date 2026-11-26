@@ -32,7 +32,9 @@ test("practice is the default mode, and the quick start says what the round will
   await page.click('#hintSeg [data-v="en"]');
   await expect(page.locator("#quickSum")).toHaveText("Farben, Zahlen, Essen & Trinken +1 · 20 Karten · Wettkampf: Ferran gegen Meri · English hint");
   await page.click('#countSeg [data-v="0"]');
-  await expect(page.locator("#quickSum")).toContainText("Alle 138 Karten");
+  // The default topics, counted here so adding words doesn't break the test.
+  const all = await page.evaluate(() => TOPICS.filter((t) => DEFAULTS.topics.includes(t.id)).reduce((n, t) => n + t.items.length, 0));
+  await expect(page.locator("#quickSum")).toContainText(`Alle ${all} Karten`);
 });
 
 test("the start button sits above the settings, which fold away once a round has been played", async ({ page }) => {
