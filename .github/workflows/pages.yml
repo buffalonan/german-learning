@@ -37,7 +37,7 @@ jobs:
           minutes: "5"
       - name: Collect the game's files
         run: node scripts/build-app-web.js _site --web
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v3
       - id: deployment
         uses: actions/deploy-pages@v4
