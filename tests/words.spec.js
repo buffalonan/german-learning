@@ -44,3 +44,11 @@ test("art names match the ones scripts/add-art.py makes", async ({ page }) => {
   const got = await page.evaluate(() => ["aufstehen", "sich setzen", "Glühbirne", "Fuß", "E-Mail", "Öl"].map(artName));
   expect(got).toEqual(["aufstehen", "sich-setzen", "gluehbirne", "fuss", "e-mail", "oel"]);
 });
+
+test("every card has a painting", async ({ page }) => {
+  await open(page);
+  const missing = await page.evaluate(() =>
+    TOPICS.flatMap((t) => t.items.map((it) => `${t.id}/${artName(it[1])}`)).filter((n) => !window.ART.includes(n)),
+  );
+  expect(missing).toEqual([]);
+});
