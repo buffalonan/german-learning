@@ -20,7 +20,8 @@ from piper import PiperVoice, SynthesisConfig
 from piper.download_voices import download_voice
 
 # Folder name in audio/ -> Piper voice. Licences are in the .onnx.json files copied next to the recordings.
-VOICES = {"kerstin": "de_DE-kerstin-low", "thorsten": "de_DE-thorsten-high"}
+# Kerstin (de_DE-kerstin-low) was dropped in November 2026: she mispronounced too much.
+VOICES = {"thorsten": "de_DE-thorsten-high"}
 # Slow and clear, for learners: 1.0 is Piper's normal speed. Lower noise makes the voice steadier and less breathy.
 LENGTH_SCALE = 1.4
 NOISE_SCALE = 0.45
@@ -37,6 +38,14 @@ def main() -> None:
     deadline = time.monotonic() + budget if budget else None
     items = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     MODELS.mkdir(exist_ok=True)
+    # Voices no longer in VOICES (restored from an older CI cache) are removed with their model cards.
+    audio = ROOT / "audio"
+    if audio.exists():
+        for old in audio.iterdir():
+            if old.is_dir() and old.name not in VOICES:
+                shutil.rmtree(old)
+            elif old.name.endswith(".onnx.json") and old.name[: -len(".onnx.json")] not in VOICES.values():
+                old.unlink()
     for folder, model in VOICES.items():
         if not (MODELS / f"{model}.onnx").exists():
             download_voice(model, MODELS)
@@ -72,8 +81,8 @@ def main() -> None:
         have = sum(1 for i in items if (out / f"{i['name']}.mp3").exists())
         print(f"{folder}: {made} new, {have} of {len(wanted)} recorded")
     # Keep each voice's model card (with its licence) next to the recordings.
-    for card in MODELS.glob("*.onnx.json"):
-        shutil.copy(card, ROOT / "audio" / card.name)
+    for model in VOICES.values():
+        shutil.copy(MODELS / f"{model}.onnx.json", audio / f"{model}.onnx.json")
 
 
 if __name__ == "__main__":

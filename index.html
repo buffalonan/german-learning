@@ -3301,7 +3301,8 @@ const ss = window.speechSynthesis;
 // (scripts/build-audio.py). They sound the same on every device; anything missing falls back to the device voice.
 // The published copies (web and app) list the recorded voices in <meta name="recorded-voices">, added by
 // scripts/build-app-web.js; the plain index.html has none and uses the device voices only.
-const REC_NAMES = { kerstin: "Kerstin", thorsten: "Thorsten" };
+// Kerstin was dropped in November 2026 because she mispronounced too much (Ferran); only Thorsten is recorded now.
+const REC_NAMES = { thorsten: "Thorsten" };
 const REC_VOICES = (document.querySelector('meta[name="recorded-voices"]')?.content || "").split(" ")
   .filter((id) => REC_NAMES[id]).map((id) => ({ id, name: REC_NAMES[id] }));
 const TEST_PHRASE = "Guten Tag! Wie geht's?";
@@ -3380,12 +3381,19 @@ if (!tts) ss?.addEventListener?.("voiceschanged", pickVoice);
 function soundProblem(msg) {
   for (const id of ["soundNote", "cardNote"]) { $(id).textContent = msg; $(id).hidden = false; }
 }
-// Reads one text. `second` is the other speaker in a conversation: the other recorded voice, or the device voice
-// pitched lower. `done` is called when the text has been read (or failed), so sayLines can read the next line.
+// Reads one text. `second` is the other speaker in a conversation. With a recording picked, that is another recorded
+// voice if there is one, else the device's German voice at its normal pitch, else the same recording played higher.
+// With a device voice picked, it is that voice pitched lower. `done` is called when the text has been read (or
+// failed), so sayLines can read the next line.
 function say(text, { second = false, done = () => {}, inLine = false } = {}) {
   if (!inLine) talkRun++; // a new text stops a conversation that is still being read
-  const rec = second && recVoice ? REC_VOICES.find((r) => r !== recVoice) || recVoice : recVoice;
-  if (rec) { stopSound(); return sayRecorded(text, rec, { second, done }); }
+  if (recVoice && second) {
+    const other = REC_VOICES.find((r) => r !== recVoice);
+    if (other) { stopSound(); return sayRecorded(text, other, { done }); }
+    if (deVoices.length) { stopRecording(); return deviceSay(text, { done }); }
+    stopSound(); return sayRecorded(text, recVoice, { done, higher: true });
+  }
+  if (recVoice) { stopSound(); return sayRecorded(text, recVoice, { done }); }
   stopRecording(); // the device voices cut themselves off
   deviceSay(text, { second, done });
 }
@@ -3407,6 +3415,7 @@ function stopRecording() {
 // Plays the recording; if it's missing or won't play, the device voice reads the text instead.
 function sayRecorded(text, rec, opts) {
   const a = player = new Audio(recPath(rec, text));
+  if (opts.higher) { a.preservesPitch = false; a.playbackRate = 1.15; } // a second speaker from the same recording
   const fallback = () => { if (player === a) { player = null; deviceSay(text, opts); } };
   a.onerror = fallback;
   a.onended = () => { if (player === a) { player = null; opts.done(); } };
