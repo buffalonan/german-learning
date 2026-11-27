@@ -12,8 +12,7 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - **Repo:** https://github.com/buffalonan/german-learning (público, rama `main`). Nunca se empuja a `main`: rama + PR.
 - **Web:** https://buffalonan.github.io/german-learning/ (GitHub Pages, `pages.yml` despliega en cada merge a `main` que toca el juego, ilustraciones o logo).
 - **App Android:** APK en GitHub Releases (`app-v1.<run>`, archivo `sags-auf-deutsch.apk`), instalada a mano en el móvil (sin Play Store). La publica `android.yml` en cada merge.
-- **Copia local en el Mac:** `~/Documents/german-learning`, servida con `python3 -m http.server 8081 --bind 0.0.0.0` para jugar por Wi-Fi (el puerto 8080 es otro proyecto, "recetas": no tocar). No se actualiza sola: tras un merge hay que copiar `index.html`, `pictures.js`, `art.js`, `art/`, `logo/`, `manifest.webmanifest` y `peerjs.min.js` (de `node_modules/peerjs/dist/`). Hoy está desactualizada (24-10-2026).
-- **Artifact de Claude:** copia antigua y privada (su enlace está en la memoria del proyecto; la página sin las líneas `<!doctype>`/`<html>`/`<head>`/`<body>`, más `pictures.js`, `art.js`, `art/` y `logo/` como archivos de apoyo).
+- **Obsoletas (desde 2026-11-27 solo se usan la web y el APK):** la copia del Mac en `~/Documents/german-learning` (servida en el puerto 8081; el 8080 es otro proyecto, "recetas": no tocar) y un artifact privado de Claude. No hay que actualizarlas.
 - **Archivos del proyecto (Claude):** `/mnt/project-files/illustrations/` tiene los prompts (`*-batch.md`, `prompts.md`, `logo/hedgehog-poses.md`) y los originales aprobados (`approved/<tema>-<Palabra>.jpg`, `logo/`). En el Mac, las pinturas salen de Gemini a `~/Downloads/german-pictures/<lote>/<Palabra>.jpg`.
 - **Secretos (solo nombres, nunca valores):** secretos del repo en GitHub Actions: `CLAUDE_CODE_OAUTH_TOKEN` (revisor Claude, lo creó Ferran con `claude setup-token`), `ANDROID_KEYSTORE_BASE64` y `ANDROID_KEYSTORE_PASSWORD` (firma del APK, alias `sagsdeutsch`; sin ellos CI firma con una clave de un solo uso). Claude no debe leerlos ni generarlos.
 - **Servicios externos:** PeerJS cloud (0.peerjs.com) para Zwei Handys; Abacus (`abacus.jasoncameron.dev`, contador `buffalonan-german-learning/besucher`) para el contador de visitas, solo en Pages; voces Piper (Kerstin, Thorsten) grabadas en CI y guardadas en la caché de Actions (caduca a los 7 días sin uso; se rellena sola en unas cuantas ejecuciones).
@@ -38,7 +37,6 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - Sin probar: la conexión real de Zwei Handys con dos móviles (CI no tiene internet; solo se prueba con un PeerJS falso). Ferran aún no la ha probado (2026-11-27).
 - El APK se firma con una clave de un solo uso: los secretos `ANDROID_KEYSTORE_*` no están puestos (2026-11-27), así que cada actualización obliga a desinstalar la app.
 - El test del emulador Android falla a veces por tiempo; relanzarlo suele bastar.
-- La copia del Mac y el artifact de Claude están desactualizados.
 
 ## Decisiones
 
@@ -58,6 +56,7 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - 2026-11-05: el erizo del logo aparece en cada pestaña con su propia pose.
 - 2026-11-25: se evita "morgen" (mañana) porque su nombre de archivo choca con "Morgen".
 - 2026-11-27: quitar la voz Kerstin, porque pronuncia mal (Ferran). Ya no suena susurrada.
+- 2026-11-27: solo se mantienen la web de GitHub Pages y el APK; la copia del Mac y el artifact quedan obsoletos (Ferran solo usa esas dos).
 - 2026-11-27: un solo archivo de contexto (`AGENTS.md`, en español); los detalles del código pasan a `docs/code-guide.md`.
 
 ## Pendiente
@@ -66,7 +65,6 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - Probar Zwei Handys con dos móviles (Ferran) y arreglar lo que falle.
 - Poner los secretos de firma del APK: Ferran crea la clave en su Mac con los comandos del README (Claude no puede generarla).
 - Quitar la voz grabada Kerstin (decidido el 2026-11-27, en marcha). Falta decidir quién lee la segunda voz de los diálogos de Hören, que hoy alterna Kerstin y Thorsten.
-- Pregunta para Ferran: ¿seguís usando la copia del Mac (puerto 8081) o el artifact de Claude? Si no, se pueden olvidar; si sí, hay que actualizarlos.
 - Los meses comparten una pintura (bloques + muñeco de nieve de Januar); se podrían repintar uno a uno si Ferran lo pide.
 
 ## Historial
