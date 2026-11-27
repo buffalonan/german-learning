@@ -34,7 +34,9 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 ## Estado actual
 
 - Funciona (27-11-2026): 849 tarjetas en 23 temas, todas pintadas; 8 lecciones de Grammatik con 100+ frases cada una; Hören con 113 textos en 6 tipos; Prüfung con Termin finden, Gemeinsam planen, Lesen y Schreiben; Zwei Handys; rondas que se reanudan; "Meine Fehler"; voces grabadas y voz del dispositivo; modo claro/oscuro; app Android.
-- Sin verificar desde Claude: la conexión real de Zwei Handys (CI no tiene internet; solo se prueba con un PeerJS falso) y el contador de visitas en la web (el proxy bloquea Abacus).
+- El contador de visitas se ve en la web (confirmado por Ferran el 2026-11-27).
+- Sin probar: la conexión real de Zwei Handys con dos móviles (CI no tiene internet; solo se prueba con un PeerJS falso). Ferran aún no la ha probado (2026-11-27).
+- El APK se firma con una clave de un solo uso: los secretos `ANDROID_KEYSTORE_*` no están puestos (2026-11-27), así que cada actualización obliga a desinstalar la app.
 - El test del emulador Android falla a veces por tiempo; relanzarlo suele bastar.
 - La copia del Mac y el artifact de Claude están desactualizados.
 
@@ -55,15 +57,15 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - 2026-11-03: toda lección de Grammatik necesita al menos 100 frases (Ferran vio pocas); las frases no se repiten entre lecciones.
 - 2026-11-05: el erizo del logo aparece en cada pestaña con su propia pose.
 - 2026-11-25: se evita "morgen" (mañana) porque su nombre de archivo choca con "Morgen".
+- 2026-11-27: quitar la voz Kerstin, porque pronuncia mal (Ferran). Ya no suena susurrada.
 - 2026-11-27: un solo archivo de contexto (`AGENTS.md`, en español); los detalles del código pasan a `docs/code-guide.md`.
 
 ## Pendiente
 
 - Siguiente paso de la hoja de ruta: Ferran no ha elegido aún. Ideas apuntadas sin decidir: temporizador para hablar, B1 Präsentation (Sprechen Teil 2), más textos de Lesen y Schreiben, construir frases con weil/dass.
-- Pregunta para Ferran: ¿habéis probado Zwei Handys con dos móviles de verdad? ¿Funciona?
-- Pregunta para Ferran: ¿aparece el contador "Besucher" en la web?
-- Pregunta para Ferran: ¿están puestos los secretos `ANDROID_KEYSTORE_*`? Si no, cada actualización del APK obliga a desinstalar.
-- Pregunta para Ferran: ¿Kerstin sigue sonando susurrada? Si sí, probar otra voz femenina de Piper.
+- Probar Zwei Handys con dos móviles (Ferran) y arreglar lo que falle.
+- Poner los secretos de firma del APK: Ferran crea la clave en su Mac con los comandos del README (Claude no puede generarla).
+- Quitar la voz grabada Kerstin (decidido el 2026-11-27, en marcha). Falta decidir quién lee la segunda voz de los diálogos de Hören, que hoy alterna Kerstin y Thorsten.
 - Pregunta para Ferran: ¿seguís usando la copia del Mac (puerto 8081) o el artifact de Claude? Si no, se pueden olvidar; si sí, hay que actualizarlos.
 - Los meses comparten una pintura (bloques + muñeco de nieve de Januar); se podrían repintar uno a uno si Ferran lo pide.
 
