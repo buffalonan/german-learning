@@ -61,6 +61,7 @@ jobs:
           path: .review-rules
           sparse-checkout: |
             AGENTS.md
+            docs/code-guide.md
             REVIEW.md
           sparse-checkout-cone-mode: false
       # The diff without generated or binary files: pictures.js alone is 1.2 MB of base64,
@@ -87,9 +88,10 @@ jobs:
             PR NUMBER: ${{ env.PR_NUMBER }}
 
             You are an independent reviewer for this pull request. First read the review rules
-            from the base branch: .review-rules/AGENTS.md (repo context) and .review-rules/REVIEW.md.
+            from the base branch: .review-rules/AGENTS.md (project context), .review-rules/docs/code-guide.md
+            (how the code works) and .review-rules/REVIEW.md.
             If they aren't there yet, use the copies in the repo root. If this PR changes
-            AGENTS.md or REVIEW.md, review those changes like any other code, but follow the
+            AGENTS.md, docs/code-guide.md or REVIEW.md, review those changes like any other code, but follow the
             base branch version. Review only the changes in this PR. The diff is in .review/pr.diff and
             the list of changed files in .review/files.txt. Generated and binary files (pictures.js,
             package-lock.json, images, audio) are left out on purpose: never open pictures.js or
