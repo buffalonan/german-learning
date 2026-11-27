@@ -15,7 +15,7 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - **Obsoletas (desde 2026-11-27 solo se usan la web y el APK):** la copia del Mac en `~/Documents/german-learning` (servida en el puerto 8081; el 8080 es otro proyecto, "recetas": no tocar) y un artifact privado de Claude. No hay que actualizarlas.
 - **Archivos del proyecto (Claude):** `/mnt/project-files/illustrations/` tiene los prompts (`*-batch.md`, `prompts.md`, `logo/hedgehog-poses.md`) y los originales aprobados (`approved/<tema>-<Palabra>.jpg`, `logo/`). En el Mac, las pinturas salen de Gemini a `~/Downloads/german-pictures/<lote>/<Palabra>.jpg`.
 - **Secretos (solo nombres, nunca valores):** secretos del repo en GitHub Actions: `CLAUDE_CODE_OAUTH_TOKEN` (revisor Claude, lo creó Ferran con `claude setup-token`), `ANDROID_KEYSTORE_BASE64` y `ANDROID_KEYSTORE_PASSWORD` (firma del APK, alias `sagsdeutsch`; sin ellos CI firma con una clave de un solo uso). Claude no debe leerlos ni generarlos.
-- **Servicios externos:** PeerJS cloud (0.peerjs.com) para Zwei Handys; Abacus (`abacus.jasoncameron.dev`, contador `buffalonan-german-learning/besucher`) para el contador de visitas, solo en Pages; voces Piper (Kerstin, Thorsten) grabadas en CI y guardadas en la caché de Actions (caduca a los 7 días sin uso; se rellena sola en unas cuantas ejecuciones).
+- **Servicios externos:** PeerJS cloud (0.peerjs.com) para Zwei Handys; Abacus (`abacus.jasoncameron.dev`, contador `buffalonan-german-learning/besucher`) para el contador de visitas, solo en Pages; voz Piper Thorsten grabada en CI y guardadas en la caché de Actions (caduca a los 7 días sin uso; se rellena sola en unas cuantas ejecuciones).
 - **Backups:** no hay más copia que GitHub (repo y releases) y los originales en `/mnt/project-files/illustrations/approved/`. No hay tareas programadas propias; solo CI semanal de seguridad y Dependabot.
 
 ## Cómo funciona
@@ -55,7 +55,7 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - 2026-11-03: toda lección de Grammatik necesita al menos 100 frases (Ferran vio pocas); las frases no se repiten entre lecciones.
 - 2026-11-05: el erizo del logo aparece en cada pestaña con su propia pose.
 - 2026-11-25: se evita "morgen" (mañana) porque su nombre de archivo choca con "Morgen".
-- 2026-11-27: quitar la voz Kerstin, porque pronuncia mal (Ferran). Ya no suena susurrada.
+- 2026-11-27: quitar la voz Kerstin, porque pronuncia mal (Ferran). En los diálogos de Hören, si se elige Thorsten, la segunda persona la lee la voz alemana del dispositivo (suele ser femenina, así que suenan dos personas sin grabar otra voz); sin voz alemana, Thorsten 1,15× más agudo. PR #74.
 - 2026-11-27: solo se mantienen la web de GitHub Pages y el APK; la copia del Mac y el artifact quedan obsoletos (Ferran solo usa esas dos).
 - 2026-11-27: un solo archivo de contexto (`AGENTS.md`, en español); los detalles del código pasan a `docs/code-guide.md`.
 
@@ -64,7 +64,6 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - Siguiente paso de la hoja de ruta: Ferran no ha elegido aún. Ideas apuntadas sin decidir: temporizador para hablar, B1 Präsentation (Sprechen Teil 2), más textos de Lesen y Schreiben, construir frases con weil/dass.
 - Probar Zwei Handys con dos móviles (Ferran) y arreglar lo que falle.
 - Poner los secretos de firma del APK: Ferran crea la clave en su Mac con los comandos del README (Claude no puede generarla).
-- Quitar la voz grabada Kerstin (decidido el 2026-11-27, en marcha). Falta decidir quién lee la segunda voz de los diálogos de Hören, que hoy alterna Kerstin y Thorsten.
 - Los meses comparten una pintura (bloques + muñeco de nieve de Januar); se podrían repintar uno a uno si Ferran lo pide.
 
 ## Historial
@@ -78,3 +77,4 @@ Juegan juntos en un portátil (compitiendo por responder primero) o en dos móvi
 - 2026-11-05: pinturas de las 86 tarjetas Goethe (PR #64); contador de visitas (PR #65); poses del erizo (PR #66).
 - 2026-11-26: +100 palabras cotidianas y sus pinturas (699 tarjetas, PR #70, #71); voces grabadas por tandas con tiempo límite.
 - 2026-11-27: +150 palabras útiles con pinturas (849 tarjetas, PR #72). AGENTS.md reescrito en español.
+- 2026-11-27: fuera la voz Kerstin; solo Thorsten grabado, la voz del dispositivo hace de segunda persona en los diálogos (PR #74).
